@@ -25,6 +25,12 @@ const insertPg = (payload) => {
             insertAlarm(payload);
             insertCom(payload);
             break;
+        case '45':
+            insertFlowArrow1(payload);
+            insertVolume(payload);
+            insertAlarm(payload);
+            insertCom(payload);
+            break;
         case '81':
             if (fPort == 1){
                 insertFlowArrow1(payload);
@@ -34,6 +40,13 @@ const insertPg = (payload) => {
             }
             insertVolume(payload);
             insertAlarm(payload);
+            insertCom(payload);
+            break;
+        case '82':
+            insertFlowJanz2(payload);
+            insertVolume(payload);
+            insertAlarm(payload);
+            insertBattery(payload);
             insertCom(payload);
             break;
         case '119':
@@ -63,6 +76,32 @@ const insertFlow = (payload) => {
             if (error) {
               console.log(error);
             }
+        });
+    };
+};
+
+const insertFlowJanz2 = (payload) => {
+    for (var i=0; i < payload.Deltas.length; i++){
+        const query = `INSERT INTO flow(device, date, flow) VALUES($1, $2, $3)`;
+        var data = new Date(payload.Date);
+        if (payload.Index == '12h00 to 00h00'){
+            data.setHours(0);
+            data.setMinutes(0);
+            data.setSeconds(0);
+        };
+        if (payload.Index == '00h00 to 12h00'){
+            data.setHours(12);
+            data.setMinutes(0);
+            data.setSeconds(0);
+        };
+        var hour = data.getHours();
+        hour = hour-i;
+        data.setHours(hour);
+        var values = [payload.DeviceName, data, payload.Deltas[i]*0.001];
+        pool.query(query, values, (error, response) => {
+            if (error) {
+            console.log(error);
+            };
         });
     };
 };
@@ -174,21 +213,23 @@ const insertVolume = (payload) => {
 };
 
 const insertAlarm = (payload) => {
-    if (payload.Alarm.length == 1) {
-        var alarm = payload.Alarm[0];
-    }
-    else if (payload.Alarm.length == 2) {
-        var alarm = payload.Alarm[0] +', '+ payload.Alarm[1];
-    }
-    else if (payload.Alarm.length == 3) {
-        var alarm = payload.Alarm[0] +', '+ payload.Alarm[1] +', '+ payload.Alarm[2];
-    }
-    else if (payload.Alarm.length == 4) {
-        var alarm = payload.Alarm[0] +', '+ payload.Alarm[1] +', '+ payload.Alarm[2] +', '+ payload.Alarm[3];
+    if (Array.isArray(payload.Alarm)) {
+        if (payload.Alarm.length == 1) {
+            var alarm = payload.Alarm[0];
+        }
+        else if (payload.Alarm.length == 2) {
+            var alarm = payload.Alarm[0] +', '+ payload.Alarm[1];
+        }
+        else if (payload.Alarm.length == 3) {
+            var alarm = payload.Alarm[0] +', '+ payload.Alarm[1] +', '+ payload.Alarm[2];
+        }
+        else if (payload.Alarm.length == 4) {
+            var alarm = payload.Alarm[0] +', '+ payload.Alarm[1] +', '+ payload.Alarm[2] +', '+ payload.Alarm[3];
+        }
     }
     else {
-        var alarm = payload.Alarm
-    };
+            var alarm = payload.Alarm
+        };
     const query_alarm = `INSERT INTO alarm(device, date, alarm) VALUES($1, $2, $3)`;
     var values = [payload.DeviceName, payload.Date, alarm];
     pool.query(query_alarm, values, (error, response) => {
@@ -196,6 +237,17 @@ const insertAlarm = (payload) => {
             console.log(error);
         }
     });
+};
+
+const insertBattery = (payload) => {
+    const query_bat = `INSERT INTO battery(device, date, battery) VALUES($1, $2, $3)`;
+    var values = [payload.DeviceName, payload.Date, payload.Battery];
+    pool.query(query_bat, values, (error, response) => {
+        if (error) {
+            console.log(error);
+        };
+    });
+
 };
 
 const insertCom = (payload) => {

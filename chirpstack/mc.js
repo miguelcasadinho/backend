@@ -2,12 +2,11 @@ import { axiomaDecoder } from './decoders/axioma.js';
 import { sagemDecoder } from './decoders/sagem.js';
 import { arrowDecoder } from './decoders/arrow.js';
 import { janzLoraDecoder } from './decoders/janz_lora.js';
-import { janz2Decoder } from './decoders/janz2.js';
 import { insertPg } from './ins_pg.js';
 import express from 'express';
 import bodyParser from 'body-parser';
 
-const port = 2000;
+const port = 5000;
 const path = '/chirp';
 const app = express();
 app.use(bodyParser.json());
@@ -36,11 +35,6 @@ app.post(path, (req, res) => {
             insertPg(arrowDecoder(objectjson));    
             res.send('Data received successfully!');
             break;
-        case '82':
-            console.log(janz2Decoder(objectjson));
-            insertPg(janz2Decoder(objectjson));    
-            res.send('Data received successfully!');
-            break;    
         case '119':
             console.log(janzLoraDecoder(objectjson));
             insertPg(janzLoraDecoder(objectjson));    

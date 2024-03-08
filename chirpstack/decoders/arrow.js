@@ -6,6 +6,7 @@ const arrowDecoder = (message) => {
             var bytes = Buffer.from(message.data, 'base64');
             var date = new Date((bytes[0] | bytes[1] << 8 | bytes[2] << 16 | bytes[3] << 24)*1000);
             date = new Date(date.setFullYear(date.getFullYear() + 30));
+            date = new Date(date.setTime(date.getTime() - (24 * 60 * 60 * 1000)));
             var data = new Date(date);
             var hour = data.getHours();
             data.setHours(hour-24);
@@ -111,7 +112,7 @@ const arrowDecoder = (message) => {
             var payload = {
                 "AppID": message.applicationID,
                 "Application": message.applicationName,
-                "DeviceName": message.deviceName,
+                "DeviceName": message.tags.CONTADOR,
                 "Data": message.data,
                 "fPort": message.fPort,
                 "vif": vif,
