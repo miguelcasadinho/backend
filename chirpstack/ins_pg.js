@@ -25,6 +25,13 @@ const insertPg = (payload) => {
             insertAlarm(payload);
             insertCom(payload);
             break;
+        case '42':
+            insertFlowArrow1(payload);
+            insertVolume(payload);
+            insertAlarm(payload);
+            insertBattery(payload);
+            insertCom(payload);
+            break;
         case '45':
             insertFlowArrow1(payload);
             insertVolume(payload);

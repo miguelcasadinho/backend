@@ -1,5 +1,6 @@
 import { axiomaDecoder } from './decoders/axioma.js';
 import { sagemDecoder } from './decoders/sagem.js';
+import { gladiatorDecoder } from './decoders/gladiator.js';
 import { arrowDecoder } from './decoders/arrow.js';
 import { janzLoraDecoder } from './decoders/janz_lora.js';
 import { janz2Decoder } from './decoders/janz2.js';
@@ -24,6 +25,11 @@ app.post(path, (req, res) => {
         case '34':
             console.log(axiomaDecoder(objectjson));
             insertPg(axiomaDecoder(objectjson));    
+            res.send('Data received successfully!');
+            break;
+        case '42':
+            console.log(gladiatorDecoder(objectjson));
+            insertPg(gladiatorDecoder(objectjson));    
             res.send('Data received successfully!');
             break;
         case '45':
