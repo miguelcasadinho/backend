@@ -25,6 +25,12 @@ const insertPg = (payload) => {
             insertAlarm(payload);
             insertCom(payload);
             break;
+        case '39':
+            insertFlowNke(payload);
+            insertVolumeNke(payload);
+            insertBattery(payload);
+            insertCom(payload);
+            break;
         case '42':
             insertFlowArrow1(payload);
             insertVolume(payload);
@@ -56,6 +62,12 @@ const insertPg = (payload) => {
             insertBattery(payload);
             insertCom(payload);
             break;
+        case '83':
+            insertFlowDiehl(payload);
+            insertVolumeDiehl(payload);
+            insertAlarm(payload);
+            insertCom(payload);
+            break;
         case '119':
             if (fPort == 1){
                 insertFlowArrow1(payload);
@@ -82,7 +94,23 @@ const insertFlow = (payload) => {
         pool.query(query, values, (error, response) => {
             if (error) {
               console.log(error);
-            }
+            };
+        });
+    };
+};
+
+const insertFlowDiehl = (payload) => {
+    for (var i=0; i < payload.Deltas.length; i++){
+        const query = `INSERT INTO flow(device, date, flow) VALUES($1, $2, $3)`;
+        var data = new Date(payload.Datelog);
+        var hour = data.getHours();
+        hour=hour+i;
+        data.setHours(hour);
+        var values = [payload.DeviceName, data, payload.Deltas[i]*0.001];
+        pool.query(query, values, (error, response) => {
+            if (error) {
+              console.log(error);
+            };
         });
     };
 };
@@ -209,6 +237,119 @@ const insertFlowArrow2 = (payload) => {
     }, 1000);
 };
 
+const insertFlowNke = (payload) => {
+    //inserting the aux data
+    if (payload.index1.length > 0) { 
+        for (var i=0; i < payload.index1.length; i++){
+            var query_index1 = `INSERT INTO nkeaux(device, date, flow) VALUES($1, $2, $3)`;
+            var values = [payload.index1[i].device, payload.index1[i].date, payload.index1[i].flow];
+            pool.query(query_index1, values, (error, response) => {
+                if (error) {
+                    console.log(error);
+                };
+            });
+        };
+    };
+    if (payload.index2.length > 0) { 
+        for (var i=0; i < payload.index2.length; i++){
+            var query_index2 = `INSERT INTO nkeauxinv(device, date, flow) VALUES($1, $2, $3)`;
+            var values = [payload.index2[i].device, payload.index2[i].date, payload.index2[i].flow_inv];
+            pool.query(query_index2, values, (error, response) => {
+                if (error) {
+                    console.log(error);
+                };
+            });
+        };
+    };
+
+    //Get the aux data
+    var flow;
+    var flow_inv;
+    if (payload.index1.length > 0) {
+        var data = new Date(payload.index1[0].date);
+        var hour =data.getHours();
+        hour=hour-2;
+        data.setHours(hour);
+        var query_index1 = {
+            name: 'index1-partial',
+            text: 'SELECT device, date, flow - lag(flow) over (order by date) as flow, pg_sleep(1) FROM nkeaux WHERE device = $1 AND date >= $2',
+            values: [payload.index1[0].device, data],
+        };
+        setTimeout(() => {
+            pool.query(query_index1, (err, res) => {
+                if (err) {
+                    console.log(err.stack)
+                } else {
+                    flow = res.rows
+                    // console.log(flow)
+                    //inserting the data
+                    for (var i=0; i < flow.length; i++){
+                        const q1 = `INSERT INTO flow(device, date, flow) VALUES($1, $2, $3)`;
+                        var values = [flow[i].device, flow[i].date, flow[i].flow];
+                        pool.query(q1, values, (error, response) => {
+                            if (error) {
+                                console.log(error);
+                            };
+                        });
+                    };
+                };
+            });
+        }, 2000);
+    };
+    if (payload.index2.length > 0) {
+        var data_inv = new Date(payload.index2[0].date);
+        var hour_inv = data_inv.getHours();
+        hour_inv=hour_inv-2;
+        data_inv.setHours(hour_inv);        
+        var query_index2 = {
+            name: 'index2-partial',
+            text: 'SELECT device, date, flow - lag(flow) over (order by date) as flow, pg_sleep(3) FROM nkeauxinv WHERE device = $1 AND date >= $2',
+            values: [payload.index2[0].device, data_inv],
+        };
+        setTimeout(() => {
+            pool.query(query_index2, (err, res) => {
+                if (err) {
+                    console.log(err.stack)
+                } else {
+                    flow_inv = res.rows
+                    //console.log(flow_inv)
+                    //inserting the data
+                    for (var i=0; i < flow_inv.length; i++){
+                        const q2 = `INSERT INTO flow_inv(device, date, flow) VALUES($1, $2, $3)`;
+                        var values = [flow_inv[i].device, flow[i].date, flow_inv[i].flow];
+                        pool.query(q2, values, (error, response) => {
+                            if (error) {
+                                console.log(error);
+                            };
+                        });
+                    };
+                };
+            });
+        }, 4000);
+    };
+};
+
+const insertVolumeNke = (payload) => {
+    if (payload.index1.length > 0) {
+        const query_vol = `INSERT INTO volume(device, date, volume) VALUES($1, $2, $3)`;
+        var values = [payload.DeviceName, payload.Date, payload.Volume];
+        pool.query(query_vol, values, (error, response) => {
+            if (error) {
+                console.log(error);
+            };
+        });
+    };
+    if (payload.index2.length > 0) {
+        const query_vol_in = `INSERT INTO volume_inv(device, date, volume) VALUES($1, $2, $3)`;
+        values = [payload.DeviceName, payload.Date, payload.Volume_inv];
+        pool.query(query_vol_in, values, (error, response) => {
+            if (error) {
+                console.log(error);
+            };
+        });
+    };
+};
+
 const insertVolume = (payload) => {
     const query_vol = `INSERT INTO volume(device, date, volume) VALUES($1, $2, $3)`;
     var values = [payload.DeviceName, payload.Date, payload.Volume];
@@ -217,6 +358,21 @@ const insertVolume = (payload) => {
             console.log(error);
         }
     });
+};
+
+const insertVolumeDiehl = (payload) => {
+    const query_vol = `INSERT INTO volume(device, date, volume) VALUES($1, $2, $3)`;
+        var datavol = new Date(payload.Date);
+        datavol.setHours(0);
+        datavol.setMinutes(0);
+        datavol.setSeconds(0);
+        datavol.setMilliseconds(0);
+        var values = [payload.DeviceName, datavol, payload.Volume];
+        pool.query(query_vol, values, (error, response) => {
+            if (error) {
+                console.log(error);
+            };
+        });
 };
 
 const insertAlarm = (payload) => {
