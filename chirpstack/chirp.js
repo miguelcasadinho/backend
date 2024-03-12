@@ -6,6 +6,10 @@ import { janzLoraDecoder } from './decoders/janz_lora.js';
 import { janz2Decoder } from './decoders/janz2.js';
 import { diehlDecoder } from './decoders/diehl.js';
 import { nkeDecoder } from './decoders/nke.js';
+import { xtrDecoder } from './decoders/xtr.js';
+import { pslbDecoder } from './decoders/ps-lb.js';
+import { ldds75Decoder} from  './decoders/ldds75.js';
+import { sensecapDecoder} from  './decoders/sensecap.js';
 import { insertPg } from './ins_pg.js';
 import express from 'express';
 import bodyParser from 'body-parser';
@@ -25,46 +29,125 @@ app.post(path, (req, res) => {
     var appID = objectjson.applicationID;
     switch (appID) {
         case '34':
-            console.log(axiomaDecoder(objectjson));
-            insertPg(axiomaDecoder(objectjson));    
-            res.send('Data received successfully!');
+            let axioma_decoded = axiomaDecoder(objectjson);
+            if (typeof axioma_decoded !== 'undefined'){
+                //console.log(axioma_decoded);
+                insertPg(axiomaDecoder(objectjson));
+            } else {
+                console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+            }
+            res.send('Data received successfully!');      
             break;
         case '39':
-            console.log(nkeDecoder(objectjson));
-            insertPg(nkeDecoder(objectjson));    
-            res.send('Data received successfully!');
+            let nke_decoded = axiomaDecoder(objectjson);
+            if (typeof nke_decoded !== 'undefined'){
+                //console.log(nke_decoded);
+                insertPg(nkeDecoder(objectjson));
+            } else {
+                console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+            }
+            res.send('Data received successfully!');      
             break;
         case '42':
-            console.log(gladiatorDecoder(objectjson));
-            insertPg(gladiatorDecoder(objectjson));    
-            res.send('Data received successfully!');
+            let gladiator_decoded = gladiatorDecoder(objectjson);
+            if (typeof gladiator_decoded !== 'undefined'){
+                //console.log(gladiator_decoded);
+                insertPg(gladiatorDecoder(objectjson));
+            } else {
+                console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+            }
+            res.send('Data received successfully!');      
             break;
         case '45':
-            console.log(sagemDecoder(objectjson));
-            insertPg(sagemDecoder(objectjson));    
-            res.send('Data received successfully!');
+            let sagem_decoded = sagemDecoder(objectjson);
+            if (typeof sagem_decoded !== 'undefined'){
+                //console.log(gladiator_decoded);
+                insertPg(sagemDecoder(objectjson));
+            } else {
+                console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+            }
+            res.send('Data received successfully!');      
+            break;
+        case '80':
+            let xtr_decoded = xtrDecoder(objectjson);
+            if (typeof xtr_decoded !== 'undefined'){
+                //console.log(xtr_decoded);
+                insertPg(xtrDecoder(objectjson));
+            } else {
+                console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+            }
+            res.send('Data received successfully!');      
             break;
         case '81':
-            console.log(arrowDecoder(objectjson));
-            insertPg(arrowDecoder(objectjson));    
-            res.send('Data received successfully!');
+            let arrow_decoded = arrowDecoder(objectjson);
+            if (typeof arrow_decoded !== 'undefined'){
+                //console.log(arrow_decoded);
+                insertPg(arrowDecoder(objectjson));
+            } else {
+                console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+            }
+            res.send('Data received successfully!');        
             break;
         case '82':
-            console.log(janz2Decoder(objectjson));
-            insertPg(janz2Decoder(objectjson));    
-            res.send('Data received successfully!');
+            let janz2_decoded = janz2Decoder(objectjson);
+            if (typeof janz2_decoded !== 'undefined'){
+                //console.log(janz2_decoded);
+                insertPg(janz2Decoder(objectjson));
+            } else {
+                console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+            }
+            res.send('Data received successfully!');    
             break;
         case '83':
-            console.log(diehlDecoder(objectjson));
-            insertPg(diehlDecoder(objectjson));    
-            res.send('Data received successfully!');
-            break;        
-        case '119':
-            console.log(janzLoraDecoder(objectjson));
-            insertPg(janzLoraDecoder(objectjson));    
+            let diehl_decoded = diehlDecoder(objectjson);
+            if (typeof diehl_decoded !== 'undefined'){
+                //console.log(diehl_decoded);
+                insertPg(diehlDecoder(objectjson));
+            } else {
+                console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+            }
+            res.send('Data received successfully!');    
+            break;
+        case '84':
+            let sensecap_decoded = sensecapDecoder(objectjson);
+            if (typeof sensecap_decoded !== 'undefined'){
+                //console.log(pslb_decoded);
+                insertPg(sensecapDecoder(objectjson));   
+            } else {
+                console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+            }
             res.send('Data received successfully!');
             break;
-        
+        case '85':
+            let pslb_decoded = pslbDecoder(objectjson);
+            if (typeof pslb_decoded !== 'undefined'){
+                //console.log(pslb_decoded);
+                insertPg(pslbDecoder(objectjson));   
+            } else {
+                console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+            }
+            res.send('Data received successfully!');
+            break;
+        case '86':
+            let ldds75_decoded = ldds75Decoder(objectjson);
+            if (typeof ldds75_decoded !== 'undefined'){
+                //console.log(ldds75_decoded);
+                insertPg(ldds75Decoder(objectjson));   
+            } else {
+                console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+            }
+            res.send('Data received successfully!');
+            break;           
+        case '119':
+            let janzLora_decoded = janzLoraDecoder(objectjson);
+            if (typeof janzLora_decoded !== 'undefined') {
+                //console.log(janzLora_decoded);
+                insertPg(janzLoraDecoder(objectjson));  
+            } else {
+                console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+            }  
+            res.send('Data received successfully!');
+            break;
         default:
             res.send('Data received successfully!');
     }

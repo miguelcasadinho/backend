@@ -44,6 +44,12 @@ const insertPg = (payload) => {
             insertAlarm(payload);
             insertCom(payload);
             break;
+        case '80':
+            insertFlowArrow1(payload);
+            insertVolume(payload);
+            insertAlarm(payload);
+            insertCom(payload);
+            break;
         case '81':
             if (fPort == 1){
                 insertFlowArrow1(payload);
@@ -68,6 +74,18 @@ const insertPg = (payload) => {
             insertAlarm(payload);
             insertCom(payload);
             break;
+        case '84':
+            insertSensecap(payload);
+            insertCom(payload);
+            break;
+        case '85':
+            insertPslb(payload);
+            insertCom(payload);
+            break;
+        case '86':
+            insertLdds75(payload);
+            insertCom(payload);
+            break;
         case '119':
             if (fPort == 1){
                 insertFlowArrow1(payload);
@@ -85,7 +103,7 @@ const insertPg = (payload) => {
 
 const insertFlow = (payload) => {
     for (var i=0; i < payload.Deltas.length; i++){
-        const query = `INSERT INTO flow(device, date, flow) VALUES($1, $2, $3)`;
+        const query = `INSERT INTO flow(device, date, flow) VALUES($1, $2, $3) ON CONFLICT (device, date) DO NOTHING`;
         var data = new Date(payload.Date_log);
         var hour =data.getHours();
         hour=hour+1+i;
@@ -101,7 +119,7 @@ const insertFlow = (payload) => {
 
 const insertFlowDiehl = (payload) => {
     for (var i=0; i < payload.Deltas.length; i++){
-        const query = `INSERT INTO flow(device, date, flow) VALUES($1, $2, $3)`;
+        const query = `INSERT INTO flow(device, date, flow) VALUES($1, $2, $3) ON CONFLICT (device, date) DO NOTHING`;
         var data = new Date(payload.Datelog);
         var hour = data.getHours();
         hour=hour+i;
@@ -143,7 +161,7 @@ const insertFlowJanz2 = (payload) => {
 
 const insertFlowArrow1 = (payload) => {
     for (var i=0; i < payload.Deltas.length; i++){
-        const query = `INSERT INTO flow(device, date, flow) VALUES($1, $2, $3)`;
+        const query = `INSERT INTO flow(device, date, flow) VALUES($1, $2, $3) ON CONFLICT (device, date) DO NOTHING`;
         var data = new Date(payload.Date);
         var hour = data.getHours();
         hour=hour-i;
@@ -421,6 +439,37 @@ const insertCom = (payload) => {
         if (error) {
             console.log(error);
         }
+    });
+};
+
+const insertPslb = (payload) => {
+    const query = `INSERT INTO pressure(device, date, pressure, battery, lat, lon) VALUES($1, $2, $3, $4, $5, $6)`;
+    var values = [payload.DeviceName, payload.Date, payload.Deltas*10, payload.Battery, payload.Lat, payload.Lon];
+    pool.query(query, values, (error, response) => {
+        if (error) {
+            console.log(error);
+        };
+    });
+};
+
+const insertLdds75 = (payload) => {
+    const query = `INSERT INTO ldds75(device, date, battery, distance, lat, lon) VALUES($1, $2, $3, $4, $5, $6)`;
+    var values = [payload.DeviceName, payload.Date, payload.Battery, payload.Distance, payload.Lat, payload.Lon];
+    pool.query(query, values, (error, response) => {
+        if (error) {
+            console.log(error);
+        };
+    });
+};
+
+const insertSensecap = (payload) => {
+    const query = `INSERT INTO weather(device, date, air_temperature, air_humidity, light_intensity, uv_index, wind_speed, wind_direction, rain_gauge, barometric_pressure)
+               VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`;
+    var values = [payload.DeviceName, payload.Date, payload.air_temperature, payload.air_humidity, payload.light_intensity, payload.uv_index, payload.wind_speed, payload.wind_direction, payload.rain_gauge, payload.barometric_pressure];
+    pool.query(query, values, (error, response) => {
+        if (error) {
+            console.log(error);
+        };
     });
 };
 
