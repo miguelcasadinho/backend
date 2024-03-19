@@ -116,14 +116,16 @@ executeAllQueries()
   console.log(sqlresult.length, ' Tags to insert');
   return insertData();
 })
-.catch((error) => {
-    console.error('Error executing query:', error);
-})
 .then(() => {
   // Close the pool when done
-  pool.end();
+  return pool.end(); // Return the promise returned by pool.end()
 })
-.catch(err => console.error('Error:', err));
+.then(() => {
+  console.log('Connection pool closed.');
+})
+.catch((error) => {
+  console.error('Error:', error);
+});
 };
 
 export { qhourTask };

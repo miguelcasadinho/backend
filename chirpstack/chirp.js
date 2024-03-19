@@ -39,7 +39,7 @@ app.post(path, (req, res) => {
             res.send('Data received successfully!');      
             break;
         case '39':
-            let nke_decoded = axiomaDecoder(objectjson);
+            let nke_decoded = nkeDecoder(objectjson);
             if (typeof nke_decoded !== 'undefined'){
                 //console.log(nke_decoded);
                 insertPg(nkeDecoder(objectjson));
@@ -61,7 +61,7 @@ app.post(path, (req, res) => {
         case '45':
             let sagem_decoded = sagemDecoder(objectjson);
             if (typeof sagem_decoded !== 'undefined'){
-                //console.log(gladiator_decoded);
+                //console.log(sagem_decoded);
                 insertPg(sagemDecoder(objectjson));
             } else {
                 console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");

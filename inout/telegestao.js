@@ -15,7 +15,6 @@ rule.tz = 'Europe/Lisbon';
 
 // Define the qhour schedule
 const qhour_rule = new schedule.RecurrenceRule();
-qhour_rule.second = 0; //(0-59, OPTIONAL)
 qhour_rule.minute = 5; //(0-59)
 
 

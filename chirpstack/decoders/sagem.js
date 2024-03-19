@@ -68,7 +68,7 @@ const sagemDecoder = (message) => {
                 alarm = "no alarms";
             }
             else {
-                offset = 0;
+                offset = 13;
             };
             //Check delta0 and volume bug 
             if (((bytes[4+offset] | bytes[5+offset] << 8) !== (bytes[11+offset] | bytes[11+offset+1] << 8 ))){
