@@ -1,7 +1,5 @@
 import schedule from 'node-schedule';
-import { insmeters } from './insaqpg.js';
-
-
+import { insmeters, insclients, inscoords } from './insaqpg.js';
 
 /*
 //schedule rules
@@ -26,6 +24,20 @@ meters_rule1.hour = 17; //(0-23)
 const meters_job0 = schedule.scheduleJob(meters_rule0, insmeters);
 const meters_job1 = schedule.scheduleJob(meters_rule1, insmeters);
 
+// Define the insclients schedule
+const clients_rule = new schedule.RecurrenceRule();
+clients_rule.minute = 10; //(0-59)
+clients_rule.hour = 16; //(0-23)
+// Schedule the insclientss tasks
+const clients_job = schedule.scheduleJob(clients_rule, insclients);
+
+// Define the inscoords schedule
+const coords_rule = new schedule.RecurrenceRule();
+coords_rule.minute = 25; //(0-59)
+coords_rule.hour = 16; //(0-23)
+// Schedule the insclientss tasks
+const coords_job = schedule.scheduleJob(coords_rule, inscoords);
 
 // Cancel the job if needed
 // job.cancel();
+

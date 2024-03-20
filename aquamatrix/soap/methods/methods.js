@@ -22,4 +22,37 @@ const GIS_DadosContadores =
     </soap:Body>
     </soap:Envelope>`;
 
-export { GIS_DadosContadores };
+const GIS_Clientes =
+    `<?xml version="1.0" encoding="utf-8"?>
+    <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <GIS_Clientes xmlns="http://tempuri.org/">
+        <Empresa>${process.env.aquaUser}</Empresa>
+        <!--<ramalAgua></ramalAgua>-->
+        <!--<zona>2</zona>-->
+        <!--<area>15</area>-->
+        <!--<cliente>1838415</cliente>-->
+        <!--<local>8015</local>-->
+        </GIS_Clientes>
+    </soap:Body>
+    </soap:Envelope>`;
+
+const GIS_CoordenadasPorRamal =
+    `<?xml version="1.0" encoding="utf-8"?>
+    <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <GIS_CoordenadasPorRamal xmlns="http://tempuri.org/">
+        <Empresa>${process.env.aquaUser}</Empresa>
+        <!--<local></local>-->
+        <!--<ramal></ramal>-->
+        <itemInicial>1</itemInicial>
+        <nrItemsObter>50000</nrItemsObter>
+        </GIS_CoordenadasPorRamal>
+    </soap:Body>
+    </soap:Envelope>`;
+
+export { GIS_DadosContadores, GIS_Clientes, GIS_CoordenadasPorRamal };

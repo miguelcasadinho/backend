@@ -66,7 +66,6 @@ const extractdata = () => {
                     "DtLeitura":new Date(xml[i].DT_ULTIMA_LEITURA[0])
                 });
                 }
-
             else if (Object.hasOwnProperty.bind(xml[i])('DT_INSTALACAO') && Object.hasOwnProperty.bind(xml[i])('LOCAL') && Object.hasOwnProperty.bind(xml[i])('CLIENTE') 
             && Object.hasOwnProperty.bind(xml[i])('TARIFA') && Object.hasOwnProperty.bind(xml[i])('ULTIMA_LEITURA') 
             && (Object.hasOwnProperty.bind(xml[i])('ANDAR') && typeof xml[i].ANDAR[0] === 'object')){
@@ -88,8 +87,7 @@ const extractdata = () => {
                     "Volume":parseInt(xml[i].ULTIMA_LEITURA[0]),
                     "DtLeitura":new Date(xml[i].DT_ULTIMA_LEITURA[0])
                     });
-            }        
-            
+            }                 
             else if (Object.hasOwnProperty.bind(xml[i])('DT_INSTALACAO') && Object.hasOwnProperty.bind(xml[i])('LOCAL') && Object.hasOwnProperty.bind(xml[i])('CLIENTE') 
                     && Object.hasOwnProperty.bind(xml[i])('TARIFA') && !Object.hasOwnProperty.bind(xml[i])('ULTIMA_LEITURA')
                     && (Object.hasOwnProperty.bind(xml[i])('ANDAR') && typeof xml[i].ANDAR[0] !== 'object')){
@@ -108,10 +106,10 @@ const extractdata = () => {
                     "Classe":xml[i].TARIFA[0],
                     "Marca":xml[i].MARCA[0],
                     "Modelo":xml[i].MODELO[0],
-                    "Volume":parseInt(0)
+                    "Volume":'',
+                    //"DtLeitura":''
                 });
             }
-
             else if (Object.hasOwnProperty.bind(xml[i])('DT_INSTALACAO') && Object.hasOwnProperty.bind(xml[i])('LOCAL') && Object.hasOwnProperty.bind(xml[i])('CLIENTE') 
             && Object.hasOwnProperty.bind(xml[i])('TARIFA') && !Object.hasOwnProperty.bind(xml[i])('ULTIMA_LEITURA')
             && (Object.hasOwnProperty.bind(xml[i])('ANDAR') && typeof xml[i].ANDAR[0] === 'object')){
@@ -130,33 +128,32 @@ const extractdata = () => {
                     "Classe":xml[i].TARIFA[0],
                     "Marca":xml[i].MARCA[0],
                     "Modelo":xml[i].MODELO[0],
-                    "Volume":parseInt(0)
+                    "Volume":'',
+                    //"DtLeitura":''
                 });
             }
-
             else if (Object.hasOwnProperty.bind(xml[i])('DT_INSTALACAO') && Object.hasOwnProperty.bind(xml[i])('LOCAL') && Object.hasOwnProperty.bind(xml[i])('CLIENTE') 
                     && !Object.hasOwnProperty.bind(xml[i])('TARIFA') && Object.hasOwnProperty.bind(xml[i])('ULTIMA_LEITURA')
                     && (Object.hasOwnProperty.bind(xml[i])('ANDAR') && typeof xml[i].ANDAR[0] !== 'object')){
-            metersdata.push({
-                "Ramal":parseInt(xml[i].RAMAL[0]),
-                "Local":parseInt(xml[i].LOCAL[0]),
-                "Cliente":parseInt(xml[i].CLIENTE[0]),
-                "Rua":xml[i].RUA[0],
-                "NPolicia":xml[i].NR_POLICIA[0],
-                "Andar":xml[i].ANDAR[0],
-                "Grupo":parseInt(xml[i].GR_CONTADOR[0]),
-                "Numero":parseInt(xml[i].NR_CONTADOR[0]),
-                "Contador":xml[i].NR_SERIE[0],
-                "DtInstalacao":new Date(xml[i].DT_INSTALACAO[0]),
-                "Diametro":parseInt(xml[i].DIAMETRO[0]),
-                //"Classe":xml[i].TARIFA[0],
-                "Marca":xml[i].MARCA[0],
-                "Modelo":xml[i].MODELO[0],
-                "Volume":parseInt(xml[i].ULTIMA_LEITURA[0]),
-                "DtLeitura":new Date(xml[i].DT_ULTIMA_LEITURA[0])
-            });
+                metersdata.push({
+                    "Ramal":parseInt(xml[i].RAMAL[0]),
+                    "Local":parseInt(xml[i].LOCAL[0]),
+                    "Cliente":parseInt(xml[i].CLIENTE[0]),
+                    "Rua":xml[i].RUA[0],
+                    "NPolicia":xml[i].NR_POLICIA[0],
+                    "Andar":xml[i].ANDAR[0],
+                    "Grupo":parseInt(xml[i].GR_CONTADOR[0]),
+                    "Numero":parseInt(xml[i].NR_CONTADOR[0]),
+                    "Contador":xml[i].NR_SERIE[0],
+                    "DtInstalacao":new Date(xml[i].DT_INSTALACAO[0]),
+                    "Diametro":parseInt(xml[i].DIAMETRO[0]),
+                    "Classe":'',
+                    "Marca":xml[i].MARCA[0],
+                    "Modelo":xml[i].MODELO[0],
+                    "Volume":parseInt(xml[i].ULTIMA_LEITURA[0]),
+                    "DtLeitura":new Date(xml[i].DT_ULTIMA_LEITURA[0])
+                });
             }
-
             else if (Object.hasOwnProperty.bind(xml[i])('DT_INSTALACAO') && Object.hasOwnProperty.bind(xml[i])('LOCAL') && Object.hasOwnProperty.bind(xml[i])('CLIENTE') 
             && !Object.hasOwnProperty.bind(xml[i])('TARIFA') && Object.hasOwnProperty.bind(xml[i])('ULTIMA_LEITURA')
             && (Object.hasOwnProperty.bind(xml[i])('ANDAR') && typeof xml[i].ANDAR[0] === 'object')){
@@ -172,14 +169,13 @@ const extractdata = () => {
                     "Contador":xml[i].NR_SERIE[0],
                     "DtInstalacao":new Date(xml[i].DT_INSTALACAO[0]),
                     "Diametro":parseInt(xml[i].DIAMETRO[0]),
-                    //"Classe":xml[i].TARIFA[0],
+                    "Classe":'',
                     "Marca":xml[i].MARCA[0],
                     "Modelo":xml[i].MODELO[0],
                     "Volume":parseInt(xml[i].ULTIMA_LEITURA[0]),
                     "DtLeitura":new Date(xml[i].DT_ULTIMA_LEITURA[0])
                 });
             }  
-            
             else if (Object.hasOwnProperty.bind(xml[i])('DT_INSTALACAO') && Object.hasOwnProperty.bind(xml[i])('LOCAL') && Object.hasOwnProperty.bind(xml[i])('CLIENTE') 
                     && !Object.hasOwnProperty.bind(xml[i])('TARIFA') && !Object.hasOwnProperty.bind(xml[i])('ULTIMA_LEITURA')
                     && (Object.hasOwnProperty.bind(xml[i])('ANDAR') && typeof xml[i].ANDAR[0] !== 'object')){
@@ -195,11 +191,11 @@ const extractdata = () => {
                     "Contador":xml[i].NR_SERIE[0],
                     "DtInstalacao":new Date(xml[i].DT_INSTALACAO[0]),
                     "Diametro":parseInt(xml[i].DIAMETRO[0]),
-                    //"Classe":xml[i].TARIFA[0],
+                    "Classe":'',
                     "Marca":xml[i].MARCA[0],
                     "Modelo":xml[i].MODELO[0],
-                    "Volume":parseInt(0),
-                    //"DtLeitura":new Date(xml[i].DT_ULTIMA_LEITURA[0])
+                    "Volume":'',
+                    //"DtLeitura":''
                 });
             } 
             else if (Object.hasOwnProperty.bind(xml[i])('DT_INSTALACAO') && Object.hasOwnProperty.bind(xml[i])('LOCAL') && Object.hasOwnProperty.bind(xml[i])('CLIENTE') 
@@ -217,44 +213,42 @@ const extractdata = () => {
                     "Contador":xml[i].NR_SERIE[0],
                     "DtInstalacao":new Date(xml[i].DT_INSTALACAO[0]),
                     "Diametro":parseInt(xml[i].DIAMETRO[0]),
-                    //"Classe":xml[i].TARIFA[0],
+                    "Classe":'',
                     "Marca":xml[i].MARCA[0],
                     "Modelo":xml[i].MODELO[0],
-                    "Volume":parseInt(0),
-                    //"DtLeitura":new Date(xml[i].DT_ULTIMA_LEITURA[0])
+                    "Volume":'',
+                    //"DtLeitura":''
                 });
-            }    
-                    
+            }       
             else if (Object.hasOwnProperty.bind(xml[i])('DT_INSTALACAO') && Object.hasOwnProperty.bind(xml[i])('LOCAL') && !Object.hasOwnProperty.bind(xml[i])('CLIENTE') 
                     && Object.hasOwnProperty.bind(xml[i])('TARIFA') && Object.hasOwnProperty.bind(xml[i])('ULTIMA_LEITURA')
                     && (Object.hasOwnProperty.bind(xml[i])('ANDAR') && typeof xml[i].ANDAR[0] !== 'object')){
                 metersdata.push({
-                "Ramal":parseInt(xml[i].RAMAL[0]),
-                "Local":parseInt(xml[i].LOCAL[0]),
-                //"Cliente":parseInt(xml[i].CLIENTE[0]),
-                "Rua":xml[i].RUA[0],
-                "NPolicia":xml[i].NR_POLICIA[0],
-                "Andar":xml[i].ANDAR[0],
-                "Grupo":parseInt(xml[i].GR_CONTADOR[0]),
-                "Numero":parseInt(xml[i].NR_CONTADOR[0]),
-                "Contador":xml[i].NR_SERIE[0],
-                "DtInstalacao":new Date(xml[i].DT_INSTALACAO[0]),
-                "Diametro":parseInt(xml[i].DIAMETRO[0]),
-                "Classe":xml[i].TARIFA[0],
-                "Marca":xml[i].MARCA[0],
-                "Modelo":xml[i].MODELO[0],
-                "Volume":parseInt(xml[i].ULTIMA_LEITURA[0]),
-                "DtLeitura":new Date(xml[i].DT_ULTIMA_LEITURA[0])
+                    "Ramal":parseInt(xml[i].RAMAL[0]),
+                    "Local":parseInt(xml[i].LOCAL[0]),
+                    "Cliente":'',
+                    "Rua":xml[i].RUA[0],
+                    "NPolicia":xml[i].NR_POLICIA[0],
+                    "Andar":xml[i].ANDAR[0],
+                    "Grupo":parseInt(xml[i].GR_CONTADOR[0]),
+                    "Numero":parseInt(xml[i].NR_CONTADOR[0]),
+                    "Contador":xml[i].NR_SERIE[0],
+                    "DtInstalacao":new Date(xml[i].DT_INSTALACAO[0]),
+                    "Diametro":parseInt(xml[i].DIAMETRO[0]),
+                    "Classe":xml[i].TARIFA[0],
+                    "Marca":xml[i].MARCA[0],
+                    "Modelo":xml[i].MODELO[0],
+                    "Volume":parseInt(xml[i].ULTIMA_LEITURA[0]),
+                    "DtLeitura":new Date(xml[i].DT_ULTIMA_LEITURA[0])
                 });
             }
-
             else if (Object.hasOwnProperty.bind(xml[i])('DT_INSTALACAO') && Object.hasOwnProperty.bind(xml[i])('LOCAL') && !Object.hasOwnProperty.bind(xml[i])('CLIENTE') 
                     && Object.hasOwnProperty.bind(xml[i])('TARIFA') && Object.hasOwnProperty.bind(xml[i])('ULTIMA_LEITURA')
                     && (Object.hasOwnProperty.bind(xml[i])('ANDAR') && typeof xml[i].ANDAR[0] === 'object')){
                 metersdata.push({
                     "Ramal":parseInt(xml[i].RAMAL[0]),
                     "Local":parseInt(xml[i].LOCAL[0]),
-                    //"Cliente":parseInt(xml[i].CLIENTE[0]),
+                    "Cliente":'',
                     "Rua":xml[i].RUA[0],
                     "NPolicia":xml[i].NR_POLICIA[0],
                     "Andar":'',
@@ -270,14 +264,13 @@ const extractdata = () => {
                     "DtLeitura":new Date(xml[i].DT_ULTIMA_LEITURA[0])
                 });
             }
-            
             else if (Object.hasOwnProperty.bind(xml[i])('DT_INSTALACAO') && Object.hasOwnProperty.bind(xml[i])('LOCAL') && !Object.hasOwnProperty.bind(xml[i])('CLIENTE') 
                     && Object.hasOwnProperty.bind(xml[i])('TARIFA') && !Object.hasOwnProperty.bind(xml[i])('ULTIMA_LEITURA')
                     && (Object.hasOwnProperty.bind(xml[i])('ANDAR') && typeof xml[i].ANDAR[0] !== 'object')){
                 metersdata.push({
                     "Ramal":parseInt(xml[i].RAMAL[0]),
                     "Local":parseInt(xml[i].LOCAL[0]),
-                    //"Cliente":parseInt(xml[i].CLIENTE[0]),
+                    "Cliente":'',
                     "Rua":xml[i].RUA[0],
                     "NPolicia":xml[i].NR_POLICIA[0],
                     "Andar":xml[i].ANDAR[0],
@@ -289,18 +282,17 @@ const extractdata = () => {
                     "Classe":xml[i].TARIFA[0],
                     "Marca":xml[i].MARCA[0],
                     "Modelo":xml[i].MODELO[0],
-                    "Volume":parseInt(0)
-                    //"DtLeitura":new Date(xml[i].DT_ULTIMA_LEITURA[0])
+                    "Volume":'',
+                    //"DtLeitura":''
                     });
             }
-
             else if (Object.hasOwnProperty.bind(xml[i])('DT_INSTALACAO') && Object.hasOwnProperty.bind(xml[i])('LOCAL') && !Object.hasOwnProperty.bind(xml[i])('CLIENTE') 
                     && Object.hasOwnProperty.bind(xml[i])('TARIFA') && !Object.hasOwnProperty.bind(xml[i])('ULTIMA_LEITURA')
                     && (Object.hasOwnProperty.bind(xml[i])('ANDAR') && typeof xml[i].ANDAR[0] === 'object')){
                 metersdata.push({
                     "Ramal":parseInt(xml[i].RAMAL[0]),
                     "Local":parseInt(xml[i].LOCAL[0]),
-                    //"Cliente":parseInt(xml[i].CLIENTE[0]),
+                    "Cliente":'',
                     "Rua":xml[i].RUA[0],
                     "NPolicia":xml[i].NR_POLICIA[0],
                     "Andar":'',
@@ -312,18 +304,17 @@ const extractdata = () => {
                     "Classe":xml[i].TARIFA[0],
                     "Marca":xml[i].MARCA[0],
                     "Modelo":xml[i].MODELO[0],
-                    "Volume":parseInt(0)
-                    //"DtLeitura":new Date(xml[i].DT_ULTIMA_LEITURA[0])
+                    "Volume":'',
+                    //"DtLeitura":''
                 });
             }
-            
             else if (Object.hasOwnProperty.bind(xml[i])('DT_INSTALACAO') && Object.hasOwnProperty.bind(xml[i])('LOCAL') && !Object.hasOwnProperty.bind(xml[i])('CLIENTE') 
                     && !Object.hasOwnProperty.bind(xml[i])('TARIFA') && Object.hasOwnProperty.bind(xml[i])('ULTIMA_LEITURA')
                     && (Object.hasOwnProperty.bind(xml[i])('ANDAR') && typeof xml[i].ANDAR[0] !== 'object')){
                 metersdata.push({
                     "Ramal":parseInt(xml[i].RAMAL[0]),
                     "Local":parseInt(xml[i].LOCAL[0]),
-                    //"Cliente":parseInt(xml[i].CLIENTE[0]),
+                    "Cliente":'',
                     "Rua":xml[i].RUA[0],
                     "NPolicia":xml[i].NR_POLICIA[0],
                     "Andar":xml[i].ANDAR[0],
@@ -332,21 +323,20 @@ const extractdata = () => {
                     "Contador":xml[i].NR_SERIE[0],
                     "DtInstalacao":new Date(xml[i].DT_INSTALACAO[0]),
                     "Diametro":parseInt(xml[i].DIAMETRO[0]),
-                    //"Classe":xml[i].TARIFA[0],
+                    "Classe":'',
                     "Marca":xml[i].MARCA[0],
                     "Modelo":xml[i].MODELO[0],
                     "Volume":parseInt(xml[i].ULTIMA_LEITURA[0]),
                     "DtLeitura":new Date(xml[i].DT_ULTIMA_LEITURA[0])
                 });
             }
-
             else if (Object.hasOwnProperty.bind(xml[i])('DT_INSTALACAO') && Object.hasOwnProperty.bind(xml[i])('LOCAL') && !Object.hasOwnProperty.bind(xml[i])('CLIENTE') 
                     && !Object.hasOwnProperty.bind(xml[i])('TARIFA') && Object.hasOwnProperty.bind(xml[i])('ULTIMA_LEITURA')
                     && (Object.hasOwnProperty.bind(xml[i])('ANDAR') && typeof xml[i].ANDAR[0] === 'object')){
                 metersdata.push({
                     "Ramal":parseInt(xml[i].RAMAL[0]),
                     "Local":parseInt(xml[i].LOCAL[0]),
-                    //"Cliente":parseInt(xml[i].CLIENTE[0]),
+                    "Cliente":'',
                     "Rua":xml[i].RUA[0],
                     "NPolicia":xml[i].NR_POLICIA[0],
                     "Andar":'',
@@ -355,21 +345,20 @@ const extractdata = () => {
                     "Contador":xml[i].NR_SERIE[0],
                     "DtInstalacao":new Date(xml[i].DT_INSTALACAO[0]),
                     "Diametro":parseInt(xml[i].DIAMETRO[0]),
-                    //"Classe":xml[i].TARIFA[0],
+                    "Classe":'',
                     "Marca":xml[i].MARCA[0],
                     "Modelo":xml[i].MODELO[0],
                     "Volume":parseInt(xml[i].ULTIMA_LEITURA[0]),
                     "DtLeitura":new Date(xml[i].DT_ULTIMA_LEITURA[0])
                 });
             }
-            
             else if (Object.hasOwnProperty.bind(xml[i])('DT_INSTALACAO') && Object.hasOwnProperty.bind(xml[i])('LOCAL') && !Object.hasOwnProperty.bind(xml[i])('CLIENTE') 
                     && !Object.hasOwnProperty.bind(xml[i])('TARIFA') && !Object.hasOwnProperty.bind(xml[i])('ULTIMA_LEITURA')
                     && (Object.hasOwnProperty.bind(xml[i])('ANDAR') && typeof xml[i].ANDAR[0] !== 'object')){
                 metersdata.push({
                     "Ramal":parseInt(xml[i].RAMAL[0]),
                     "Local":parseInt(xml[i].LOCAL[0]),
-                    //"Cliente":parseInt(xml[i].CLIENTE[0]),
+                    "Cliente":'',
                     "Rua":xml[i].RUA[0],
                     "NPolicia":xml[i].NR_POLICIA[0],
                     "Andar":xml[i].ANDAR[0],
@@ -378,21 +367,20 @@ const extractdata = () => {
                     "Contador":xml[i].NR_SERIE[0],
                     "DtInstalacao":new Date(xml[i].DT_INSTALACAO[0]),
                     "Diametro":parseInt(xml[i].DIAMETRO[0]),
-                    //"Classe":xml[i].TARIFA[0],
+                    "Classe":'',
                     "Marca":xml[i].MARCA[0],
                     "Modelo":xml[i].MODELO[0],
-                    "Volume":parseInt(0)
-                    //"DtLeitura":new Date(xml[i].DT_ULTIMA_LEITURA[0])
+                    "Volume":'',
+                    //"DtLeitura":''
                 });
             }
-
             else if (Object.hasOwnProperty.bind(xml[i])('DT_INSTALACAO') && Object.hasOwnProperty.bind(xml[i])('LOCAL') && !Object.hasOwnProperty.bind(xml[i])('CLIENTE') 
                     && !Object.hasOwnProperty.bind(xml[i])('TARIFA') && !Object.hasOwnProperty.bind(xml[i])('ULTIMA_LEITURA')
                     && (Object.hasOwnProperty.bind(xml[i])('ANDAR') && typeof xml[i].ANDAR[0] === 'object')){
                 metersdata.push({
                     "Ramal":parseInt(xml[i].RAMAL[0]),
                     "Local":parseInt(xml[i].LOCAL[0]),
-                    //"Cliente":parseInt(xml[i].CLIENTE[0]),
+                    "Cliente":'',
                     "Rua":xml[i].RUA[0],
                     "NPolicia":xml[i].NR_POLICIA[0],
                     "Andar":'',
@@ -401,29 +389,31 @@ const extractdata = () => {
                     "Contador":xml[i].NR_SERIE[0],
                     "DtInstalacao":new Date(xml[i].DT_INSTALACAO[0]),
                     "Diametro":parseInt(xml[i].DIAMETRO[0]),
-                    //"Classe":xml[i].TARIFA[0],
+                    "Classe":'',
                     "Marca":xml[i].MARCA[0],
                     "Modelo":xml[i].MODELO[0],
-                    "Volume":parseInt(0)
-                    //"DtLeitura":new Date(xml[i].DT_ULTIMA_LEITURA[0])
+                    "Volume":'',
+                    //"DtLeitura":''
                 });
             }
-
             else {
                 metersdata.push({
-                    //"Ramal":parseInt(xml[i].RAMAL[0]),
-                    //"Local":parseInt(xml[i].LOCAL[0]),
-                    //"Cliente":parseInt(xml[i].CLIENTE[0]),
+                    "Ramal":'',
+                    "Local":'',
+                    "Cliente":'',
+                    "Rua":'',
+                    "NPolicia":'',
+                    "Andar":'',
                     "Grupo":parseInt(xml[i].GR_CONTADOR[0]),
                     "Numero":parseInt(xml[i].NR_CONTADOR[0]),
                     "Contador":xml[i].NR_SERIE[0],
-                    //"DtInstalacao":new Date(xml[i].DT_INSTALACAO[0]),
+                    //"DtInstalacao":'',
                     "Diametro":parseInt(xml[i].DIAMETRO[0]),
-                    //"Classe":xml[i].TARIFA[0],
+                    "Classe":'',
                     "Marca":xml[i].MARCA[0],
                     "Modelo":xml[i].MODELO[0],
-                    //"Volume":parseInt(xml[i].ULTIMA_LEITURA[0]),
-                    //"DtLeitura":new Date(xml[i].DT_ULTIMA_LEITURA[0])
+                    "Volume":'',
+                    //"DtLeitura":''
                     });
             }
         }
@@ -431,21 +421,18 @@ const extractdata = () => {
     });
 };
 
-const metersdataTask = () => {
-    return getxml()
-    .then(xml => {
+const metersdataTask = async () => {
+    try {
+        const xml = await getxml();
         console.log(xml.length, 'records');
-        return extractdata(xml);
-    })
-    .then((metersdata) => {
+        const metersdata = await extractdata(xml);
         // Handle the extracted data
         console.log(metersdata.length, 'meters to insert');
         return metersdata;
-    })
-    .catch(error => {
+    } catch (error) {
         // Handle any errors in the Promise chain
         console.error('Error in metersdataTask:', error);
-    });
+    }
 };
 
 export { metersdataTask };
