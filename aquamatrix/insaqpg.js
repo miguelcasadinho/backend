@@ -9,7 +9,8 @@ import pg from 'pg';
 import { metersdataTask } from './soap/meters.js';
 import { clientsdataTask } from './soap/clients.js';
 import { coordsdataTask } from './soap/coords.js';
-
+import { fatdataTask } from './soap/fat.js';
+import { contradataTask } from './soap/contra.js'
 
 const pool  = new pg.Pool({
     host: process.env.psqlGiggoHost,
@@ -135,6 +136,98 @@ const insertcoordsdata = async (coordsdata) => {
   }
 };
 
+// Define an async function to insert fat
+const insertfatdata = async (fatdata) => {
+  let data = new Date;
+  const client = await pool.connect();
+  try {
+    // Begin a transaction
+    await client.query('BEGIN');
+    // Iterate over the data and execute insert queries
+    for (var i=0; i < fatdata.length ; i++){
+      await client.query(`INSERT INTO dadosfaturacao(ramal, local, date, date_ini, date_fim, volume_fat) VALUES($1, $2, $3, $4, $5, $6)`,
+                        [fatdata[i].Ramal, fatdata[i].Local, data, fatdata[i].Dt_Ini_Ft, fatdata[i].Dt_Ini_Ft, fatdata[i].Volume_Ft]);
+    }
+    // Commit the transaction
+    await client.query('COMMIT');
+    console.log('Data inserted successfully');
+  } catch (err) {
+    // Rollback the transaction if an error occurs
+    await client.query('ROLLBACK');
+    console.error('Error inserting data:', err);
+  } finally {
+    // Release the client back to the pool
+    client.release();
+  }
+};
+
+// Define an async function to delete contracts
+const deleteAllRecords  = async (tableName) => {
+  const client = await pool.connect();
+  try {
+    // Begin a transaction
+    await client.query('BEGIN');
+
+    // Delete all records from the specified table
+    await client.query(`DELETE FROM ${tableName}`);
+
+    // Commit the transaction
+    await client.query('COMMIT');
+    
+    console.log('All records deleted successfully from', tableName);
+  } catch (err) {
+    // Rollback the transaction if an error occurs
+    await client.query('ROLLBACK');
+    console.error('Error deleting records:', err);
+  } finally {
+    // Release the client back to the pool
+    client.release();
+  }
+};
+
+// Define an async function to insert contracts
+const insertcontradata = async (contradata) => {
+  const client = await pool.connect();
+  try {
+    // Begin a transaction
+    await client.query('BEGIN');
+    // Delete all existing records from the infocontrato table
+    await deleteAllRecords('infocontrato');
+    // Iterate over the data and execute insert queries
+    for (var i=0; i < contradata.length ; i++){
+      if ( !Object.hasOwnProperty.bind(contradata[i])('DtInst') ){
+        await client.query(`INSERT INTO infocontrato(ramal, local, client, name, street, num_pol, floor, locality, zone, area, sequence, situation, 
+                            client_group, client_tariff, estimated)
+                            VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`,
+                            [Number(contradata[i].Ramal), Number(contradata[i].Local), Number(contradata[i].Cliente), contradata[i].Nome, contradata[i].Rua, 
+                            contradata[i].NumPolicia, contradata[i].Andar, contradata[i].Localidade, contradata[i].Zona,contradata[i].Area, contradata[i].NumSeq, 
+                            contradata[i].Situacao, contradata[i].GrupoCliente, contradata[i].GrupoTarifario, Number(contradata[i].Estimativa)]);
+      }
+      else {
+        await client.query(`INSERT INTO infocontrato(ramal, local, client, device, name, street, num_pol, floor, locality, zone, area, sequence, situation, 
+                            client_group, client_tariff, date_inst, brand, year, dn, estimated)
+                            VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)`,
+                            [Number(contradata[i].Ramal), Number(contradata[i].Local), Number(contradata[i].Cliente), contradata[i].AnoNumFabri.substring(5, ), 
+                            contradata[i].Nome, contradata[i].Rua, contradata[i].NumPolicia, contradata[i].Andar, contradata[i].Localidade, contradata[i].Zona, 
+                            contradata[i].Area, contradata[i].NumSeq, contradata[i].Situacao, contradata[i].GrupoCliente, contradata[i].GrupoTarifario, 
+                            new Date(contradata[i].DtInst).toISOString(), contradata[i].Fabricante, contradata[i].AnoNumFabri.substring(0, 4), 
+                            Number(contradata[i].Calibre), Number(contradata[i].Estimativa)]);
+      }
+     
+    }
+    // Commit the transaction
+    await client.query('COMMIT');
+    console.log('Data inserted successfully');
+  } catch (err) {
+    // Rollback the transaction if an error occurs
+    await client.query('ROLLBACK');
+    console.error('Error inserting data:', err);
+  } finally {
+    // Release the client back to the pool
+    client.release();
+  }
+};
+
 const insmeters = () => {
     metersdataTask()
     .then((metersdata) => {
@@ -189,4 +282,40 @@ const inscoords = () => {
   });
 };
 
-export { insmeters, insclients, inscoords };
+const insfat = () => {
+  fatdataTask()
+  .then((fatdata) => {
+      //console.log(fatdata);
+      return insertfatdata(fatdata);
+  })
+  .then(() => {
+      // Close the pool when done
+      return pool.end(); // Return the promise returned by pool.end()
+  })
+  .then(() => {
+      console.log('Connection pool closed.');
+  })
+  .catch((error) => {
+      console.error('Error:', error);
+  });
+};
+
+const inscontra = () => {
+  contradataTask()
+  .then((contradata) => {
+      //console.log(fatdata);
+      return insertcontradata(contradata);
+  })
+  .then(() => {
+      // Close the pool when done
+      return pool.end(); // Return the promise returned by pool.end()
+  })
+  .then(() => {
+      console.log('Connection pool closed.');
+  })
+  .catch((error) => {
+      console.error('Error:', error);
+  });
+};
+
+export { insmeters, insclients, inscoords, insfat, inscontra };
