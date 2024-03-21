@@ -1,5 +1,5 @@
 import schedule from 'node-schedule';
-import { insmeters, insclients, inscoords, insfat, inscontra } from './insaqpg.js';
+import { insmeters, insclients, inscoords, insfat, inscontra, insramrua } from './insaqpg.js';
 
 /*
 //schedule rules
@@ -51,6 +51,13 @@ contra_rule.minute = 30; //(0-59)
 contra_rule.hour = 16; //(0-23)
 // Schedule the insclientss tasks
 const contra_job = schedule.scheduleJob(contra_rule, inscontra);
+
+// Define the inscontra schedule
+const ramrua_rule = new schedule.RecurrenceRule();
+ramrua_rule.minute = 13; //(0-59)
+ramrua_rule.hour = 18; //(0-23)
+// Schedule the insclientss tasks
+const ramrua_job = schedule.scheduleJob(ramrua_rule, insramrua);
 
 // Cancel the job if needed
 // job.cancel();

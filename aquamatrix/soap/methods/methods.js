@@ -98,4 +98,20 @@ const GIS_InfoContrato =
     </soap:Body>
     </soap:Envelope>`;
 
-export { GIS_DadosContadores, GIS_Clientes, GIS_CoordenadasPorRamal, GIS_DadosFaturacao, GIS_InfoContrato };
+const GIS_RamaisRua =
+    `<?xml version="1.0" encoding="utf-8"?>
+    <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <GIS_RamaisRua xmlns="http://tempuri.org/">
+        <Empresa>${process.env.aquaUser}</Empresa>
+        <!--<nrRua></nrRua>-->
+        <!--<localidade></localidade>-->
+        <!--<ramal></ramal>-->
+        <!--<zmc></zmc>-->
+        </GIS_RamaisRua>
+    </soap:Body>
+    </soap:Envelope>`;
+
+export { GIS_DadosContadores, GIS_Clientes, GIS_CoordenadasPorRamal, GIS_DadosFaturacao, GIS_InfoContrato, GIS_RamaisRua };

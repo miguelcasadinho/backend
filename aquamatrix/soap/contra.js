@@ -75,7 +75,7 @@ const extractdata = () => {
                     "Estimativa":parseInt(xml[i].ESTIMATIVA[0])
                 });
             }
-            if (Object.hasOwnProperty.bind(xml[i])('DTINST') && (Object.hasOwnProperty.bind(xml[i])('ANDAR') && typeof xml[i].ANDAR[0] === 'object') 
+            else if (Object.hasOwnProperty.bind(xml[i])('DTINST') && (Object.hasOwnProperty.bind(xml[i])('ANDAR') && typeof xml[i].ANDAR[0] === 'object') 
                 && Object.hasOwnProperty.bind(xml[i])('LOCALIDADE')){
                 contradata.push({
                     "Ramal":parseInt(xml[i].RAMAL[0]),
@@ -168,7 +168,7 @@ const extractdata = () => {
                     "Estimativa":parseInt(xml[i].ESTIMATIVA[0])
                 });
             }
-            if (Object.hasOwnProperty.bind(xml[i])('DTINST') && !Object.hasOwnProperty.bind(xml[i])('ANDAR') && Object.hasOwnProperty.bind(xml[i])('LOCALIDADE')){
+            else if (Object.hasOwnProperty.bind(xml[i])('DTINST') && !Object.hasOwnProperty.bind(xml[i])('ANDAR') && Object.hasOwnProperty.bind(xml[i])('LOCALIDADE')){
                 contradata.push({
                     "Ramal":parseInt(xml[i].RAMAL[0]),
                     "Local":parseInt(xml[i].COD_LOCAL[0]),
@@ -198,7 +198,7 @@ const extractdata = () => {
                     "Estimativa":parseInt(xml[i].ESTIMATIVA[0])
                 });
             }
-            if (Object.hasOwnProperty.bind(xml[i])('DTINST') && !Object.hasOwnProperty.bind(xml[i])('ANDAR') && !Object.hasOwnProperty.bind(xml[i])('LOCALIDADE')){
+            else if (Object.hasOwnProperty.bind(xml[i])('DTINST') && !Object.hasOwnProperty.bind(xml[i])('ANDAR') && !Object.hasOwnProperty.bind(xml[i])('LOCALIDADE')){
                 contradata.push({
                     "Ramal":parseInt(xml[i].RAMAL[0]),
                     "Local":parseInt(xml[i].COD_LOCAL[0]),

@@ -11,6 +11,7 @@ import { clientsdataTask } from './soap/clients.js';
 import { coordsdataTask } from './soap/coords.js';
 import { fatdataTask } from './soap/fat.js';
 import { contradataTask } from './soap/contra.js'
+import { ramruadataTask } from './soap/ramaisrua.js'
 
 const pool  = new pg.Pool({
     host: process.env.psqlGiggoHost,
@@ -228,6 +229,31 @@ const insertcontradata = async (contradata) => {
   }
 };
 
+// Define an async function to insert fat
+const insertramruadata = async (ramruadata) => {
+  const client = await pool.connect();
+  try {
+    // Begin a transaction
+    await client.query('BEGIN');
+    // Iterate over the data and execute insert queries
+    for (var i=0; i < ramruadata.length ; i++){
+      await client.query(`INSERT INTO ramaisrua(ramal, predio, zmc, dt_sit) VALUES($1, $2, $3, $4) 
+                          ON CONFLICT (ramal) DO UPDATE SET zmc = EXCLUDED.zmc, dt_sit = EXCLUDED.dt_sit`,
+                          [ramruadata[i].Ramal, ramruadata[i].Predio, ramruadata[i].ZMC, ramruadata[i].DtSituacao]);
+    }
+    // Commit the transaction
+    await client.query('COMMIT');
+    console.log('Data inserted successfully');
+  } catch (err) {
+    // Rollback the transaction if an error occurs
+    await client.query('ROLLBACK');
+    console.error('Error inserting data:', err);
+  } finally {
+    // Release the client back to the pool
+    client.release();
+  }
+};
+
 const insmeters = () => {
     metersdataTask()
     .then((metersdata) => {
@@ -318,4 +344,22 @@ const inscontra = () => {
   });
 };
 
-export { insmeters, insclients, inscoords, insfat, inscontra };
+const insramrua = () => {
+  ramruadataTask()
+  .then((ramruadata) => {
+      //console.log(ramruadata);
+      return insertramruadata(ramruadata);
+  })
+  .then(() => {
+      // Close the pool when done
+      return pool.end(); // Return the promise returned by pool.end()
+  })
+  .then(() => {
+      console.log('Connection pool closed.');
+  })
+  .catch((error) => {
+      console.error('Error:', error);
+  });
+};
+
+export { insmeters, insclients, inscoords, insfat, inscontra, insramrua };
