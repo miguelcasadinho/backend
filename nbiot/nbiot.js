@@ -1,13 +1,11 @@
 import { config } from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const envPath = resolve(__dirname, '../.env');
-config({ path: envPath });
 import { wlDecoder } from './decoders/water_leak.js';
 import { insertPg } from './ins_pg.js';
 import mqtt from 'mqtt';
+
+config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../.env') });
 
 // MQTT broker connection options
 const options = {

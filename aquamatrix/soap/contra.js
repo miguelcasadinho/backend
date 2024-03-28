@@ -1,13 +1,11 @@
 import { config } from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const envPath = resolve(__dirname, '../../.env');
-config({ path: envPath });
 import axios from 'axios';
 import { parseString } from 'xml2js';
 import { GIS_InfoContrato } from './methods/methods.js';
+
+config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../../.env') });
 
 let xml;
 let contradata = [];
@@ -43,7 +41,7 @@ const getxml = async () => {
 
 const extractdata = () => {
     return new Promise((resolve, reject) => {
-        for (var i=0; i < xml.length; i++){
+        for (let i=0; i < xml.length; i++){
             if (Object.hasOwnProperty.bind(xml[i])('DTINST') && (Object.hasOwnProperty.bind(xml[i])('ANDAR') && typeof xml[i].ANDAR[0] !== 'object') 
                 && Object.hasOwnProperty.bind(xml[i])('LOCALIDADE')){
                 contradata.push({

@@ -1,13 +1,11 @@
 import { config } from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const envPath = resolve(__dirname, '../../.env');
-config({ path: envPath });
 import axios from 'axios';
 import { parseString } from 'xml2js';
 import { GIS_RamaisRua } from './methods/methods.js';
+
+config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../../.env') });
 
 let xml;
 let ramruadata = [];
@@ -43,14 +41,14 @@ const getxml = async () => {
 
 const extractdata = () => {
     return new Promise((resolve, reject) => {
-        for (var i=0; i < xml.length; i++){
+        for (let i=0; i < xml.length; i++){
             if (Object.hasOwnProperty.bind(xml[i])('PREDIO') && Object.hasOwnProperty.bind(xml[i])('LOCALIDADE') && Object.hasOwnProperty.bind(xml[i])('ZMC') ){
-                var dateString = xml[i].DTSIT[0]; 
-                var year = dateString.substring(0, 4);
-                var month = dateString.substring(4, 6);
-                var day = dateString.substring(6, 8);
-                var date = new Date(year, month - 1, day); // Month in Date object is 0-indexed (0 for January)
-                var formattedDate = date.toISOString().substring(0, 10); // Get YYYY-MM-DD format
+                let dateString = xml[i].DTSIT[0]; 
+                let year = dateString.substring(0, 4);
+                let month = dateString.substring(4, 6);
+                let day = dateString.substring(6, 8);
+                let date = new Date(year, month - 1, day); // Month in Date object is 0-indexed (0 for January)
+                let formattedDate = date.toISOString().substring(0, 10); // Get YYYY-MM-DD format
                 ramruadata.push({
                     "Ramal":parseInt(xml[i].RAMAL[0]),
                     "Predio":parseInt(xml[i].PREDIO[0]),
@@ -63,12 +61,12 @@ const extractdata = () => {
                 });
             }
             else if (Object.hasOwnProperty.bind(xml[i])('PREDIO') && Object.hasOwnProperty.bind(xml[i])('LOCALIDADE') && !Object.hasOwnProperty.bind(xml[i])('ZMC') ){
-                var dateString = xml[i].DTSIT[0]; 
-                var year = dateString.substring(0, 4);
-                var month = dateString.substring(4, 6);
-                var day = dateString.substring(6, 8);
-                var date = new Date(year, month - 1, day); // Month in Date object is 0-indexed (0 for January)
-                var formattedDate = date.toISOString().substring(0, 10); // Get YYYY-MM-DD format
+                let dateString = xml[i].DTSIT[0]; 
+                let year = dateString.substring(0, 4);
+                let month = dateString.substring(4, 6);
+                let day = dateString.substring(6, 8);
+                let date = new Date(year, month - 1, day); // Month in Date object is 0-indexed (0 for January)
+                let formattedDate = date.toISOString().substring(0, 10); // Get YYYY-MM-DD format
                 ramruadata.push({
                     "Ramal":parseInt(xml[i].RAMAL[0]),
                     "Predio":parseInt(xml[i].PREDIO[0]),
@@ -81,12 +79,12 @@ const extractdata = () => {
                 });
             }
             else if (Object.hasOwnProperty.bind(xml[i])('PREDIO') && !Object.hasOwnProperty.bind(xml[i])('LOCALIDADE') && Object.hasOwnProperty.bind(xml[i])('ZMC') ){
-                var dateString = xml[i].DTSIT[0]; 
-                var year = dateString.substring(0, 4);
-                var month = dateString.substring(4, 6);
-                var day = dateString.substring(6, 8);
-                var date = new Date(year, month - 1, day); // Month in Date object is 0-indexed (0 for January)
-                var formattedDate = date.toISOString().substring(0, 10); // Get YYYY-MM-DD format
+                let dateString = xml[i].DTSIT[0]; 
+                let year = dateString.substring(0, 4);
+                let month = dateString.substring(4, 6);
+                let day = dateString.substring(6, 8);
+                let date = new Date(year, month - 1, day); // Month in Date object is 0-indexed (0 for January)
+                let formattedDate = date.toISOString().substring(0, 10); // Get YYYY-MM-DD format
                 ramruadata.push({
                     "Ramal":parseInt(xml[i].RAMAL[0]),
                     "Predio":parseInt(xml[i].PREDIO[0]),
@@ -99,12 +97,12 @@ const extractdata = () => {
                 });
             }
             else if (Object.hasOwnProperty.bind(xml[i])('PREDIO') && !Object.hasOwnProperty.bind(xml[i])('LOCALIDADE') && !Object.hasOwnProperty.bind(xml[i])('ZMC') ){
-                var dateString = xml[i].DTSIT[0]; 
-                var year = dateString.substring(0, 4);
-                var month = dateString.substring(4, 6);
-                var day = dateString.substring(6, 8);
-                var date = new Date(year, month - 1, day); // Month in Date object is 0-indexed (0 for January)
-                var formattedDate = date.toISOString().substring(0, 10); // Get YYYY-MM-DD format
+                let dateString = xml[i].DTSIT[0]; 
+                let year = dateString.substring(0, 4);
+                let month = dateString.substring(4, 6);
+                let day = dateString.substring(6, 8);
+                let date = new Date(year, month - 1, day); // Month in Date object is 0-indexed (0 for January)
+                let formattedDate = date.toISOString().substring(0, 10); // Get YYYY-MM-DD format
                 ramruadata.push({
                     "Ramal":parseInt(xml[i].RAMAL[0]),
                     "Predio":parseInt(xml[i].PREDIO[0]),

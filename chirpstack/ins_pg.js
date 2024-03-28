@@ -1,11 +1,9 @@
 import { config } from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const envPath = resolve(__dirname, '../.env');
-config({ path: envPath });
 import pg from 'pg';
+
+config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../.env') });
 
 const pool  = new pg.Pool({
     host: process.env.psqlGiggoHost,
@@ -15,164 +13,126 @@ const pool  = new pg.Pool({
     database: process.env.psqlGiggoDatabase
 });
 
-const insertPg = (payload) => {
-    var appID = payload.AppID;
-    var fPort = payload.fPort;
-    switch (appID) {
-        case '34':
-            insertFlow(payload);
-            insertVolume(payload);
-            insertAlarm(payload);
-            insertCom(payload);
-            break;
-        case '39':
-            insertFlowNke(payload);
-            insertVolumeNke(payload);
-            insertBattery(payload);
-            insertCom(payload);
-            break;
-        case '42':
-            insertFlowArrow1(payload);
-            insertVolume(payload);
-            insertAlarm(payload);
-            insertBattery(payload);
-            insertCom(payload);
-            break;
-        case '45':
-            insertFlowArrow1(payload);
-            insertVolume(payload);
-            insertAlarm(payload);
-            insertCom(payload);
-            break;
-        case '80':
-            insertFlowArrow1(payload);
-            insertVolume(payload);
-            insertAlarm(payload);
-            insertCom(payload);
-            break;
-        case '81':
-            if (fPort == 1){
-                insertFlowArrow1(payload);
-            }
-            else if (fPort == 2) {
-                insertFlowArrow2(payload);
-            }
-            insertVolume(payload);
-            insertAlarm(payload);
-            insertCom(payload);
-            break;
-        case '82':
-            insertFlowJanz2(payload);
-            insertVolume(payload);
-            insertAlarm(payload);
-            insertBattery(payload);
-            insertCom(payload);
-            break;
-        case '83':
-            insertFlowDiehl(payload);
-            insertVolumeDiehl(payload);
-            insertAlarm(payload);
-            insertCom(payload);
-            break;
-        case '84':
-            insertSensecap(payload);
-            insertCom(payload);
-            break;
-        case '85':
-            insertPslb(payload);
-            insertCom(payload);
-            break;
-        case '86':
-            insertLdds75(payload);
-            insertCom(payload);
-            break;
-        case '119':
-            if (fPort == 1){
-                insertFlowArrow1(payload);
-            }
-            else if (fPort == 2) {
-                insertFlowArrow2(payload);
-            }
-            insertVolume(payload);
-            insertAlarm(payload);
-            insertCom(payload);
-            break;
-        default:
+// Define an async function to insert Axioma devices flow (34)
+const insertFlow = async (payload) => {
+    const client = await pool.connect();
+    try {
+      // Begin a transaction
+      await client.query('BEGIN');
+      // Iterate over the data and execute insert queries
+      for (let i=0; i < payload.Deltas.length ; i++){
+        let data = new Date(payload.Date_log);
+        let hour =data.getHours();
+        hour=hour+1+i;
+        data.setHours(hour);
+        await client.query(`INSERT INTO flow(device, date, flow) VALUES($1, $2, $3) ON CONFLICT (device, date) DO NOTHING`,
+                          [payload.DeviceName, data, payload.Deltas[i]]);
+      }
+      // Commit the transaction
+      await client.query('COMMIT');
+      console.log(`${payload.Application}, ${payload.DeviceName} , flow inserted successfully`);
+    } catch (err) {
+      // Rollback the transaction if an error occurs
+      await client.query('ROLLBACK');
+      console.error('Error inserting data:', err);
+    } finally {
+      // Release the client back to the pool
+      client.release();
     }
 };
 
-const insertFlow = (payload) => {
-    for (var i=0; i < payload.Deltas.length; i++){
-        const query = `INSERT INTO flow(device, date, flow) VALUES($1, $2, $3) ON CONFLICT (device, date) DO NOTHING`;
-        var data = new Date(payload.Date_log);
-        var hour =data.getHours();
-        hour=hour+1+i;
-        data.setHours(hour);
-        var values = [payload.DeviceName, data, payload.Deltas[i]];
-        pool.query(query, values, (error, response) => {
-            if (error) {
-              console.log(error);
-            };
-        });
-    };
-};
-
-const insertFlowDiehl = (payload) => {
-    for (var i=0; i < payload.Deltas.length; i++){
-        const query = `INSERT INTO flow(device, date, flow) VALUES($1, $2, $3) ON CONFLICT (device, date) DO NOTHING`;
-        var data = new Date(payload.Datelog);
-        var hour = data.getHours();
+// Define an async function to insert Diehl devices flow (83)
+const insertFlowDiehl = async (payload) => {
+    const client = await pool.connect();
+    try {
+      // Begin a transaction
+      await client.query('BEGIN');
+      // Iterate over the data and execute insert queries
+      for (let i=0; i < payload.Deltas.length ; i++){
+        let data = new Date(payload.Datelog);
+        let hour =data.getHours();
         hour=hour+i;
         data.setHours(hour);
-        var values = [payload.DeviceName, data, payload.Deltas[i]*0.001];
-        pool.query(query, values, (error, response) => {
-            if (error) {
-              console.log(error);
-            };
-        });
-    };
+        await client.query(`INSERT INTO flow(device, date, flow) VALUES($1, $2, $3) ON CONFLICT (device, date) DO NOTHING`,
+                          [payload.DeviceName, data, payload.Deltas[i]*0.001]);
+      }
+      // Commit the transaction
+      await client.query('COMMIT');
+      console.log(`${payload.Application}, ${payload.DeviceName} , flow inserted successfully`);
+    } catch (err) {
+      // Rollback the transaction if an error occurs
+      await client.query('ROLLBACK');
+      console.error('Error inserting data:', err);
+    } finally {
+      // Release the client back to the pool
+      client.release();
+    }
 };
 
-const insertFlowJanz2 = (payload) => {
-    for (var i=0; i < payload.Deltas.length; i++){
-        const query = `INSERT INTO flow(device, date, flow) VALUES($1, $2, $3)`;
-        var data = new Date(payload.Date);
+// Define an async function to insert Gladiator, Sagemcom, xtr, arrow, Janzvlora devices flow (42, 45, 80, 81, 119)
+const insertFlowJanz2 = async (payload) => {
+    const client = await pool.connect();
+    try {
+      // Begin a transaction
+      await client.query('BEGIN');
+      // Iterate over the data and execute insert queries
+      for (let i=0; i < payload.Deltas.length ; i++){
+        let data = new Date(payload.Date);
         if (payload.Index == '12h00 to 00h00'){
             data.setHours(0);
             data.setMinutes(0);
             data.setSeconds(0);
-        };
-        if (payload.Index == '00h00 to 12h00'){
+        }
+        else if (payload.Index == '00h00 to 12h00'){
             data.setHours(12);
             data.setMinutes(0);
             data.setSeconds(0);
         };
-        var hour = data.getHours();
-        hour = hour-i;
-        data.setHours(hour);
-        var values = [payload.DeviceName, data, payload.Deltas[i]*0.001];
-        pool.query(query, values, (error, response) => {
-            if (error) {
-            console.log(error);
-            };
-        });
-    };
-};
-
-const insertFlowArrow1 = (payload) => {
-    for (var i=0; i < payload.Deltas.length; i++){
-        const query = `INSERT INTO flow(device, date, flow) VALUES($1, $2, $3) ON CONFLICT (device, date) DO NOTHING`;
-        var data = new Date(payload.Date);
-        var hour = data.getHours();
+        let hour =data.getHours();
         hour=hour-i;
         data.setHours(hour);
-        var values = [payload.DeviceName, data, payload.Deltas[i]];
-        pool.query(query, values, (error, response) => {
-            if (error) {
-              console.log(error);
-            }
-        });
-    };
+        await client.query(`INSERT INTO flow(device, date, flow) VALUES($1, $2, $3) ON CONFLICT (device, date) DO NOTHING`,
+                          [payload.DeviceName, data, payload.Deltas[i]*0.001]);
+      }
+      // Commit the transaction
+      await client.query('COMMIT');
+      console.log(`${payload.Application}, ${payload.DeviceName} , flow inserted successfully`);
+    } catch (err) {
+      // Rollback the transaction if an error occurs
+      await client.query('ROLLBACK');
+      console.error('Error inserting data:', err);
+    } finally {
+      // Release the client back to the pool
+      client.release();
+    }
+};
+
+// Define an async function to insert Gladiator, Sagemcom, xtr, arrow, Janzvlora devices flow (42, 45, 80, 81, 119)
+const insertFlow2 = async (payload) => {
+    const client = await pool.connect();
+    try {
+      // Begin a transaction
+      await client.query('BEGIN');
+      // Iterate over the data and execute insert queries
+      for (let i=0; i < payload.Deltas.length ; i++){
+        let data = new Date(payload.Date);
+        let hour =data.getHours();
+        hour=hour-i;
+        data.setHours(hour);
+        await client.query(`INSERT INTO flow(device, date, flow) VALUES($1, $2, $3) ON CONFLICT (device, date) DO NOTHING`,
+                          [payload.DeviceName, data, payload.Deltas[i]]);
+      }
+      // Commit the transaction
+      await client.query('COMMIT');
+      console.log(`${payload.Application}, ${payload.DeviceName} , flow inserted successfully`);
+    } catch (err) {
+      // Rollback the transaction if an error occurs
+      await client.query('ROLLBACK');
+      console.error('Error inserting data:', err);
+    } finally {
+      // Release the client back to the pool
+      client.release();
+    }
 };
 
 const insertFlowArrow2 = (payload) => {
@@ -347,131 +307,316 @@ const insertFlowNke = (payload) => {
     };
 };
 
-const insertVolumeNke = (payload) => {
-    if (payload.index1.length > 0) {
-        const query_vol = `INSERT INTO volume(device, date, volume) VALUES($1, $2, $3)`;
-        var values = [payload.DeviceName, payload.Date, payload.Volume];
-        pool.query(query_vol, values, (error, response) => {
-            if (error) {
-                console.log(error);
-            };
-        });
-    };
-    if (payload.index2.length > 0) {
-        const query_vol_in = `INSERT INTO volume_inv(device, date, volume) VALUES($1, $2, $3)`;
-        values = [payload.DeviceName, payload.Date, payload.Volume_inv];
-        pool.query(query_vol_in, values, (error, response) => {
-            if (error) {
-                console.log(error);
-            };
-        });
-    };
+// Define an async function to insert Axioma, Gladiator, Sagemcom, xtr, Arrow, Janzv2, janzvlora, devices volume (34, 42, 45, 80, 81, 82, 119)
+const insertVolume = async (payload) => {
+    const client = await pool.connect();
+    try {
+      // Begin a transaction
+      await client.query('BEGIN');
+      //Execute insert querie
+        await client.query(`INSERT INTO volume(device, date, volume) VALUES($1, $2, $3)`,
+                            [payload.DeviceName, payload.Date, payload.Volume]);
+      // Commit the transaction
+      await client.query('COMMIT');
+      console.log(`${payload.Application}, ${payload.DeviceName} , volume inserted successfully`);
+    } catch (err) {
+      // Rollback the transaction if an error occurs
+      await client.query('ROLLBACK');
+      console.error('Error inserting data:', err);
+    } finally {
+      // Release the client back to the pool
+      client.release();
+    }
 };
 
-const insertVolume = (payload) => {
-    const query_vol = `INSERT INTO volume(device, date, volume) VALUES($1, $2, $3)`;
-    var values = [payload.DeviceName, payload.Date, payload.Volume];
-    pool.query(query_vol, values, (error, response) => {
-        if (error) {
-            console.log(error);
+// Define an async function to insert nke devices volume (39)
+const insertVolumeNke = async (payload) => {
+    const client = await pool.connect();
+    try {
+        // Begin a transaction
+        await client.query('BEGIN');
+        if (payload.index1.length > 0) {
+        //Execute insert querie
+            await client.query(`INSERT INTO volume(device, date, volume) VALUES($1, $2, $3)`,
+                                [payload.DeviceName, payload.Date, payload.Volume]);
         }
-    });
+        if (payload.index2.length > 0) {
+            //Execute insert querie
+                await client.query(`INSERT INTO volume_inv(device, date, volume) VALUES($1, $2, $3)`,
+                                    [payload.DeviceName, payload.Date, payload.Volume_inv]);
+        }
+        // Commit the transaction
+        await client.query('COMMIT');
+        console.log(`${payload.Application}, ${payload.DeviceName} , volume inserted successfully`);
+    } catch (err) {
+      // Rollback the transaction if an error occurs
+      await client.query('ROLLBACK');
+      console.error('Error inserting data:', err);
+    } finally {
+      // Release the client back to the pool
+      client.release();
+    }
 };
 
-const insertVolumeDiehl = (payload) => {
-    const query_vol = `INSERT INTO volume(device, date, volume) VALUES($1, $2, $3)`;
-        var datavol = new Date(payload.Date);
+// Define an async function to insert Axioma, Gladiator, Sagemcom, xtr, Arrow, Janzv2, janzvlora, devices volume (34, 42, 45, 80, 81, 82, 119)
+const insertVolumeDiehl = async (payload) => {
+    const client = await pool.connect();
+    try {
+        // Begin a transaction
+        await client.query('BEGIN');
+        let datavol = new Date(payload.Date);
         datavol.setHours(0);
         datavol.setMinutes(0);
         datavol.setSeconds(0);
         datavol.setMilliseconds(0);
-        var values = [payload.DeviceName, datavol, payload.Volume];
-        pool.query(query_vol, values, (error, response) => {
-            if (error) {
-                console.log(error);
-            };
-        });
-};
-
-const insertAlarm = (payload) => {
-    if (Array.isArray(payload.Alarm)) {
-        if (payload.Alarm.length == 1) {
-            var alarm = payload.Alarm[0];
-        }
-        else if (payload.Alarm.length == 2) {
-            var alarm = payload.Alarm[0] +', '+ payload.Alarm[1];
-        }
-        else if (payload.Alarm.length == 3) {
-            var alarm = payload.Alarm[0] +', '+ payload.Alarm[1] +', '+ payload.Alarm[2];
-        }
-        else if (payload.Alarm.length == 4) {
-            var alarm = payload.Alarm[0] +', '+ payload.Alarm[1] +', '+ payload.Alarm[2] +', '+ payload.Alarm[3];
-        }
+        //Execute insert querie
+        await client.query(`INSERT INTO volume(device, date, volume) VALUES($1, $2, $3)`,
+                            [payload.DeviceName, datavol, payload.Volume]);
+      // Commit the transaction
+      await client.query('COMMIT');
+      console.log(`${payload.Application}, ${payload.DeviceName} , volume inserted successfully`);
+    } catch (err) {
+      // Rollback the transaction if an error occurs
+      await client.query('ROLLBACK');
+      console.error('Error inserting data:', err);
+    } finally {
+      // Release the client back to the pool
+      client.release();
     }
-    else {
-            var alarm = payload.Alarm
-        };
-    const query_alarm = `INSERT INTO alarm(device, date, alarm) VALUES($1, $2, $3)`;
-    var values = [payload.DeviceName, payload.Date, alarm];
-    pool.query(query_alarm, values, (error, response) => {
-        if (error) {
-            console.log(error);
+};
+
+// Define an async function to insert Axioma, Gladiator, Sagemcom, xtr, Arrow, Janzv2, Diehl, janzvlora, devices alarms (34, 42, 45, 80, 81, 82, 83, 119)
+const insertAlarm = async (payload) => {
+    let alarm;
+    if (Array.isArray(payload.Alarm)) {
+        alarm = payload.Alarm.join(', ');
+    } else {
+        alarm = payload.Alarm;
+    }
+    const client = await pool.connect();
+    try {
+      // Begin a transaction
+      await client.query('BEGIN');
+      //Execute insert querie
+        await client.query(`INSERT INTO alarm(device, date, alarm) VALUES($1, $2, $3)`,
+                            [payload.DeviceName, payload.Date, alarm]);
+      // Commit the transaction
+      await client.query('COMMIT');
+      console.log(`${payload.Application}, ${payload.DeviceName} , alarms inserted successfully`);
+    } catch (err) {
+      // Rollback the transaction if an error occurs
+      await client.query('ROLLBACK');
+      console.error('Error inserting data:', err);
+    } finally {
+      // Release the client back to the pool
+      client.release();
+    }
+};
+
+// Define an async function to insert nke, Gladiator, Janzv2 devices battery (39, 42, 82)
+const insertBattery = async (payload) => {
+    const client = await pool.connect();
+    try {
+      // Begin a transaction
+      await client.query('BEGIN');
+      //Execute insert querie
+      var data_tr = new Date();
+      await client.query(`INSERT INTO battery(device, date, battery) VALUES($1, $2, $3)`,
+                        [payload.DeviceName, payload.Date, payload.Battery]);
+      // Commit the transaction
+      await client.query('COMMIT');
+      console.log(`${payload.Application}, ${payload.DeviceName} , battery details inserted successfully`);
+    } catch (err) {
+      // Rollback the transaction if an error occurs
+      await client.query('ROLLBACK');
+      console.error('Error inserting data:', err);
+    } finally {
+      // Release the client back to the pool
+      client.release();
+    }
+};
+
+// Define an async function to insert Axioma, nke, Gladiator, Sagemcom, xtr, Arrow, Janzv2, Diehl, Janzvlora, 
+// sensecap, pslb, ldds devices transmissions (34, 39, 42, 45, 80, 81, 82, 83, 84, 85, 86, 119)
+const insertCom = async (payload) => {
+    const client = await pool.connect();
+    try {
+      // Begin a transaction
+      await client.query('BEGIN');
+      //Execute insert querie
+      var data_tr = new Date();
+      await client.query(`INSERT INTO transmission(gateway,device, date, rssi, snr, sf) VALUES($1, $2, $3, $4, $5, $6)`,
+                         [payload.gateway, payload.DeviceName, data_tr, payload.rssi, payload.snr, payload.sf]);
+      // Commit the transaction
+      await client.query('COMMIT');
+      console.log(`${payload.Application}, ${payload.DeviceName} , communications details inserted successfully`);
+    } catch (err) {
+      // Rollback the transaction if an error occurs
+      await client.query('ROLLBACK');
+      console.error('Error inserting data:', err);
+    } finally {
+      // Release the client back to the pool
+      client.release();
+    }
+};
+
+// Define an async function to insert sensecap data (84)
+const insertSensecap = async (payload) => {
+    const client = await pool.connect();
+    try {
+      // Begin a transaction
+      await client.query('BEGIN');
+      //Execute insert querie
+      await client.query(`INSERT INTO weather(device, date, air_temperature, air_humidity, light_intensity, uv_index, wind_speed, wind_direction, rain_gauge, barometric_pressure)
+                        VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+                        [payload.DeviceName, payload.Date, payload.air_temperature, payload.air_humidity, payload.light_intensity, payload.uv_index, 
+                        payload.wind_speed, payload.wind_direction, payload.rain_gauge, payload.barometric_pressure]);
+      // Commit the transaction
+      await client.query('COMMIT');
+      console.log(`${payload.Application}, ${payload.DeviceName} , weather details inserted successfully`);
+    } catch (err) {
+      // Rollback the transaction if an error occurs
+      await client.query('ROLLBACK');
+      console.error('Error inserting data:', err);
+    } finally {
+      // Release the client back to the pool
+      client.release();
+    }
+};
+
+// Define an async function to insert pslb data (85)
+const insertPslb = async (payload) => {
+    const client = await pool.connect();
+    try {
+      // Begin a transaction
+      await client.query('BEGIN');
+      //Execute insert querie
+      await client.query(`INSERT INTO pressure(device, date, pressure, battery, lat, lon) VALUES($1, $2, $3, $4, $5, $6)`,
+                        [payload.DeviceName, payload.Date, payload.Deltas*10, payload.Battery, payload.Lat, payload.Lon]);
+      // Commit the transaction
+      await client.query('COMMIT');
+      console.log(`${payload.Application}, ${payload.DeviceName} , pressure details inserted successfully`);
+    } catch (err) {
+      // Rollback the transaction if an error occurs
+      await client.query('ROLLBACK');
+      console.error('Error inserting data:', err);
+    } finally {
+      // Release the client back to the pool
+      client.release();
+    }
+};
+
+// Define an async function to insert ldds75 data (86)
+const insertLdds75 = async (payload) => {
+    const client = await pool.connect();
+    try {
+      // Begin a transaction
+      await client.query('BEGIN');
+      //Execute insert querie
+      await client.query(`INSERT INTO ldds75(device, date, battery, distance, lat, lon) VALUES($1, $2, $3, $4, $5, $6)`,
+                        [payload.DeviceName, payload.Date, payload.Battery, payload.Distance, payload.Lat, payload.Lon]);
+      // Commit the transaction
+      await client.query('COMMIT');
+      console.log(`${payload.Application}, ${payload.DeviceName} , distance details inserted successfully`);
+    } catch (err) {
+      // Rollback the transaction if an error occurs
+      await client.query('ROLLBACK');
+      console.error('Error inserting data:', err);
+    } finally {
+      // Release the client back to the pool
+      client.release();
+    }
+};
+
+const insertPg = async (payload) => {
+    try {
+        switch (payload.AppID) {
+            case '34':
+                insertFlow(payload);
+                insertVolume(payload);
+                insertAlarm(payload);
+                insertCom(payload);
+                break;
+            case '39':
+                insertFlowNke(payload);//falta otimizar
+                insertVolumeNke(payload);
+                insertBattery(payload);
+                insertCom(payload);
+                break;
+            case '42':
+                insertFlow2(payload);
+                insertVolume(payload);
+                insertAlarm(payload);
+                insertBattery(payload);
+                insertCom(payload);
+                break;
+            case '45':
+                insertFlow2(payload);
+                insertVolume(payload);
+                insertAlarm(payload);
+                insertCom(payload);
+                break;
+            case '80':
+                insertFlow2(payload);
+                insertVolume(payload);
+                insertAlarm(payload);
+                insertCom(payload);
+                break;
+            case '81':
+                if (payload.fPort == 1){
+                    insertFlow2(payload);
+                }
+                else if (payload.fPort == 2) {
+                    insertFlowArrow2(payload);//falta otimizar
+                }
+                insertVolume(payload);
+                insertAlarm(payload);
+                insertCom(payload);
+                break;
+            case '82':
+                insertFlowJanz2(payload);
+                insertVolume(payload);
+                insertAlarm(payload);
+                insertBattery(payload);
+                insertCom(payload);
+                break;
+            case '83':
+                insertFlowDiehl(payload);
+                insertVolumeDiehl(payload);
+                insertAlarm(payload);
+                insertCom(payload);
+                break;
+            case '84':
+                insertSensecap(payload);
+                insertCom(payload);
+                break;
+            case '85':
+                insertPslb(payload);
+                insertCom(payload);
+                break;
+            case '86':
+                insertLdds75(payload);
+                insertCom(payload);
+                break;
+            case '119':
+                if (payload.fPort == 1){
+                    insertFlow2(payload);
+                }
+                else if (payload.fPort == 2) {
+                    insertFlowArrow2(payload);
+                }
+                insertVolume(payload);
+                insertAlarm(payload);
+                insertCom(payload);
+                break;
+            default:
+                console.log('Unsupported AppID:', payload.AppID);
         }
-    });
+    } catch (error) {
+        console.error('Error inserting data:', error);
+    }
 };
 
-const insertBattery = (payload) => {
-    const query_bat = `INSERT INTO battery(device, date, battery) VALUES($1, $2, $3)`;
-    var values = [payload.DeviceName, payload.Date, payload.Battery];
-    pool.query(query_bat, values, (error, response) => {
-        if (error) {
-            console.log(error);
-        };
-    });
-
-};
-
-const insertCom = (payload) => {
-    const query_trans = `INSERT INTO transmission(gateway,device, date, rssi, snr, sf) VALUES($1, $2, $3, $4, $5, $6)`;
-    var data_tr = new Date();
-    var values = [payload.gateway, payload.DeviceName, data_tr, payload.rssi, payload.snr, payload.sf];
-    pool.query(query_trans, values, (error, response) => {
-        if (error) {
-            console.log(error);
-        }
-    });
-};
-
-const insertPslb = (payload) => {
-    const query = `INSERT INTO pressure(device, date, pressure, battery, lat, lon) VALUES($1, $2, $3, $4, $5, $6)`;
-    var values = [payload.DeviceName, payload.Date, payload.Deltas*10, payload.Battery, payload.Lat, payload.Lon];
-    pool.query(query, values, (error, response) => {
-        if (error) {
-            console.log(error);
-        };
-    });
-};
-
-const insertLdds75 = (payload) => {
-    const query = `INSERT INTO ldds75(device, date, battery, distance, lat, lon) VALUES($1, $2, $3, $4, $5, $6)`;
-    var values = [payload.DeviceName, payload.Date, payload.Battery, payload.Distance, payload.Lat, payload.Lon];
-    pool.query(query, values, (error, response) => {
-        if (error) {
-            console.log(error);
-        };
-    });
-};
-
-const insertSensecap = (payload) => {
-    const query = `INSERT INTO weather(device, date, air_temperature, air_humidity, light_intensity, uv_index, wind_speed, wind_direction, rain_gauge, barometric_pressure)
-               VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`;
-    var values = [payload.DeviceName, payload.Date, payload.air_temperature, payload.air_humidity, payload.light_intensity, payload.uv_index, payload.wind_speed, payload.wind_direction, payload.rain_gauge, payload.barometric_pressure];
-    pool.query(query, values, (error, response) => {
-        if (error) {
-            console.log(error);
-        };
-    });
-};
 
 export { insertPg };  
 

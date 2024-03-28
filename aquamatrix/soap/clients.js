@@ -1,13 +1,11 @@
 import { config } from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const envPath = resolve(__dirname, '../../.env');
-config({ path: envPath });
 import axios from 'axios';
 import { parseString } from 'xml2js';
 import { GIS_Clientes } from './methods/methods.js';
+
+config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../../.env') });
 
 let xml;
 let clientsdata = [];
@@ -43,24 +41,24 @@ const getxml = async () => {
 
 const extractdata = () => {
     return new Promise((resolve, reject) => {
-        for (var i=0; i < xml.length; i++){
+        for (let i=0; i < xml.length; i++){
             if (Object.hasOwnProperty.bind(xml[i])('DTSIT')){
-                var year = xml[i].DTSIT[0].substring(0, 4);
-                var month = xml[i].DTSIT[0].substring(4, 6);
+                let year = xml[i].DTSIT[0].substring(0, 4);
+                let month = xml[i].DTSIT[0].substring(4, 6);
                 if(month.toString().length == 1) {
                   month = '0'+month
                 }
                 else if (month.toString().length == 2) {
                 month = month
                 }
-                var day = xml[i].DTSIT[0].substring(6, 8);
+                let day = xml[i].DTSIT[0].substring(6, 8);
                 if(day.toString().length == 1) {
                   day = '0'+day
                 }
                 else if(day.toString().length == 2){
                 day = day
                 }
-                var date = year+'-'+month+'-'+day;
+                let date = year+'-'+month+'-'+day;
             }
             if (Object.hasOwnProperty.bind(xml[i])('CLIENTE') && Object.hasOwnProperty.bind(xml[i])('PREDIO') && Object.hasOwnProperty.bind(xml[i])('TELEMOVEL') 
                 && Object.hasOwnProperty.bind(xml[i])('SENSIBILIDADE')){

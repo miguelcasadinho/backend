@@ -1,23 +1,30 @@
 import { config } from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const envPath = resolve(__dirname, '../../.env');
-config({ path: envPath });
 import axios from 'axios';
 import { parseString } from 'xml2js';
 import { GIS_DadosFaturacao } from './methods/methods.js';
 
+config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../../.env') });
+
 let xml;
 let fatdata = [];
 
-const getxml = async () => {
+const getdate = async () => {
+    // Get the current date
+    const date = new Date();
+    date.setDate(date.getDate() - 1);
+    // Format the date (e.g., YYYY-MM-DD)
+    const formdate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+    return formdate;
+};
+
+const getxml = async (method) => {
     try {
-        const response = await axios.post(process.env.aquaHost, GIS_DadosFaturacao, {
+        const response = await axios.post(process.env.aquaHost, method, {
             headers: {
                 'Content-Type': 'text/xml;charset=UTF-8',
-                'Content-Length': GIS_DadosFaturacao.length
+                'Content-Length': method.length
             }
         });
 
@@ -43,7 +50,7 @@ const getxml = async () => {
 
 const extractdata = () => {
     return new Promise((resolve, reject) => {
-        for (var i=0; i < xml.length; i++){
+        for (let i=0; i < xml.length; i++){
             fatdata.push({
                 "Ramal":parseInt(xml[i].RAMAL[0]),
                 "Local":parseInt(xml[i].LOCAL[0]),
@@ -62,7 +69,9 @@ const extractdata = () => {
 
 const fatdataTask = async () => {
     try {
-        const xml = await getxml();
+        const formdate = await getdate();
+        const method = await GIS_DadosFaturacao(formdate);
+        const xml = await getxml(method);
         console.log(xml.length, 'records');
         const fatdata = await extractdata(xml);
         // Handle the extracted data

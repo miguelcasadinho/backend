@@ -1,10 +1,6 @@
 import { config } from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const envPath = resolve(__dirname, '../.env');
-config({ path: envPath });
 import pg from 'pg';
 import { metersdataTask } from './soap/meters.js';
 import { clientsdataTask } from './soap/clients.js';
@@ -12,6 +8,8 @@ import { coordsdataTask } from './soap/coords.js';
 import { fatdataTask } from './soap/fat.js';
 import { contradataTask } from './soap/contra.js'
 import { ramruadataTask } from './soap/ramaisrua.js'
+
+config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../.env') });
 
 const pool  = new pg.Pool({
     host: process.env.psqlGiggoHost,
@@ -140,6 +138,7 @@ const insertcoordsdata = async (coordsdata) => {
 // Define an async function to insert fat
 const insertfatdata = async (fatdata) => {
   let data = new Date;
+  data.setDate(data.getDate() - 1);
   const client = await pool.connect();
   try {
     // Begin a transaction
@@ -254,112 +253,76 @@ const insertramruadata = async (ramruadata) => {
   }
 };
 
-const insmeters = () => {
-    metersdataTask()
-    .then((metersdata) => {
-        //console.log(metersdata);
-        return insertmetersdata(metersdata);
-    })
-    .then(() => {
-        // Close the pool when done
-        return pool.end(); // Return the promise returned by pool.end()
-    })
-    .then(() => {
-        console.log('Connection pool closed.');
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-    });
+const insmeters = async () => {
+  try {
+      const metersdata = await metersdataTask();
+      //console.log(metersdata);
+      await insertmetersdata(metersdata);
+      //await pool.end();
+      //console.log('Connection pool closed.');
+  } catch (error) {
+      console.error('Error:', error);
+  }
 };
 
-const insclients = () => {
-  clientsdataTask()
-  .then((clientsdata) => {
+const insclients = async () => {
+  try {
+      const clientsdata = await clientsdataTask();
       //console.log(clientsdata);
-      return insertclientsdata(clientsdata);
-  })
-  .then(() => {
-      // Close the pool when done
-      return pool.end(); // Return the promise returned by pool.end()
-  })
-  .then(() => {
-      console.log('Connection pool closed.');
-  })
-  .catch((error) => {
+      await insertclientsdata(clientsdata);
+      //await pool.end();
+      //console.log('Connection pool closed.');
+  } catch (error) {
       console.error('Error:', error);
-  });
+  }
 };
 
-const inscoords = () => {
-  coordsdataTask()
-  .then((coordsdata) => {
+const inscoords = async () => {
+  try {
+      const coordsdata = await coordsdataTask();
       //console.log(coordsdata);
-      return insertcoordsdata(coordsdata);
-  })
-  .then(() => {
-      // Close the pool when done
-      return pool.end(); // Return the promise returned by pool.end()
-  })
-  .then(() => {
-      console.log('Connection pool closed.');
-  })
-  .catch((error) => {
+      await insertcoordsdata(coordsdata);
+      //await pool.end();
+      //console.log('Connection pool closed.');
+  } catch (error) {
       console.error('Error:', error);
-  });
+  }
 };
 
-const insfat = () => {
-  fatdataTask()
-  .then((fatdata) => {
+const insfat = async () => {
+  try {
+      const fatdata = await fatdataTask();
       //console.log(fatdata);
-      return insertfatdata(fatdata);
-  })
-  .then(() => {
-      // Close the pool when done
-      return pool.end(); // Return the promise returned by pool.end()
-  })
-  .then(() => {
-      console.log('Connection pool closed.');
-  })
-  .catch((error) => {
+      await insertfatdata(fatdata);
+      //await pool.end();
+      //console.log('Connection pool closed.');
+  } catch (error) {
       console.error('Error:', error);
-  });
+  }
 };
 
-const inscontra = () => {
-  contradataTask()
-  .then((contradata) => {
-      //console.log(fatdata);
-      return insertcontradata(contradata);
-  })
-  .then(() => {
-      // Close the pool when done
-      return pool.end(); // Return the promise returned by pool.end()
-  })
-  .then(() => {
-      console.log('Connection pool closed.');
-  })
-  .catch((error) => {
+const inscontra = async () => {
+  try {
+      const contradata = await contradataTask();
+      //console.log(contradata);
+      await insertcontradata(contradata);
+      //await pool.end();
+      //console.log('Connection pool closed.');
+  } catch (error) {
       console.error('Error:', error);
-  });
+  }
 };
 
-const insramrua = () => {
-  ramruadataTask()
-  .then((ramruadata) => {
+const insramrua = async () => {
+  try {
+      const ramruadata = await ramruadataTask();
       //console.log(ramruadata);
-      return insertramruadata(ramruadata);
-  })
-  .then(() => {
-      // Close the pool when done
-      return pool.end(); // Return the promise returned by pool.end()
-  })
-  .then(() => {
-      console.log('Connection pool closed.');
-  })
-  .catch((error) => {
+      await insertramruadata(ramruadata);
+      //await pool.end();
+      //console.log('Connection pool closed.');
+  } catch (error) {
       console.error('Error:', error);
-  });
+  }
 };
 
 export { insmeters, insclients, inscoords, insfat, inscontra, insramrua };

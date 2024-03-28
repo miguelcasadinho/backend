@@ -67,9 +67,19 @@ const sagemDecoder = (message) => {
                 offset = 5;
                 alarm = "no alarms";
             }
-            else {
+            else if (FOS == 0x2142){
                 offset = 13;
-            };
+                alarm = "FOS desconhecido";
+            }
+            else if (FOS == 0x7a0e){
+                offset = 17;
+                alarm = "FOS desconhecido";
+            }
+            else {
+                offset = 5;
+                alarm = "FOS desconhecido";
+            }
+
             //Check delta0 and volume bug 
             if (((bytes[4+offset] | bytes[5+offset] << 8) !== (bytes[11+offset] | bytes[11+offset+1] << 8 ))){
                 var minute = (bytes[0+offset] & 0x3F);

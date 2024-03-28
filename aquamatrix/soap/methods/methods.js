@@ -1,18 +1,8 @@
 import { config } from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const envPath = resolve(__dirname, '../../../.env');
-config({ path: envPath });
 
-// Get the current date
-const date = new Date();
-// Format the date (e.g., YYYY-MM-DD)
-const formdate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
-let date_2m = new Date();
-date_2m = new Date(date_2m.setMonth(date_2m.getMonth() - 2));
-const formdate_2m = `${date_2m.getFullYear()}-${(date_2m.getMonth() + 1).toString().padStart(2, '0')}-${date_2m.getDate().toString().padStart(2, '0')}`;
+config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../../../.env') });
 
 const GIS_DadosContadores = 
     `<?xml version="1.0" encoding="utf-8"?>
@@ -63,7 +53,8 @@ const GIS_CoordenadasPorRamal =
     </soap:Body>
     </soap:Envelope>`;
 
-const GIS_DadosFaturacao =
+const GIS_DadosFaturacao = async (date) => {
+    let method = 
     `<?xml version="1.0" encoding="utf-8"?>
     <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -71,8 +62,8 @@ const GIS_DadosFaturacao =
     <soap:Body>
         <GIS_DadosFaturacao xmlns="http://tempuri.org/">
         <Empresa>${process.env.aquaUser}</Empresa>
-        <dataInicial>${formdate}</dataInicial>
-        <dataFinal>${formdate}</dataFinal>
+        <dataInicial>${date}</dataInicial>
+        <dataFinal>${date}</dataFinal>
         <!--<local></local>-->
         <!--<ramal> </ramal>-->
         <itemInicial>1</itemInicial>
@@ -80,6 +71,8 @@ const GIS_DadosFaturacao =
         </GIS_DadosFaturacao>
     </soap:Body>
     </soap:Envelope>`;
+    return method;
+};
 
 const GIS_InfoContrato =
     `<?xml version="1.0" encoding="utf-8"?>

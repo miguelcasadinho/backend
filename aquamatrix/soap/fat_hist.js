@@ -3,13 +3,9 @@ import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 import axios from 'axios';
 import { parseString } from 'xml2js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const envPath = resolve(__dirname, '../../.env');
-config({ path: envPath });
-
 import pg from 'pg';
+
+config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../../.env') });
 
 const pool  = new pg.Pool({
     host: process.env.psqlGiggoHost,
@@ -71,7 +67,7 @@ const getxml = async (formdate) => {
 
 const extractdata = (xml) => {
     return new Promise((resolve, reject) => {
-        for (var i = 0; i < xml.length; i++) {
+        for (let i = 0; i < xml.length; i++) {
             fatdata.push({
                 "Ramal": parseInt(xml[i].RAMAL[0]),
                 "Local": parseInt(xml[i].LOCAL[0]),
@@ -113,7 +109,7 @@ const insertfatdata = async (fatdata, date) => {
         // Begin a transaction
         await client.query('BEGIN');
         // Iterate over the data and execute insert queries
-        for (var i = 0; i < fatdata.length; i++) {
+        for (let i = 0; i < fatdata.length; i++) {
             await client.query(`INSERT INTO dadosfaturacao(ramal, local, date, date_ini, date_fim, volume_fat) VALUES($1, $2, $3, $4, $5, $6)`,
                 [fatdata[i].Ramal, fatdata[i].Local, date, fatdata[i].Dt_Ini_Ft, fatdata[i].Dt_Ini_Ft, fatdata[i].Volume_Ft]);
         }
@@ -132,7 +128,7 @@ const insertfatdata = async (fatdata, date) => {
 
 const fetchAndProcessData = async () => {
     const pageSize = 100; // Define the page size
-    const totalIterations = 445; // Total number of iterations
+    const totalIterations = 1; // Total number of iterations
     const totalPages = Math.ceil(totalIterations / pageSize); // Calculate total pages
 
     try {
@@ -144,7 +140,8 @@ const fetchAndProcessData = async () => {
             // Generate dates for the current page
             for (let i = startIdx; i < endIdx; i++) {
                 let date = new Date();
-                date.setDate(date.getDate() - i);
+                date.setDate(date.getDate() -1);// Select other day to start the iteration
+                //date.setDate(date.getDate() - i);
                 const formdate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
                 dates.push({ date: formdate, actualDate: date }); // Store both formdate and actual date
             }
