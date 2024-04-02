@@ -41,6 +41,7 @@ const getxml = async () => {
 
 const extractdata = () => {
     return new Promise((resolve, reject) => {
+        let date;
         for (let i=0; i < xml.length; i++){
             if (Object.hasOwnProperty.bind(xml[i])('DTSIT')){
                 let year = xml[i].DTSIT[0].substring(0, 4);
@@ -58,7 +59,7 @@ const extractdata = () => {
                 else if(day.toString().length == 2){
                 day = day
                 }
-                let date = year+'-'+month+'-'+day;
+                date = year+'-'+month+'-'+day;
             }
             if (Object.hasOwnProperty.bind(xml[i])('CLIENTE') && Object.hasOwnProperty.bind(xml[i])('PREDIO') && Object.hasOwnProperty.bind(xml[i])('TELEMOVEL') 
                 && Object.hasOwnProperty.bind(xml[i])('SENSIBILIDADE')){

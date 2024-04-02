@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
-import { tags } from './tags.js';
+import { vol_tags } from './tags.js';
 import sql from 'mssql';
 
 config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../../.env') });
@@ -35,45 +35,45 @@ const executeQuery = async (query) => {
   const executeAllQueries = async () => {
     try {
         volmendata = [];
-        for (let i=0; i < tags.length; i++){
-            if (tags[i] == 146 || tags[i] == 1005) {
+        for (let i=0; i < vol_tags.length; i++){
+            if (vol_tags[i] == 146 || vol_tags[i] == 1005) {
                 const result = await executeQuery(`SELECT TOP(1) Tag_ID, 
-                                                ((SELECT TOP(1) Valor FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = ${tags[i]} and 
+                                                ((SELECT TOP(1) Valor FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = ${vol_tags[i]} and 
                                                 Data <= DATEADD(hour, 24, cast(cast(EOMONTH(GETDATE(), -1) as date) as datetime)) ORDER BY Data DESC)
-                                                - (SELECT TOP(1) Valor FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = ${tags[i]} 
+                                                - (SELECT TOP(1) Valor FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = ${vol_tags[i]} 
                                                 and Data  >=  DATEADD(day, -15, GETDATE()) - DAY( DATEADD(day, -15, GETDATE()) ) + 1  ORDER BY Data ASC))
                                                 - (SELECT top(1) (SELECT TOP(1) Valor FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = 408 
                                                 and Data <= DATEADD(hour, 24, cast(cast(EOMONTH(GETDATE(), -1) as date) as datetime)) ORDER BY Data DESC)
                                                 - (SELECT TOP(1) Valor FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = 408 
                                                 and Data  >=  DATEADD(day, -15, GETDATE()) - DAY( DATEADD(day, -15, GETDATE()) ) + 1  ORDER BY Data ASC) As vol
                                                 FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = 408) As vol
-                                                FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = ${tags[i]}`);
+                                                FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = ${vol_tags[i]}`);
                 volmendata.push({
                     tag_id : result[0].Tag_ID,
                     date : new Date(),
                     vol : result[0].vol
                 });
             }
-            else if (tags[i] == 215 || tags[i] == 1006) {
+            else if (vol_tags[i] == 215 || vol_tags[i] == 1006) {
                 const result = await executeQuery(`SELECT TOP(1) Tag_ID, 
-                                                ((SELECT TOP(1) Valor FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = ${tags[i]} 
+                                                ((SELECT TOP(1) Valor FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = ${vol_tags[i]} 
                                                 and Data <= DATEADD(hour, 24, cast(cast(EOMONTH(GETDATE(), -1) as date) as datetime)) ORDER BY Data DESC)/100)
-                                                - ((SELECT TOP(1) Valor FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = ${tags[i]} 
+                                                - ((SELECT TOP(1) Valor FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = ${vol_tags[i]} 
                                                 and Data  >=  DATEADD(day, -15, GETDATE()) - DAY( DATEADD(day, -15, GETDATE()) ) + 1  ORDER BY Data ASC)/100) As vol
-                                                FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = ${tags[i]}`);
+                                                FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = ${vol_tags[i]}`);
                 volmendata.push({
                     tag_id : result[0].Tag_ID,
                     date : new Date(),
                     vol : result[0].vol
                 });
             }
-            else if (tags[i] == 500) {
+            else if (vol_tags[i] == 500) {
                 const result = await executeQuery(`SELECT TOP(1) Tag_ID, 
-                                                ((SELECT TOP(1) Valor FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = ${tags[i]} 
+                                                ((SELECT TOP(1) Valor FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = ${vol_tags[i]} 
                                                 and Data <= DATEADD(hour, 24, cast(cast(EOMONTH(GETDATE(), -1) as date) as datetime)) ORDER BY Data DESC)*10)
-                                                - ((SELECT TOP(1) Valor FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = ${tags[i]} 
+                                                - ((SELECT TOP(1) Valor FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = ${vol_tags[i]} 
                                                 and Data  >=  DATEADD(day, -15, GETDATE()) - DAY( DATEADD(day, -15, GETDATE()) ) + 1  ORDER BY Data ASC)*10) As vol
-                                                FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = ${tags[i]}`);
+                                                FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = ${vol_tags[i]}`);
                 volmendata.push({
                     tag_id : result[0].Tag_ID,
                     date : new Date(),
@@ -82,11 +82,11 @@ const executeQuery = async (query) => {
             }
             else {
                 const result = await executeQuery(`SELECT TOP(1) Tag_ID,
-                                                (SELECT TOP(1) Valor FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = ${tags[i]} 
+                                                (SELECT TOP(1) Valor FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = ${vol_tags[i]} 
                                                 and Data <= DATEADD(hour, 24, cast(cast(EOMONTH(GETDATE(), -1) as date) as datetime)) ORDER BY Data DESC)
-                                                - (SELECT TOP(1) Valor FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = ${tags[i]} 
+                                                - (SELECT TOP(1) Valor FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = ${vol_tags[i]} 
                                                 and Data  >=  DATEADD(day, -15, GETDATE()) - DAY( DATEADD(day, -15, GETDATE()) ) + 1  ORDER BY Data ASC) As vol
-                                                FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = ${tags[i]}`);
+                                                FROM Go_Ready.dbo.Telegestao_data WHERE Tag_ID = ${vol_tags[i]}`);
                 volmendata.push({
                     tag_id : result[0].Tag_ID,
                     date : new Date(),
@@ -112,5 +112,5 @@ const volmendataTask = async () => {
       console.error('Error in volmendataTask:', error);
     }
 };
-  
+ 
 export {volmendataTask};

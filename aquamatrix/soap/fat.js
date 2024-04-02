@@ -12,10 +12,10 @@ let fatdata = [];
 
 const getdate = async () => {
     // Get the current date
-    const date = new Date();
-    date.setDate(date.getDate() - 1);
+    let date = new Date();
+    let lastdate = date.setDate(date.getDate() - 1);
     // Format the date (e.g., YYYY-MM-DD)
-    const formdate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+    let formdate = `${lastdate.getFullYear()}-${(lastdate.getMonth() + 1).toString().padStart(2, '0')}-${lastdate.getDate().toString().padStart(2, '0')}`;
     return formdate;
 };
 
@@ -70,6 +70,7 @@ const extractdata = () => {
 const fatdataTask = async () => {
     try {
         const formdate = await getdate();
+        console.log(formdate);
         const method = await GIS_DadosFaturacao(formdate);
         const xml = await getxml(method);
         console.log(xml.length, 'records');
