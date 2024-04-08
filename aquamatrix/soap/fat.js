@@ -12,8 +12,9 @@ let fatdata = [];
 
 const getdate = async () => {
     // Get the current date
-    let date = new Date();
-    let lastdate = date.setDate(date.getDate() - 1);
+    let lastdate = new Date(new Date().setDate(new Date().getDate() - 1));
+    //let date = new Date();
+    //date = date.setDate(date.getDate() - 1);
     // Format the date (e.g., YYYY-MM-DD)
     let formdate = `${lastdate.getFullYear()}-${(lastdate.getMonth() + 1).toString().padStart(2, '0')}-${lastdate.getDate().toString().padStart(2, '0')}`;
     return formdate;

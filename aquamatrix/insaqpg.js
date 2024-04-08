@@ -146,7 +146,7 @@ const insertfatdata = async (fatdata) => {
     // Iterate over the data and execute insert queries
     for (var i=0; i < fatdata.length ; i++){
       await client.query(`INSERT INTO dadosfaturacao(ramal, local, date, date_ini, date_fim, volume_fat) VALUES($1, $2, $3, $4, $5, $6)`,
-                        [fatdata[i].Ramal, fatdata[i].Local, data, fatdata[i].Dt_Ini_Ft, fatdata[i].Dt_Ini_Ft, fatdata[i].Volume_Ft]);
+                        [fatdata[i].Ramal, fatdata[i].Local, data, fatdata[i].Dt_Ini_Ft, fatdata[i].Dt_Fim_Ft, fatdata[i].Volume_Ft]);
     }
     // Commit the transaction
     await client.query('COMMIT');
