@@ -80,8 +80,8 @@ const sagemDecoder = (message) => {
                 alarm = "FOS desconhecido";
             }
 
-            //Check delta0 and volume bug 
-            if (((bytes[4+offset] | bytes[5+offset] << 8) !== (bytes[11+offset] | bytes[11+offset+1] << 8 ))){
+            //Check delta0 and volume bug and ignore supervision frame
+            if (((bytes[4+offset] | bytes[5+offset] << 8) !== (bytes[11+offset] | bytes[11+offset+1] << 8 )) && FOS !== 0x04fd){
                 var minute = (bytes[0+offset] & 0x3F);
                 var hour = (bytes[1+offset] & 0x1F);
                 var day = (bytes[2+offset] & 0x1F);

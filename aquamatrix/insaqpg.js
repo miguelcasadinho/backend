@@ -160,7 +160,7 @@ const insertfatdata = async (fatdata) => {
     client.release();
   }
 };
-
+/*
 // Define an async function to delete contracts
 const deleteAllRecords  = async (tableName) => {
   const client = await pool.connect();
@@ -184,21 +184,25 @@ const deleteAllRecords  = async (tableName) => {
     client.release();
   }
 };
-
+*/
 // Define an async function to insert contracts
 const insertcontradata = async (contradata) => {
   const client = await pool.connect();
   try {
     // Begin a transaction
     await client.query('BEGIN');
+    /*
     // Delete all existing records from the infocontrato table
     await deleteAllRecords('infocontrato');
+    */
     // Iterate over the data and execute insert queries
     for (var i=0; i < contradata.length ; i++){
       if ( !Object.hasOwnProperty.bind(contradata[i])('DtInst') ){
         await client.query(`INSERT INTO infocontrato(ramal, local, client, name, street, num_pol, floor, locality, zone, area, sequence, situation, 
-                            client_group, client_tariff, estimated)
-                            VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`,
+                            client_group, client_tariff, estimated) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+                            ON CONFLICT (local) DO UPDATE SET client = EXCLUDED.client, name = EXCLUDED.name, street = EXCLUDED.street, num_pol = EXCLUDED.num_pol,
+                            floor = EXCLUDED.floor, locality = EXCLUDED.locality, area = EXCLUDED.area, sequence = EXCLUDED.sequence, situation = EXCLUDED.situation, 
+                            client_group = EXCLUDED.client_group, client_tariff = EXCLUDED.client_tariff, estimated = EXCLUDED.estimated`,
                             [Number(contradata[i].Ramal), Number(contradata[i].Local), Number(contradata[i].Cliente), contradata[i].Nome, contradata[i].Rua, 
                             contradata[i].NumPolicia, contradata[i].Andar, contradata[i].Localidade, contradata[i].Zona,contradata[i].Area, contradata[i].NumSeq, 
                             contradata[i].Situacao, contradata[i].GrupoCliente, contradata[i].GrupoTarifario, Number(contradata[i].Estimativa)]);
@@ -206,14 +210,17 @@ const insertcontradata = async (contradata) => {
       else {
         await client.query(`INSERT INTO infocontrato(ramal, local, client, device, name, street, num_pol, floor, locality, zone, area, sequence, situation, 
                             client_group, client_tariff, date_inst, brand, year, dn, estimated)
-                            VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)`,
+                            VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
+                            ON CONFLICT (local) DO UPDATE SET client = EXCLUDED.client, device = EXCLUDED.device, name = EXCLUDED.name, street = EXCLUDED.street, 
+                            num_pol = EXCLUDED.num_pol, floor = EXCLUDED.floor, locality = EXCLUDED.locality, area = EXCLUDED.area, sequence = EXCLUDED.sequence, 
+                            situation = EXCLUDED.situation, client_group = EXCLUDED.client_group, client_tariff = EXCLUDED.client_tariff, date_inst = EXCLUDED.date_inst, 
+                            brand = EXCLUDED.brand, year = EXCLUDED.year, dn = EXCLUDED.dn, estimated = EXCLUDED.estimated`,
                             [Number(contradata[i].Ramal), Number(contradata[i].Local), Number(contradata[i].Cliente), contradata[i].AnoNumFabri.substring(5, ), 
                             contradata[i].Nome, contradata[i].Rua, contradata[i].NumPolicia, contradata[i].Andar, contradata[i].Localidade, contradata[i].Zona, 
                             contradata[i].Area, contradata[i].NumSeq, contradata[i].Situacao, contradata[i].GrupoCliente, contradata[i].GrupoTarifario, 
                             new Date(contradata[i].DtInst).toISOString(), contradata[i].Fabricante, contradata[i].AnoNumFabri.substring(0, 4), 
                             Number(contradata[i].Calibre), Number(contradata[i].Estimativa)]);
-      }
-     
+      }   
     }
     // Commit the transaction
     await client.query('COMMIT');
