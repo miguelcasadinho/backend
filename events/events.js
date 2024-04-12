@@ -1,5 +1,5 @@
 import schedule from 'node-schedule';
-import { diszerogc, diszeroregas } from './dispatch.js';
+import { disunauth, diszerogc, diszeroregas } from './dispatch.js';
 
 /*
 //schedule rules
@@ -12,6 +12,12 @@ rule.month = 1; //(1-12)
 rule.dayOfWeek = 0; //(0 - 7) (0 or 7 is Sun)
 rule.tz = 'Europe/Lisbon';
 */
+
+// Define the unautorized schedule
+const unauth_rule = new schedule.RecurrenceRule();
+unauth_rule.minute = 25; //(0-59)
+// Schedule the insclientss tasks
+const unauth_job = schedule.scheduleJob(unauth_rule, disunauth);
 
 // Define the zeros gc schedule
 const zerogc_rule = new schedule.RecurrenceRule();
@@ -28,3 +34,4 @@ zeroregas_rule.hour = 8; //(0-23)
 zeroregas_rule.dayOfWeek = 1; //(0 - 7) (0 or 7 is Sun)
 // Schedule the insclientss tasks
 const zeroregas_job = schedule.scheduleJob(zeroregas_rule, diszeroregas);
+

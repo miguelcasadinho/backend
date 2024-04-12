@@ -3,6 +3,7 @@ import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 import { zerogcdataTask } from './class/zerogc.js';
 import { zeroregasdataTask } from './class/zeroregas.js';
+import { unauthdataTask } from './class/unauth.js';
 import nodemailer from 'nodemailer';
 
 config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../.env') });
@@ -15,15 +16,23 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-const zerogcsendEmail = async (data) => {
+const unauthsendEmail = async (data) => {
     try {
         for (const entry of data) {
-            const { local, device, name, morada, consumo } = entry;
+            const { intervencao, int_sintoma, work, morada, data_termino } = entry;
+            let now = new Date(data_termino);
+            let year = now.getFullYear();
+            let month = ('0' + (now.getMonth() + 1)).slice(-2); // Using slice to pad with leading zero
+            let day = ('0' + now.getDate()).slice(-2); // Using slice to pad with leading zero
+            let hour = ('0' + (now.getHours() + 1)).slice(-2); // Using slice to pad with leading zero, and incrementing hour properly
+            let minute = ('0' + now.getMinutes()).slice(-2); // Using slice to pad with leading zero
+            let second = ('0' + now.getSeconds()).slice(-2); // Using slice to pad with leading zero
+            let data = day + '-' + month + '-' + year + ' pelas ' + hour + ':' + minute + ':' + second;
             const mailOptions = {
                 from: 'mciot.pt@gmail.com',
-                to: 'miguel.casadinho@emas-beja.pt',//luis.janeiro@emas-beja.pt,Helio.Placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt',
-                subject: 'Anómalia grande cliente',
-                text: `Olá, o contador ${device} instalado no local ${local} com o nome ${name} e morada ${morada} teve um consumo de ${consumo} m3 nas últimas 72 horas.`
+                to: 'miguel.casadinho@emas-beja.pt',//pedro.rodrigues@emas-beja.pt,luis.janeiro@emas-beja.pt,sabrina.dores@emas-beja.pt,helio.placido@emas-beja.pt,nuno.barnabe@emas-beja.pt',
+                subject: work,
+                text: 'Olá, no dia ' + data + ' a intervenção ' + intervencao + ", com o sintoma " + int_sintoma + " e trabalho " + work + ", na morada "  + morada + " foi concluida."
             };
             const info = await transporter.sendMail(mailOptions);
             console.log('Email sent:', info.response);
@@ -57,6 +66,34 @@ const zeroregassendEmail = async () => {
     }
 };
 
+const zerogcsendEmail = async (data) => {
+    try {
+        for (const entry of data) {
+            const { local, device, name, morada, consumo } = entry;
+            const mailOptions = {
+                from: 'mciot.pt@gmail.com',
+                to: 'miguel.casadinho@emas-beja.pt,luis.janeiro@emas-beja.pt,Helio.Placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt',
+                subject: 'Anómalia grande cliente',
+                text: `Olá, o contador ${device} instalado no local ${local} com o nome ${name} e morada ${morada} teve um consumo de ${consumo} m3 nas últimas 72 horas.`
+            };
+            const info = await transporter.sendMail(mailOptions);
+            console.log('Email sent:', info.response);
+        }
+    } catch (error) {
+        console.error('Error sending email:', error);
+        // Consider adding retries or other error handling mechanisms here
+    }
+};
+
+const disunauth = async () => {
+    try {
+        const unauthdata = await unauthdataTask();
+        await unauthsendEmail(unauthdata);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
 const diszerogc = async () => {
     try {
         const zerogcdata = await zerogcdataTask();
@@ -75,4 +112,4 @@ const diszeroregas = async () => {
     }
 };
 
-export { diszerogc, diszeroregas };
+export { disunauth, diszerogc, diszeroregas };
