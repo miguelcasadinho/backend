@@ -51,6 +51,7 @@ const getxml = async (method) => {
 
 const extractdata = () => {
     return new Promise((resolve, reject) => {
+        fatdata = [];
         for (let i=0; i < xml.length; i++){
             fatdata.push({
                 "Ramal":parseInt(xml[i].RAMAL[0]),

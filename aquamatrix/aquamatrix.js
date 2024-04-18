@@ -1,5 +1,5 @@
 import schedule from 'node-schedule';
-import { insmeters, insclients, inscoords, insfat, inscontra, insramrua } from './insaqpg.js';
+import { insmeters, insclients, inscoords, insfat, inscontra, insramrua, inszmccontratos } from './insaqpg.js';
 
 /*
 //schedule rules
@@ -70,6 +70,13 @@ meters_rule2.hour = 16; //(0-23)
 const meters_job0 = schedule.scheduleJob(meters_rule0, insmeters);
 const meters_job1 = schedule.scheduleJob(meters_rule1, insmeters);
 const meters_job2 = schedule.scheduleJob(meters_rule2, insmeters);
+
+// Define the zmc contracts schedule
+const zmccontratos_rule = new schedule.RecurrenceRule();
+zmccontratos_rule.minute = 45; //(0-59)
+zmccontratos_rule.hour = 17; //(0-23)
+// Schedule the insclients tasks
+const zmccontratos_job = schedule.scheduleJob(zmccontratos_rule, inszmccontratos);
 
 // Cancel the job if needed
 // job.cancel();

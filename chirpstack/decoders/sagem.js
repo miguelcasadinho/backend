@@ -63,8 +63,69 @@ const sagemDecoder = (message) => {
                 };
                 var alarm = alarmsArray;
             }
+            else if (FOS == 0x78ee){   
+                offset = 11;
+                var error_flag = (bytes[5] | bytes[6] << 8  | bytes[7] << 16 | bytes[8] << 24);
+                var alarmsArray = [];
+                if ((error_flag >> 0) & 0x01) {
+                    alarmsArray.push("Low air temperature");
+                };
+                if ((error_flag >> 1) & 0x01) {
+                    alarmsArray.push("High air temperature");
+                };
+                if ((error_flag >> 2) & 0x01) {
+                    alarmsArray.push("Gelo");
+                };
+                if ((error_flag >> 3) & 0x01) {
+                    alarmsArray.push("High water temperature");
+                };
+                if ((error_flag >> 4) & 0x01) {
+                    alarmsArray.push("Fraud suspicion");
+                };
+                if ((error_flag >> 5) & 0x01) {
+                    alarmsArray.push("Fuga");
+                };
+                if ((error_flag >> 6) & 0x01) {
+                    alarmsArray.push("Fuga grande");
+                };
+                if ((error_flag >> 7) & 0x01) {
+                    alarmsArray.push("Air bubbles");
+                };
+                if ((error_flag >> 8) & 0x01) {
+                    alarmsArray.push("Seco");
+                };
+                if ((error_flag >> 9) & 0x01) {
+                    alarmsArray.push("Hardware error");
+                };
+                if ((error_flag >> 10) & 0x01) {
+                    alarmsArray.push("Sem consumo");
+                };
+                if ((error_flag >> 11) & 0x01) {
+                    alarmsArray.push("Fluxo inverso");
+                };
+                if ((error_flag >> 12) & 0x01) {
+                    alarmsArray.push("Bateria baixa");
+                };
+                if ((error_flag >> 13) & 0x01) {
+                    alarmsArray.push("Bateria critica");
+                };
+                if ((error_flag >> 14) & 0x01) {
+                    alarmsArray.push("Metrological CRC error");
+                };
+                if ((error_flag >> 15) & 0x01) {
+                    alarmsArray.push("Manipulação");
+                };
+                if ((error_flag >> 16) & 0x01) {
+                    alarmsArray.push("Caudal máximo");
+                };
+                var alarm = alarmsArray;
+            }
             else if (FOS == 0xEFF0){
                 offset = 5;
+                alarm = "no alarms";
+            }
+            else if (FOS == 0xAA7D){
+                offset = 7;
                 alarm = "no alarms";
             }
             else if (FOS == 0x2142){
@@ -80,8 +141,9 @@ const sagemDecoder = (message) => {
                 alarm = "FOS desconhecido";
             }
 
-            //Check delta0 and volume bug and ignore supervision frame
-            if (((bytes[4+offset] | bytes[5+offset] << 8) !== (bytes[11+offset] | bytes[11+offset+1] << 8 )) && FOS !== 0x04fd){
+            //Check delta0 and volume bug and ignore supervision frame and instalation frame and alarm frame and backflow frame and uninstall frame
+            if (((bytes[4+offset] | bytes[5+offset] << 8) !== (bytes[11+offset] | bytes[11+offset+1] << 8 )) && FOS !== 0x04fd 
+                    && FOS !== 0x825e && FOS !== 0xd90b && FOS !== 0xc374 && FOS !== 0x65fa){
                 var minute = (bytes[0+offset] & 0x3F);
                 var hour = (bytes[1+offset] & 0x1F);
                 var day = (bytes[2+offset] & 0x1F);
@@ -91,7 +153,9 @@ const sagemDecoder = (message) => {
                 var volume = (bytes[4+offset] | bytes[5+offset] << 8  | bytes[6+offset] << 16 | bytes[7+offset] << 24) / 1000;
                 var deltas = [];
                 for (var i=11+offset; i<(bytes.length); i+=2) {
-                    deltas[(i-(11+offset))/2] = (bytes[i] | bytes[i+1] << 8 ) / 1000;
+                    if ((bytes[i] | bytes[i+1] << 8) !== 0xffff){ // check the 0xffff bug 
+                        deltas[(i-(11+offset))/2] = (bytes[i] | bytes[i+1] << 8 ) / 1000;
+                    };
                 };
                 var rxinfo_length = message.rxInfo.length;
                 var snr = [];

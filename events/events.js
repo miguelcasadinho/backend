@@ -1,5 +1,5 @@
 import schedule from 'node-schedule';
-import { disunauth, diszerogc, diszeroregas } from './dispatch.js';
+import { disunauth, diszerogc, diszeroregas, disfalhas4h, disrequest } from './dispatch.js';
 
 /*
 //schedule rules
@@ -35,3 +35,15 @@ zeroregas_rule.dayOfWeek = 1; //(0 - 7) (0 or 7 is Sun)
 // Schedule the insclientss tasks
 const zeroregas_job = schedule.scheduleJob(zeroregas_rule, diszeroregas);
 
+// Define the 4h failures schedule
+const falhas4h_rule = new schedule.RecurrenceRule();
+falhas4h_rule.minute = 59; //(0-59)
+falhas4h_rule.hour = 7; //(0-23)
+// Schedule the insclientss tasks
+const falhas4h_job = schedule.scheduleJob(falhas4h_rule, disfalhas4h);
+
+// Define the requests schedule
+const requests_rule = new schedule.RecurrenceRule();
+requests_rule.second = 0; //(0-59, OPTIONAL)
+// Schedule the insclientss tasks
+const requests_job = schedule.scheduleJob(requests_rule, disrequest);

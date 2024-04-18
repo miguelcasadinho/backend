@@ -128,7 +128,7 @@ const insertfatdata = async (fatdata, date) => {
 
 const fetchAndProcessData = async () => {
     const pageSize = 100; // Define the page size
-    const totalIterations = 3500; // Total number of iterations
+    const totalIterations = 7; // Total number of iterations
     const totalPages = Math.ceil(totalIterations / pageSize); // Calculate total pages
 
     try {

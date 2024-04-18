@@ -69,7 +69,7 @@ const insertFlowDiehl = async (payload) => {
     }
 };
 
-// Define an async function to insert Gladiator, Sagemcom, xtr, arrow, Janzvlora devices flow (42, 45, 80, 81, 119)
+// Define an async function to insert Janzv2 devices flow ()
 const insertFlowJanz2 = async (payload) => {
     const client = await pool.connect();
     try {

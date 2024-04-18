@@ -8,6 +8,7 @@ import { coordsdataTask } from './soap/coords.js';
 import { fatdataTask } from './soap/fat.js';
 import { contradataTask } from './soap/contra.js'
 import { ramruadataTask } from './soap/ramaisrua.js'
+import { zmccontratosTask } from './psql/zmccontratos.js'
 
 config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../.env') });
 
@@ -260,6 +261,30 @@ const insertramruadata = async (ramruadata) => {
   }
 };
 
+// Define an async function to zmc contracts
+const insertzmccontratosdata = async (data) => {
+  const client = await pool.connect();
+  try {
+    // Begin a transaction
+    await client.query('BEGIN');
+    // Iterate over the data and execute insert queries
+    for (let i=0; i < data.length ; i++){
+      await client.query(`INSERT INTO zmccontratos(tag_id, contratos) VALUES($1, $2) ON CONFLICT (tag_id) DO UPDATE SET contratos = EXCLUDED.contratos`,
+                          [data[i].zmc, data[i].contratos]);
+    }
+    // Commit the transaction
+    await client.query('COMMIT');
+    console.log('Data inserted successfully');
+  } catch (err) {
+    // Rollback the transaction if an error occurs
+    await client.query('ROLLBACK');
+    console.error('Error inserting data:', err);
+  } finally {
+    // Release the client back to the pool
+    client.release();
+  }
+};
+
 const insmeters = async () => {
   try {
       const metersdata = await metersdataTask();
@@ -332,4 +357,16 @@ const insramrua = async () => {
   }
 };
 
-export { insmeters, insclients, inscoords, insfat, inscontra, insramrua };
+const inszmccontratos = async () => {
+  try {
+      const zmccontratosdata = await zmccontratosTask();
+      //console.log(zmccontratosdata);
+      await insertzmccontratosdata(zmccontratosdata);
+      //await pool.end();
+      //console.log('Connection pool closed.');
+  } catch (error) {
+      console.error('Error:', error);
+  }
+};
+
+export { insmeters, insclients, inscoords, insfat, inscontra, insramrua, inszmccontratos };

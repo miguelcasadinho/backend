@@ -4,7 +4,10 @@ import { dirname, resolve } from 'path';
 import { zerogcdataTask } from './class/zerogc.js';
 import { zeroregasdataTask } from './class/zeroregas.js';
 import { unauthdataTask } from './class/unauth.js';
+import { falhas4hdataTask } from './class/falhas4h.js';
+import { requestdataTask } from './class/request.js';
 import nodemailer from 'nodemailer';
+import TelegramBot from 'node-telegram-bot-api';
 
 config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../.env') });
 
@@ -15,6 +18,10 @@ const transporter = nodemailer.createTransport({
         pass: process.env.gmailPass
     }
 });
+
+const token = process.env.telegramNaviaToken;
+const chatId = process.env.telegramNaviachatId;
+const bot = new TelegramBot(token, { polling: false });
 
 const unauthsendEmail = async (data) => {
     try {
@@ -30,7 +37,7 @@ const unauthsendEmail = async (data) => {
             let data = day + '-' + month + '-' + year + ' pelas ' + hour + ':' + minute + ':' + second;
             const mailOptions = {
                 from: 'mciot.pt@gmail.com',
-                to: 'miguel.casadinho@emas-beja.pt',//pedro.rodrigues@emas-beja.pt,luis.janeiro@emas-beja.pt,sabrina.dores@emas-beja.pt,helio.placido@emas-beja.pt,nuno.barnabe@emas-beja.pt',
+                to: 'miguel.casadinho@emas-beja.pt,pedro.rodrigues@emas-beja.pt,luis.janeiro@emas-beja.pt,sabrina.dores@emas-beja.pt,helio.placido@emas-beja.pt,nuno.barnabe@emas-beja.pt',
                 subject: work,
                 text: 'Olá, no dia ' + data + ' a intervenção ' + intervencao + ", com o sintoma " + int_sintoma + " e trabalho " + work + ", na morada "  + morada + " foi concluida."
             };
@@ -47,13 +54,13 @@ const zeroregassendEmail = async () => {
     try {
         const mailOptions = {
             from: 'mciot.pt@gmail.com',
-            to: 'miguel.casadinho@emas-beja.pt',
+            to: 'miguel.casadinho@emas-beja.pt,luis.janeiro@emas-beja.pt,Helio.Placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt',
             subject: 'Anómalia regas',
             text: 'Bom dia, segue em anexo as regas sem consumos nos últimos 7 dias.',
             attachments: [
                 {
                     filename: 'regas.xlsx',
-                    path: './class' + '/regas.xlsx',
+                    path: '/home/giggo' + '/regas.xlsx',
                     cid: 'uniq-regas.xlsx'
                 }
             ]
@@ -85,6 +92,52 @@ const zerogcsendEmail = async (data) => {
     }
 };
 
+const falhas4hsendEmail = async (data) => {
+    try {
+        for (const entry of data) {
+            const { int_date, numero, sintoma, morada, duracao } = entry;
+            let duracao_hours = parseFloat((duracao/60/60).toFixed(2));
+            let now = new Date(int_date);
+            let year = now.getFullYear();
+            let month = ('0' + (now.getMonth() + 1)).slice(-2); // Using slice to pad with leading zero
+            let day = ('0' + now.getDate()).slice(-2); // Using slice to pad with leading zero
+            let hour = ('0' + (now.getHours() + 1)).slice(-2); // Using slice to pad with leading zero, and incrementing hour properly
+            let minute = ('0' + now.getMinutes()).slice(-2); // Using slice to pad with leading zero
+            let second = ('0' + now.getSeconds()).slice(-2); // Using slice to pad with leading zero
+            let date = day + '-' + month + '-' + year + ' pelas ' + hour + ':' + minute + ':' + second;
+            const mailOptions = {
+                from: 'mciot.pt@gmail.com',
+                to: 'miguel.casadinho@emas-beja.pt,artur.janeiro@emas-beja.pt,goncalo.candeias@emas-beja.pt,joao.pirata@emas-beja.pt,gabriela.palma@emas-beja.pt,j.dias@emas-beja.pt',
+                subject: 'Falha superior a 4 horas',
+                text: 'Olá, no dia ' + date + ' a intervenção ' + numero + ' com o sintoma ' + sintoma + ' e morada '  + morada + ' teve uma interrupção de abastecimento de ' + duracao_hours + ' horas.'            
+            };
+            const info = await transporter.sendMail(mailOptions);
+            console.log('Email sent:', info.response);
+        }
+    } catch (error) {
+        console.error('Error sending email:', error);
+    }
+};
+
+const request2telegram = async (data) => {
+    if (data.length > 0) {
+        const telegrambot = async (message, body) => {
+          try {
+            await bot.sendMessage(chatId, `${message}\n<pre>${body}</pre>`, {
+              parse_mode: 'HTML'
+            });
+          } catch (err) {
+            console.log('Something went wrong when trying to send a Telegram notification', err);
+          }
+        };
+        for (const { sintoma, requisicao, morada } of data) {
+            const message = sintoma;
+            const body = `${requisicao}, ${morada}`;
+            await telegrambot(message, body);
+        };
+    };
+};
+
 const disunauth = async () => {
     try {
         const unauthdata = await unauthdataTask();
@@ -112,4 +165,22 @@ const diszeroregas = async () => {
     }
 };
 
-export { disunauth, diszerogc, diszeroregas };
+const disfalhas4h = async () => {
+    try {
+        const falhas4hdata = await falhas4hdataTask();
+        await falhas4hsendEmail(falhas4hdata);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
+const disrequest = async () => {
+    try {
+        const requestdata = await requestdataTask();
+        await request2telegram(requestdata);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
+export { disunauth, diszerogc, diszeroregas, disfalhas4h, disrequest };
