@@ -4,6 +4,8 @@ import { dirname, resolve } from 'path';
 import pg from 'pg';
 import { qhourdataTask } from './sqlserver/qhour.js';
 import { volmendataTask } from './sqlserver/volmensal.js';
+import { qmindataTask } from './sqlserver/qmin24.js';
+import { qmin48dataTask } from './sqlserver/qmin48.js';
 
 config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../.env') });
 
@@ -65,6 +67,78 @@ const insertvolmendata = async (volmendata) => {
   }
 };
 
+// Define an async function to insert qmin24h
+const insertqmin24data = async (data) => {
+  const client = await pool.connect();
+  try {
+    // Begin a transaction
+    await client.query('BEGIN');
+    // Iterate over the data and execute insert queries
+    for (let i=0; i < data.length ; i++){
+        await client.query(`INSERT INTO qmin(tag_id, date, flow)  VALUES($1, $2, $3)  ON CONFLICT (tag_id) DO UPDATE SET
+        date = EXCLUDED.date, flow = EXCLUDED.flow`, [Number(data[i].tag_ID), new Date(data[i].Date), Number(data[i].Value)]);
+    }
+    // Commit the transaction
+    await client.query('COMMIT');
+    console.log('Data inserted successfully');
+  } catch (err) {
+    // Rollback the transaction if an error occurs
+    await client.query('ROLLBACK');
+    console.error('Error inserting data:', err);
+  } finally {
+    // Release the client back to the pool
+    client.release();
+  }
+};
+
+// Define an async function to insert qmin24h
+const insertqmin4evdata = async (data) => {
+  const client = await pool.connect();
+  try {
+    // Begin a transaction
+    await client.query('BEGIN');
+    // Iterate over the data and execute insert queries
+    for (let i=0; i < data.length ; i++){
+        await client.query(`INSERT INTO qmin4ev(tag_id, date, flow)  VALUES($1, $2, $3)  ON CONFLICT (tag_id) DO UPDATE SET
+        date = EXCLUDED.date, flow = EXCLUDED.flow`, [Number(data[i].tag_ID), new Date(data[i].Date), Number(data[i].Value)]);
+    }
+    // Commit the transaction
+    await client.query('COMMIT');
+    console.log('Data inserted successfully');
+  } catch (err) {
+    // Rollback the transaction if an error occurs
+    await client.query('ROLLBACK');
+    console.error('Error inserting data:', err);
+  } finally {
+    // Release the client back to the pool
+    client.release();
+  }
+};
+
+// Define an async function to insert qmin24h
+const insertqmin48data = async (data) => {
+  const client = await pool.connect();
+  try {
+    // Begin a transaction
+    await client.query('BEGIN');
+    // Iterate over the data and execute insert queries
+    for (let i=0; i < data.length ; i++){
+        await client.query(`INSERT INTO qmin48(tag_id, date, flow)  VALUES($1, $2, $3)  ON CONFLICT (tag_id) DO UPDATE SET
+        date = EXCLUDED.date, flow = EXCLUDED.flow`, [Number(data[i].tag_ID), new Date(data[i].Date), Number(data[i].Value)]);
+    }
+    // Commit the transaction
+    await client.query('COMMIT');
+    console.log('Data inserted successfully');
+  } catch (err) {
+    // Rollback the transaction if an error occurs
+    await client.query('ROLLBACK');
+    console.error('Error inserting data:', err);
+  } finally {
+    // Release the client back to the pool
+    client.release();
+  }
+};
+
 const insqhour = async () => {
   try {
       const qhourdata = await qhourdataTask();
@@ -89,5 +163,21 @@ const insvolmen = async () => {
   }
 };
 
-export { insqhour, insvolmen };
+const insqmin = async () => {
+  try {
+      const qmindata = await qmindataTask();
+      // console.log(qmindata);
+      await insertqmin24data(qmindata);
+      await insertqmin4evdata(qmindata);
+      const qmin48data = await qmin48dataTask();
+      // console.log(qmin48data);
+      await insertqmin48data(qmin48data); 
+      //await pool.end(); // Close the connection pool after insertqhourdata completes
+      //console.log('Connection pool closed.');
+  } catch (error) {
+      console.error('Error:', error);
+  }
+};
+
+export { insqhour, insvolmen, insqmin };
   

@@ -1,5 +1,5 @@
 import schedule from 'node-schedule';
-import { insqhour, insvolmen } from './instelpg.js';
+import { insqhour, insvolmen, insqmin } from './instelpg.js';
 
 /*
 //schedule rules
@@ -24,6 +24,12 @@ volmen_rule.minute = 0; //(0-59)
 volmen_rule.hour = 15; //(0-23)
 volmen_rule.date = 1; //(1-31)
 const volmen_job = schedule.scheduleJob(volmen_rule, insvolmen);// Schedule the tasks
+
+// Define the qmin schedule
+const qmin_rule = new schedule.RecurrenceRule();
+qmin_rule.minute = 4; //(0-59)
+qmin_rule.hour = 9; //(0-23)
+const qmin_job = schedule.scheduleJob(qmin_rule, insqmin);// Schedule the tasks
 
 // Cancel the job if needed
 // job.cancel();
