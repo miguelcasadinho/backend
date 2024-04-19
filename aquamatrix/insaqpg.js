@@ -6,9 +6,11 @@ import { metersdataTask } from './soap/meters.js';
 import { clientsdataTask } from './soap/clients.js';
 import { coordsdataTask } from './soap/coords.js';
 import { fatdataTask } from './soap/fat.js';
-import { contradataTask } from './soap/contra.js'
-import { ramruadataTask } from './soap/ramaisrua.js'
-import { zmccontratosTask } from './psql/zmccontratos.js'
+import { contradataTask } from './soap/contra.js';
+import { ramruadataTask } from './soap/ramaisrua.js';
+import { zmccontratosTask } from './psql/zmccontratos.js';
+import { infometersTask } from './psql/infometers.js';
+import { zmcinfometersTask } from './psql/zmcinfometers.js';
 
 config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../.env') });
 
@@ -285,6 +287,56 @@ const insertzmccontratosdata = async (data) => {
   }
 };
 
+// Define an async function to meters data
+const insertinfometersdata = async (data) => {
+  const client = await pool.connect();
+  try {
+    // Begin a transaction
+    await client.query('BEGIN');
+    // Iterate over the data and execute insert queries
+    for (let i=0; i < data.length ; i++){
+      await client.query(`INSERT INTO infometers(tag_id, age, meters, bad, tocheck) VALUES($1, $2, $3, $4, $5) 
+                          ON CONFLICT (tag_id) DO UPDATE SET age = EXCLUDED.age, meters = EXCLUDED.meters, bad = EXCLUDED.bad, tocheck = EXCLUDED.tocheck`,
+                          [data[i].zmc, data[i].age, data[i].meters, data[i].bad, data[i].check]);
+    }
+    // Commit the transaction
+    await client.query('COMMIT');
+    console.log('Data inserted successfully');
+  } catch (err) {
+    // Rollback the transaction if an error occurs
+    await client.query('ROLLBACK');
+    console.error('Error inserting data:', err);
+  } finally {
+    // Release the client back to the pool
+    client.release();
+  }
+};
+
+// Define an async function to zmc meters data
+const insertzmcinfometersdata = async (data) => {
+  const client = await pool.connect();
+  try {
+    // Begin a transaction
+    await client.query('BEGIN');
+    // Iterate over the data and execute insert queries
+    for (let i=0; i < data.length ; i++){
+      await client.query(`INSERT INTO infometerszmc(tag_id, age, meters, bad, tocheck) VALUES($1, $2, $3, $4, $5) 
+                          ON CONFLICT (tag_id) DO UPDATE SET age = EXCLUDED.age, meters = EXCLUDED.meters, bad = EXCLUDED.bad, tocheck = EXCLUDED.tocheck`,
+                          [data[i].zmc, data[i].age, data[i].meters, data[i].bad, data[i].check]);
+    }
+    // Commit the transaction
+    await client.query('COMMIT');
+    console.log('Data inserted successfully');
+  } catch (err) {
+    // Rollback the transaction if an error occurs
+    await client.query('ROLLBACK');
+    console.error('Error inserting data:', err);
+  } finally {
+    // Release the client back to the pool
+    client.release();
+  }
+};
+
 const insmeters = async () => {
   try {
       const metersdata = await metersdataTask();
@@ -369,4 +421,28 @@ const inszmccontratos = async () => {
   }
 };
 
-export { insmeters, insclients, inscoords, insfat, inscontra, insramrua, inszmccontratos };
+const insinfometers = async () => {
+  try {
+      const infometersdata = await infometersTask();
+      //console.log(infometersdata);
+      await insertinfometersdata(infometersdata);
+      //await pool.end();
+      //console.log('Connection pool closed.');
+  } catch (error) {
+      console.error('Error:', error);
+  }
+};
+
+const inszmcinfometers = async () => {
+  try {
+      const zmcinfometersdata = await zmcinfometersTask();
+      //console.log(zmcinfometersdata);
+      await insertzmcinfometersdata(zmcinfometersdata);
+      //await pool.end();
+      //console.log('Connection pool closed.');
+  } catch (error) {
+      console.error('Error:', error);
+  }
+};
+
+export { insmeters, insclients, inscoords, insfat, inscontra, insramrua, inszmccontratos, insinfometers, inszmcinfometers };

@@ -10,7 +10,9 @@ config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../../.env') })
 let xml;
 let ramruadata = [];
 
+
 const getxml = async () => {
+    ramruadata = [];
     try {
         const response = await axios.post(process.env.aquaHost, GIS_RamaisRua, {
             headers: {

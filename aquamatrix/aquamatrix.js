@@ -1,5 +1,5 @@
 import schedule from 'node-schedule';
-import { insmeters, insclients, inscoords, insfat, inscontra, insramrua, inszmccontratos } from './insaqpg.js';
+import { insmeters, insclients, inscoords, insfat, inscontra, insramrua, inszmccontratos, insinfometers, inszmcinfometers } from './insaqpg.js';
 
 /*
 //schedule rules
@@ -77,6 +77,20 @@ zmccontratos_rule.minute = 45; //(0-59)
 zmccontratos_rule.hour = 17; //(0-23)
 // Schedule the insclients tasks
 const zmccontratos_job = schedule.scheduleJob(zmccontratos_rule, inszmccontratos);
+
+// Define the meters data schedule
+const infometers_rule = new schedule.RecurrenceRule();
+infometers_rule.minute = 40; //(0-59)
+infometers_rule.hour = 10; //(0-23)
+// Schedule the insclients tasks
+const infometers_job = schedule.scheduleJob(infometers_rule, insinfometers);
+
+// Define the meters data schedule
+const zmcinfometers_rule = new schedule.RecurrenceRule();
+zmcinfometers_rule.minute = 45; //(0-59)
+zmcinfometers_rule.hour = 10; //(0-23)
+// Schedule the insclients tasks
+const zmcinfometers_job = schedule.scheduleJob(zmcinfometers_rule, inszmcinfometers);
 
 // Cancel the job if needed
 // job.cancel();
