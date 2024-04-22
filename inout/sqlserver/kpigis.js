@@ -104,6 +104,12 @@ WHERE Proprietario = 'EMAS' AND (ZMC = 'ZMC-Bairro da Esperança' or ZMC = 'ZMC-
 FROM InfraSIG.dbo.aRamais WHERE Proprietario = 'EMAS' AND (ZMC = 'ZMC-Bairro da Esperança' or ZMC = 'ZMC-Fonte Mouro'))as t2
 union all
 SELECT t1.zmc as zmc, t1.Condutas_length, t2.Ramais_number, t2.Ramais_length_med
+FROM (SELECT 'Beja ZB1 - Fonte Mouro' as zmc, CAST(SUM(Shape.STLength())/1000 AS DECIMAL(6,3)) as Condutas_length FROM aTubagens 
+WHERE Proprietario = 'EMAS' AND (ZMC = 'ZMC-Fonte Mouro')) as t1,
+(SELECT 'Beja ZB1 - Fonte Mouro' as zmc, COUNT(Shape.STLength()) as Ramais_number, CAST(SUM(Shape.STLength()) / COUNT(Shape.STLength())AS DECIMAL(5,2)) AS Ramais_length_med
+FROM InfraSIG.dbo.aRamais WHERE Proprietario = 'EMAS' AND (ZMC = 'ZMC-Fonte Mouro'))as t2
+union all
+SELECT t1.zmc as zmc, t1.Condutas_length, t2.Ramais_number, t2.Ramais_length_med
 FROM (SELECT 'Beja ZB1 - Moinhos Santa Maria' as zmc, CAST(SUM(Shape.STLength())/1000 AS DECIMAL(6,3)) as Condutas_length FROM aTubagens 
 WHERE Proprietario = 'EMAS' AND (ZMC = 'ZMC-Moinhos Santa Maria Baixa')) as t1,
 (SELECT 'Beja ZB1 - Moinhos Santa Maria' as zmc, COUNT(Shape.STLength()) as Ramais_number, CAST(SUM(Shape.STLength()) / COUNT(Shape.STLength())AS DECIMAL(5,2)) AS Ramais_length_med
@@ -162,6 +168,12 @@ FROM (SELECT 'Beja ZB2 - Patrocinio Dias' as zmc, CAST(SUM(Shape.STLength())/100
 WHERE Proprietario = 'EMAS' AND (ZMC = 'ZMC-PatrocinioDias')) as t1,
 (SELECT 'Beja ZB2 - Patrocinio Dias' as zmc, COUNT(Shape.STLength()) as Ramais_number, CAST(SUM(Shape.STLength()) / COUNT(Shape.STLength())AS DECIMAL(5,2)) AS Ramais_length_med
 FROM InfraSIG.dbo.aRamais WHERE Proprietario = 'EMAS' AND (ZMC = 'ZMC-PatrocinioDias'))as t2
+union all
+SELECT t1.zmc as zmc, t1.Condutas_length, t2.Ramais_number, t2.Ramais_length_med
+FROM (SELECT 'Beja ZB2 - Tenente Valadim' as zmc, CAST(SUM(Shape.STLength())/1000 AS DECIMAL(6,3)) as Condutas_length FROM aTubagens 
+WHERE Proprietario = 'EMAS' AND (ZMC = 'ZMC-TenenteValadim')) as t1,
+(SELECT 'Beja ZB2 - Tenente Valadim' as zmc, COUNT(Shape.STLength()) as Ramais_number, CAST(SUM(Shape.STLength()) / COUNT(Shape.STLength())AS DECIMAL(5,2)) AS Ramais_length_med
+FROM InfraSIG.dbo.aRamais WHERE Proprietario = 'EMAS' AND (ZMC = 'ZMC-TenenteValadim'))as t2
 union all
 SELECT t1.zmc as zmc, t1.Condutas_length, t2.Ramais_number, t2.Ramais_length_med
 FROM (SELECT 'Beja ZB3' as zmc, CAST(SUM(Shape.STLength())/1000 AS DECIMAL(6,3)) as Condutas_length FROM aTubagens 

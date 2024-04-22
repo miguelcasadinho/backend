@@ -112,6 +112,13 @@ on infocontrato.ramal = ramaisrua.ramal where zmc = 'BAIRRO DA ESPERANÇA' or zm
 on infocontrato.ramal = ramaisrua.ramal where client_group = 'DOMÉSTICOS' and (zmc = 'BAIRRO DA ESPERANÇA' or zmc = 'FONTE MOURO')) as t2
 union all
 SELECT t1.zmc, t1.clients, t2.clientsdom
+from (select 'Beja ZB1 - Fonte Mouro' as zmc, Count(infocontrato.local) as clients FROM infocontrato 
+left join(select ramaisrua.ramal, ramaisrua.zmc from ramaisrua) as ramaisrua
+on infocontrato.ramal = ramaisrua.ramal where zmc = 'FONTE MOURO') as t1,
+(SELECT 'Beja ZB1 - Fonte Mouro' as zmc, Count(infocontrato.local) as clientsdom FROM infocontrato left join(select ramaisrua.ramal, ramaisrua.zmc from ramaisrua) as ramaisrua
+on infocontrato.ramal = ramaisrua.ramal where client_group = 'DOMÉSTICOS' and (zmc = 'FONTE MOURO')) as t2
+union all
+SELECT t1.zmc, t1.clients, t2.clientsdom
 from (select 'Beja ZB1 - Moinhos Santa Maria' as zmc, Count(infocontrato.local) as clients FROM infocontrato 
 left join(select ramaisrua.ramal, ramaisrua.zmc from ramaisrua) as ramaisrua
 on infocontrato.ramal = ramaisrua.ramal where zmc = 'MOINHOS SANTA MARIA BAIXA') as t1,
@@ -180,6 +187,13 @@ left join(select ramaisrua.ramal, ramaisrua.zmc from ramaisrua) as ramaisrua
 on infocontrato.ramal = ramaisrua.ramal where zmc = 'PATROCINIODIAS') as t1,
 (SELECT 'Beja ZB2 - Patrocinio Dias' as zmc, Count(infocontrato.local) as clientsdom FROM infocontrato left join(select ramaisrua.ramal, ramaisrua.zmc from ramaisrua) as ramaisrua
 on infocontrato.ramal = ramaisrua.ramal where client_group = 'DOMÉSTICOS' and (zmc = 'PATROCINIODIAS')) as t2
+union all
+SELECT t1.zmc, t1.clients, t2.clientsdom
+from (select 'Beja ZB2 - Tenente Valadim' as zmc, Count(infocontrato.local) as clients FROM infocontrato 
+left join(select ramaisrua.ramal, ramaisrua.zmc from ramaisrua) as ramaisrua
+on infocontrato.ramal = ramaisrua.ramal where zmc = 'TENENTEVALADIM') as t1,
+(SELECT 'Beja ZB2 - Tenente Valadim' as zmc, Count(infocontrato.local) as clientsdom FROM infocontrato left join(select ramaisrua.ramal, ramaisrua.zmc from ramaisrua) as ramaisrua
+on infocontrato.ramal = ramaisrua.ramal where client_group = 'DOMÉSTICOS' and (zmc = 'TENENTEVALADIM')) as t2
 union all
 SELECT t1.zmc, t1.clients, t2.clientsdom
 from (select 'Beja ZB3' as zmc, Count(infocontrato.local) as clients FROM infocontrato 

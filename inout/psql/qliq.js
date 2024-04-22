@@ -61,6 +61,12 @@ WHERE (tag_id = 1076) and date > now()-interval'48h' group by hour) as t1,
 WHERE  (ramaisrua.zmc = 'BAIRRO DA ESPERANÇA' or ramaisrua.zmc = 'FONTE MOURO') AND date > now()-interval'48h' group by hour) as t2
 where t1.hour = t2.hour
 UNION ALL
+SELECT 'Beja ZB1 - Fonte Mouro' as zmc, t1.hour, t1.dist, t2.telemetria, (t1.dist-t2.telemetria) as liq from (SELECT date_trunc('hour', date) as hour, sum(flow) as dist FROM zmcflowdis
+WHERE (tag_id = 6493686) and date > now()-interval'48h' group by hour) as t1,
+(SELECT date_trunc('hour', date) as hour, sum(flow) as telemetria FROM flow LEFT JOIN (SELECT infocontrato.ramal, infocontrato.device FROM infocontrato) AS infocontrato ON flow.device = infocontrato.device LEFT JOIN (SELECT ramaisrua.zmc, ramaisrua.ramal as ram from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ram
+WHERE  (ramaisrua.zmc = 'FONTE MOURO') AND date > now()-interval'48h' group by hour) as t2
+where t1.hour = t2.hour
+UNION ALL
 SELECT 'Beja ZB1 - Moinhos Santa Maria' as zmc, t1.hour, t1.dist, t2.telemetria, (t1.dist-t2.telemetria) as liq from (SELECT date_trunc('hour', date) as hour, sum(flow) as dist FROM zmcflowdis
 WHERE (tag_id = 301) and date > now()-interval'48h' group by hour) as t1,
 (SELECT date_trunc('hour', date) as hour, sum(flow) as telemetria FROM flow LEFT JOIN (SELECT infocontrato.ramal, infocontrato.device FROM infocontrato) AS infocontrato ON flow.device = infocontrato.device LEFT JOIN (SELECT ramaisrua.zmc, ramaisrua.ramal as ram from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ram
@@ -110,9 +116,15 @@ WHERE  (ramaisrua.zmc = 'JULIAOQUINTINHA') AND date > now()-interval'48h' group 
 where t1.hour = t2.hour
 UNION ALL
 SELECT 'Beja ZB2 - Patrocinio Dias' as zmc, t1.hour, t1.dist, t2.telemetria, (t1.dist-t2.telemetria) as liq from (SELECT date_trunc('hour', date) as hour, sum(flow) as dist FROM zmcflowdis
-WHERE (tag_id = 1040) and date > now()-interval'48h' group by hour) as t1,
+WHERE (tag_id = 232027341) and date > now()-interval'48h' group by hour) as t1,
 (SELECT date_trunc('hour', date) as hour, sum(flow) as telemetria FROM flow LEFT JOIN (SELECT infocontrato.ramal, infocontrato.device FROM infocontrato) AS infocontrato ON flow.device = infocontrato.device LEFT JOIN (SELECT ramaisrua.zmc, ramaisrua.ramal as ram from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ram
 WHERE  (ramaisrua.zmc = 'PATROCINIODIAS') AND date > now()-interval'48h' group by hour) as t2
+where t1.hour = t2.hour
+UNION ALL
+SELECT 'Beja ZB2 - Tenente Valadim' as zmc, t1.hour, t1.dist, t2.telemetria, (t1.dist-t2.telemetria) as liq from (SELECT date_trunc('hour', date) as hour, sum(flow) as dist FROM zmcflowdis
+WHERE (tag_id = 1040) and date > now()-interval'48h' group by hour) as t1,
+(SELECT date_trunc('hour', date) as hour, sum(flow) as telemetria FROM flow LEFT JOIN (SELECT infocontrato.ramal, infocontrato.device FROM infocontrato) AS infocontrato ON flow.device = infocontrato.device LEFT JOIN (SELECT ramaisrua.zmc, ramaisrua.ramal as ram from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ram
+WHERE  (ramaisrua.zmc = 'TENENTEVALADIM') AND date > now()-interval'48h' group by hour) as t2
 where t1.hour = t2.hour
 UNION ALL
 SELECT 'Beja ZB3' as zmc, t1.hour, t1.dist, t2.telemetria, (t1.dist-t2.telemetria) as liq from (SELECT date_trunc('hour', date) as hour, sum(flow) as dist FROM zmcflowdis
@@ -128,7 +140,7 @@ WHERE  (ramaisrua.zmc = 'ZB4' or ramaisrua.zmc = 'RAMIROCORREIA') AND date > now
 where t1.hour = t2.hour
 UNION ALL
 SELECT 'Beja ZB5' as zmc, t1.hour, t1.dist, t2.telemetria, (t1.dist-t2.telemetria) as liq from (SELECT date_trunc('hour', date) as hour, sum(flow) as dist FROM zmcflowdis
-WHERE (tag_id = 305) and date > now()-interval'48h' group by hour) as t1,
+WHERE (tag_id = 182014161) and date > now()-interval'48h' group by hour) as t1,
 (SELECT date_trunc('hour', date) as hour, sum(flow) as telemetria FROM flow LEFT JOIN (SELECT infocontrato.ramal, infocontrato.device FROM infocontrato) AS infocontrato ON flow.device = infocontrato.device LEFT JOIN (SELECT ramaisrua.zmc, ramaisrua.ramal as ram from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ram
 WHERE  (ramaisrua.zmc = 'ZB5') AND date > now()-interval'48h' group by hour) as t2
 where t1.hour = t2.hour
