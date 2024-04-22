@@ -41,6 +41,7 @@ const getxml = async () => {
 
 const extractdata = () => {
     return new Promise((resolve, reject) => {
+        metersdata = [];
         for (let i=0; i < xml.length; i++){
             if (Object.hasOwnProperty.bind(xml[i])('DT_INSTALACAO') && Object.hasOwnProperty.bind(xml[i])('LOCAL') && Object.hasOwnProperty.bind(xml[i])('CLIENTE') 
             && Object.hasOwnProperty.bind(xml[i])('TARIFA') && Object.hasOwnProperty.bind(xml[i])('ULTIMA_LEITURA') 

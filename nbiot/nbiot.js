@@ -28,7 +28,7 @@ client.on('connect', () => {
 // Event handler for when a message is received
 client.on('message', (topic, message) => {
     //console.log('Received message:', message.toString());
-    console.log(wlDecoder(message.toString()));
+    //console.log(wlDecoder(message.toString()));
     insertPg(wlDecoder(message.toString()));
 });
 

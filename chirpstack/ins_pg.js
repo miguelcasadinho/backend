@@ -358,7 +358,7 @@ const insertVolumeNke = async (payload) => {
     }
 };
 
-// Define an async function to insert Axioma, Gladiator, Sagemcom, xtr, Arrow, Janzv2, janzvlora, devices volume (34, 42, 45, 80, 81, 82, 119)
+// Define an async function to insert Diehl volume ()
 const insertVolumeDiehl = async (payload) => {
     const client = await pool.connect();
     try {
@@ -370,7 +370,7 @@ const insertVolumeDiehl = async (payload) => {
         datavol.setSeconds(0);
         datavol.setMilliseconds(0);
         //Execute insert querie
-        await client.query(`INSERT INTO volume(device, date, volume) VALUES($1, $2, $3)`,
+        await client.query(`INSERT INTO volume(device, date, volume) VALUES($1, $2, $3) ON CONFLICT (device, date) DO UPDATE SET volume = EXCLUDED.volume`,
                             [payload.DeviceName, datavol, payload.Volume]);
       // Commit the transaction
       await client.query('COMMIT');

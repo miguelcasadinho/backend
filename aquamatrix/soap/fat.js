@@ -72,9 +72,13 @@ const extractdata = () => {
 const fatdataTask = async () => {
     try {
         const formdate = await getdate();
-        console.log(formdate);
+        //console.log(formdate);
         const method = await GIS_DadosFaturacao(formdate);
         const xml = await getxml(method);
+        if (!xml || !xml.length) {
+            console.log('Warning: Empty or invalid XML data received for date:', formdate);
+            return; // Ignore empty or invalid XML data
+        }
         console.log(xml.length, 'records');
         const fatdata = await extractdata(xml);
         // Handle the extracted data

@@ -41,6 +41,7 @@ const getxml = async () => {
 
 const extractdata = () => {
     return new Promise((resolve, reject) => {
+        contradata = [];
         for (let i=0; i < xml.length; i++){
             if (Object.hasOwnProperty.bind(xml[i])('DTINST') && (Object.hasOwnProperty.bind(xml[i])('ANDAR') && typeof xml[i].ANDAR[0] !== 'object') 
                 && Object.hasOwnProperty.bind(xml[i])('LOCALIDADE')){

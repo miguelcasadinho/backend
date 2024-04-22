@@ -67,7 +67,9 @@ const executeQuery = async (query, params = []) => {
 const requestdataTask = async () => {
     try {
         const requestdata = await executeQuery(query);
-        console.log(requestdata.length, "records fetched successfully");
+        if (requestdata.length > 0){
+          console.log(requestdata.length, "records fetched successfully");
+        };
         return requestdata;
     } catch (error) {
         console.error('Error fetching request data:', error);

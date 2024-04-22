@@ -108,7 +108,7 @@ const georeqTask = async () => {
         console.log(georeqdata.length, "records fetched successfully");
         //console.log(georeqdata);
         const geodata = await geocodeAddresses(georeqdata);
-        console.log(geodata);
+        //console.log(geodata);
         return geodata;
     } catch (error) {
         console.error('Error fetching requests, service orders data:', error);
