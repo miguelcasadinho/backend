@@ -17,7 +17,7 @@ rule.tz = 'Europe/Lisbon';
 const reso_rule = new schedule.RecurrenceRule();
 reso_rule.minute = 25; //(0-59)
 reso_rule.hour = 7; //(0-23)
-// Schedule the insclientss tasks
+// Schedule the service orders tasks
 const reso_job = schedule.scheduleJob(reso_rule, insreso);
 
 // Define the geo request schedule
@@ -30,7 +30,7 @@ georeq_rule2.hour = 13; //(0-23)
 const georeq_rule3 = new schedule.RecurrenceRule();
 georeq_rule3.minute = 15; //(0-59)
 georeq_rule3.hour = 19; //(0-23)
-// Schedule the insclientss tasks
+// Schedule geo request tasks
 const georeq_job1 = schedule.scheduleJob(georeq_rule1, insgeoreq);
 const georeq_job2 = schedule.scheduleJob(georeq_rule2, insgeoreq);
 const georeq_job3 = schedule.scheduleJob(georeq_rule3, insgeoreq);

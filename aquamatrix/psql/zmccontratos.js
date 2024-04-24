@@ -56,6 +56,9 @@ UNION ALL
 SELECT 'Beja ZB1 - Bairro Esperança' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
 where ramaisrua.zmc = 'BAIRRO DA ESPERANÇA'
 UNION ALL
+SELECT 'Beja ZB1 - Fonte Mouro' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
+where ramaisrua.zmc = 'FONTE MOURO'
+UNION ALL
 SELECT 'Beja ZB1 - Moinhos Santa Maria' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
 where ramaisrua.zmc = 'MOINHOS SANTA MARIA BAIXA'
 UNION ALL
@@ -85,6 +88,9 @@ where ramaisrua.zmc = 'PADRÃO'
 UNION ALL
 SELECT 'Beja ZB2 - Patrocinio Dias' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
 where ramaisrua.zmc = 'PATROCINIODIAS'
+UNION ALL
+SELECT 'Beja ZB2 - Tenente Valadim' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
+where ramaisrua.zmc = 'TENENTEVALADIM'
 UNION ALL
 SELECT 'Beja ZB3' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
 where ramaisrua.zmc = 'ZB3'

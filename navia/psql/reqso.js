@@ -281,6 +281,25 @@ AND (workcause.work LIKE '%Reparação de ramal de abastecimento%' OR workcause.
 AND (vw.service_orders.dma = 'Beja ZB1 Bairro da Esperança' or vw.service_orders.dma = 'Beja ZB1 Fonte Mouro')) as t2
 UNION ALL
 select t1.zmc as zmc, t1.requests, t2.orders from
+(SELECT cast('Beja ZB1 - Fonte Mouro' as text) as zmc, count(vw.requests.id_request) as requests FROM vw.requests
+left join (select id_request, id_address from vw.request_address_infrastructures) as  request_address_infrastructures on vw.requests.id_request = request_address_infrastructures.id_request
+left join (select id_address, dma, toponymies.street from vw.toponymies) as toponymies on request_address_infrastructures.id_address = toponymies.id_address
+left join (select id_request as request, id_service_order from vw.request_r_service_orders) as request_r_service_orders on vw.requests.id_request = request_r_service_orders.request
+left join (select id_request, state from vw.service_orders) as service_orders on vw.requests.id_request = service_orders.id_request  
+WHERE vw.requests .date_hour_created >= NOW() - INTERVAL '180 DAYS' 
+AND (vw.requests.state = 'Requisitada' or vw.requests.state = 'Requisitada com análise')
+AND vw.requests.symptom like 'DOMA » Abastecimento » Fugas de água%'
+AND (request_r_service_orders.request is NULL or service_orders.state = 'Não executada')
+AND toponymies.street is not NULL
+AND (toponymies.dma = 'Beja ZB1 Fonte Mouro')) as t1,
+(SELECT cast('Beja ZB1 - Fonte Mouro' as text) as zmc, count(vw.service_orders.id_service_order) as orders  FROM vw.service_orders
+LEFT JOIN (SELECT vw.service_orders_cause_work.id_service_order ,string_agg(vw.service_orders_cause_work.work, ', ') as work
+FROM vw.service_orders_cause_work GROUP BY vw.service_orders_cause_work.id_service_order ) AS workcause ON vw.service_orders.id_service_order = workcause.id_service_order
+WHERE vw.service_orders.date_hour_executed >= now() - interval '24 hours'
+AND (workcause.work LIKE '%Reparação de ramal de abastecimento%' OR workcause.work LIKE '%Reparação de conduta%' OR workcause.work LIKE '%Substituição de ramal de abastecimento%')
+AND (vw.service_orders.dma = 'Beja ZB1 Fonte Mouro')) as t2
+UNION ALL
+select t1.zmc as zmc, t1.requests, t2.orders from
 (SELECT cast('Beja ZB1 - Moinhos Santa Maria' as text) as zmc, count(vw.requests.id_request) as requests FROM vw.requests
 left join (select id_request, id_address from vw.request_address_infrastructures) as  request_address_infrastructures on vw.requests.id_request = request_address_infrastructures.id_request
 left join (select id_address, dma, toponymies.street from vw.toponymies) as toponymies on request_address_infrastructures.id_address = toponymies.id_address
@@ -469,6 +488,25 @@ FROM vw.service_orders_cause_work GROUP BY vw.service_orders_cause_work.id_servi
 WHERE vw.service_orders.date_hour_executed >= now() - interval '24 hours'
 AND (workcause.work LIKE '%Reparação de ramal de abastecimento%' OR workcause.work LIKE '%Reparação de conduta%' OR workcause.work LIKE '%Substituição de ramal de abastecimento%')
 AND (vw.service_orders.dma = 'Beja ZB2 Patrocinio Dias')) as t2
+UNION ALL
+select t1.zmc as zmc, t1.requests, t2.orders from
+(SELECT cast('Beja ZB2 - Tenente Valadim' as text) as zmc, count(vw.requests.id_request) as requests FROM vw.requests
+left join (select id_request, id_address from vw.request_address_infrastructures) as  request_address_infrastructures on vw.requests.id_request = request_address_infrastructures.id_request
+left join (select id_address, dma, toponymies.street from vw.toponymies) as toponymies on request_address_infrastructures.id_address = toponymies.id_address
+left join (select id_request as request, id_service_order from vw.request_r_service_orders) as request_r_service_orders on vw.requests.id_request = request_r_service_orders.request
+left join (select id_request, state from vw.service_orders) as service_orders on vw.requests.id_request = service_orders.id_request  
+WHERE vw.requests .date_hour_created >= NOW() - INTERVAL '180 DAYS' 
+AND (vw.requests.state = 'Requisitada' or vw.requests.state = 'Requisitada com análise')
+AND vw.requests.symptom like 'DOMA » Abastecimento » Fugas de água%'
+AND (request_r_service_orders.request is NULL or service_orders.state = 'Não executada')
+AND toponymies.street is not NULL
+AND (toponymies.dma = 'Beja ZB2 Tenente Valadim')) as t1,
+(SELECT cast('Beja ZB2 - Tenente Valadim' as text) as zmc, count(vw.service_orders.id_service_order) as orders  FROM vw.service_orders
+LEFT JOIN (SELECT vw.service_orders_cause_work.id_service_order ,string_agg(vw.service_orders_cause_work.work, ', ') as work
+FROM vw.service_orders_cause_work GROUP BY vw.service_orders_cause_work.id_service_order ) AS workcause ON vw.service_orders.id_service_order = workcause.id_service_order
+WHERE vw.service_orders.date_hour_executed >= now() - interval '24 hours'
+AND (workcause.work LIKE '%Reparação de ramal de abastecimento%' OR workcause.work LIKE '%Reparação de conduta%' OR workcause.work LIKE '%Substituição de ramal de abastecimento%')
+AND (vw.service_orders.dma = 'Beja ZB2 Tenente Valadim')) as t2
 UNION ALL
 select t1.zmc as zmc, t1.requests, t2.orders from
 (SELECT cast('Beja ZB2 - Padrão' as text) as zmc, count(vw.requests.id_request) as requests FROM vw.requests
@@ -1370,4 +1408,5 @@ const resoTask = async () => {
 };
 
 export { resoTask };
+resoTask()
 

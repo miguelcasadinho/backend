@@ -141,9 +141,9 @@ const sagemDecoder = (message) => {
                 alarm = "FOS desconhecido";
             }
 
-            //Check delta0 and volume bug and ignore supervision frame and instalation frame and alarm frame and backflow frame and uninstall frame
+            //Check delta0 and volume bug and ignore supervision frame and instalation frame and alarm frame and backflow frame, uninstall frame and unknow frame 14aa
             if (((bytes[4+offset] | bytes[5+offset] << 8) !== (bytes[11+offset] | bytes[11+offset+1] << 8 )) && FOS !== 0x04fd 
-                    && FOS !== 0x825e && FOS !== 0xd90b && FOS !== 0xc374 && FOS !== 0x65fa){
+                    && FOS !== 0x825e && FOS !== 0xd90b && FOS !== 0xc374 && FOS !== 0x65fa && FOS !== 0x14aa){
                 var minute = (bytes[0+offset] & 0x3F);
                 var hour = (bytes[1+offset] & 0x1F);
                 var day = (bytes[2+offset] & 0x1F);
