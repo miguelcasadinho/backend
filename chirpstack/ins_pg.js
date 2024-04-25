@@ -261,9 +261,9 @@ const insertFlowNke = (payload) => {
                     flow = res.rows
                     // console.log(flow)
                     //inserting the data
-                    for (var i=0; i < flow.length; i++){
-                        const q1 = `INSERT INTO flow(device, date, flow) VALUES($1, $2, $3)`;
-                        var values = [flow[i].device, flow[i].date, flow[i].flow];
+                    for (let i=0; i < flow.length; i++){
+                        const q1 = `INSERT INTO flow(device, date, flow) VALUES($1, $2, $3) ON CONFLICT(device, date) DO NOTHING`;
+                        const values = [flow[i].device, flow[i].date, flow[i].flow];
                         pool.query(q1, values, (error, response) => {
                             if (error) {
                                 console.log(error);

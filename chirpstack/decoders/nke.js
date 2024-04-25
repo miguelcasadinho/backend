@@ -1,8 +1,8 @@
 const nkeDecoder = (message) => {
     if (message.hasOwnProperty('fPort') && message.hasOwnProperty('data')) {
         var fPort = message.fPort;
-        if (fPort == 125) {
-          var bytes = Buffer.from(message.data, 'base64');
+        var bytes = Buffer.from(message.data, 'base64');
+        if (fPort == 125 && bytes.length > 15) {
           var ST_UNDEF = 0;
           var ST_BL = 1;
           var ST_U4 = 2;
@@ -753,9 +753,9 @@ const nkeDecoder = (message) => {
             if (decodedBatch === false){
               payload.zclheader = {};
               payload.zclheader.report =  "standard";
-              attributID = -1;
-              cmdID = -1;
-              clusterdID = -1;
+              var attributID = -1;
+              var cmdID = -1;
+              var clusterdID = -1;
               //endpoint
               payload.zclheader.endpoint = ((bytes[0]&0xE0)>>5) | ((bytes[0]&0x06)<<2);
               //command ID
@@ -764,7 +764,7 @@ const nkeDecoder = (message) => {
               clusterdID = bytes[2]*256 + bytes[3]; payload.zclheader.clusterdID = decimalToHex(clusterdID,4);
               // decode report and read atrtribut response
               if((cmdID === 0x0a)|(cmdID === 0x8a)|(cmdID === 0x01)){
-                stdData = {};
+                var stdData = {};
                 var tab=[];
                 //Attribut ID
                 attributID = bytes[4]*256 + bytes[5]; payload.zclheader.attributID = decimalToHex(attributID,4);
