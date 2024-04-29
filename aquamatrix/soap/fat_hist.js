@@ -128,7 +128,7 @@ const insertfatdata = async (fatdata, date) => {
 
 const fetchAndProcessData = async () => {
     const pageSize = 100; // Define the page size
-    const totalIterations = 7; // Total number of iterations
+    const totalIterations = 1; // Total number of iterations
     const totalPages = Math.ceil(totalIterations / pageSize); // Calculate total pages
 
     try {
@@ -140,8 +140,8 @@ const fetchAndProcessData = async () => {
             // Generate dates for the current page
             for (let i = startIdx; i < endIdx; i++) {
                 let date = new Date();
-                //date.setDate(date.getDate() -1);// Select other day to start the iteration
-                date.setDate(date.getDate() - i);
+                date.setDate(date.getDate() -2);// Select other day to start the iteration
+                //date.setDate(date.getDate() - i);
                 const formdate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
                 dates.push({ date: formdate, actualDate: date }); // Store both formdate and actual date
             }

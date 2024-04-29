@@ -229,94 +229,96 @@ const diehlDecoder = (message) => {
                 Payload = Payload + bytes[i].toString(16);
             };
             decoded.Payload = Payload; // Full Payload in a string
-            var time = decoded.DateTime_TransmissionTimeStamp;
-            var hourlog = parseInt(time.slice(0, 2));
-            var minlog = parseInt(time.slice(3, 5));
-            var datelog = new Date();
-            datelog.setHours(hourlog-23);
-            datelog.setMinutes(0);
-            datelog.setSeconds(0);
-            datelog.setMilliseconds(0);
-            var date = new Date();
-            date.setHours(hourlog);
-            date.setMinutes(0);
-            date.setSeconds(0);
-            datelog.setMilliseconds(0);
-            var hour = date.getHours();
-            //hour=hour;
-            date.setHours(hour);
-            var alarm = [];
-            if (decoded.MicroAlarme_Metrology_BlockedMeter == 1) {
-                alarm.push("Contador bloqueado");
+            if (decoded.FrameType !== 0 && decoded.FrameType !== 9 && decoded.FrameType !== 11){
+                var time = decoded.DateTime_TransmissionTimeStamp;
+                var hourlog = parseInt(time.slice(0, 2));
+                var minlog = parseInt(time.slice(3, 5));
+                var datelog = new Date();
+                datelog.setHours(hourlog-23);
+                datelog.setMinutes(0);
+                datelog.setSeconds(0);
+                datelog.setMilliseconds(0);
+                var date = new Date();
+                date.setHours(hourlog);
+                date.setMinutes(0);
+                date.setSeconds(0);
+                datelog.setMilliseconds(0);
+                var hour = date.getHours();
+                //hour=hour;
+                date.setHours(hour);
+                var alarm = [];
+                if (decoded.MicroAlarme_Metrology_BlockedMeter == 1) {
+                    alarm.push("Contador bloqueado");
+                };
+                if (decoded.MicroAlarme_Metrology_OverFlowSmallSize == 1) {
+                    alarm.push("Over Flow Small Size");
+                };
+                if (decoded.MicroAlarme_Metrology_OverFlowLargeSize == 1) {
+                    alarm.push("Over Flow Large Size");
+                };
+                if (decoded.MicroAlarme_System_Battery == 1) {
+                    alarm.push("Bateria fraca");
+                };
+                if (decoded.MicroAlarme_System_ClockUpdated == 1) {
+                    alarm.push("Clock Updated");
+                };
+                if (decoded.MicroAlarme_System_ModuleReconfigured == 1) {
+                    alarm.push("Módulo reconfigurado");
+                };
+                if (decoded.MicroAlarme_System_NoiseDefense == 1) {
+                    alarm.push("Noise Defense");
+                };
+                if (decoded.MicroAlarme_System_LowTemperature == 1) {
+                    alarm.push("Gelo");
+                };
+                if (decoded.MicroAlarme_System_Number0fAlarmCycleAuthorizedReached == 1) {
+                    alarm.push("Number 0f Alarm Cycle Authorized Reached");
+                };
+                if (decoded.MicroAlarme_Tamper_ReversedMeter == 1) {
+                    alarm.push("Reversed Meter");
+                };
+                if (decoded.MicroAlarme_Tamper_Module_tampered == 1) {
+                    alarm.push("Manipulação mecânica");
+                };
+                if (decoded.MicroAlarme_Tamper_AcquisitionStageFailure == 1) {
+                    alarm.push("Acquisition Stage Failure");
+                };
+                if (decoded.MicroAlarme_WaterQuality_Backflow == 1) {
+                    alarm.push("Fluxo inverso");
+                };
+                if (alarm.length == 0){
+                    alarm.push("No Alarms");
+                }; 
+                var rxinfo_length = message.rxInfo.length;
+                var snr = [];
+                var index;
+                for (var a = 0; a < rxinfo_length; a++) {
+                    snr.push (
+                        message.rxInfo[a].loRaSNR
+                    );
+                    var max = Math.max(...snr);
+                    index = snr.indexOf(max);
+                };
+                var gatewayID = (Buffer.from(message.rxInfo[index].gatewayID, 'base64')).toString('hex');
+                var payload = {
+                    "AppID": message.applicationID,
+                    "Application": message.applicationName,
+                    "DeviceName": message.tags.CONTADOR,
+                    "Data": message.data,
+                    "fPort": message.fPort,
+                    "Alarm": alarm,
+                    "Date": date,
+                    "Datelog": datelog,
+                    "Volume": parseFloat((decoded.Index0h00*0.001).toFixed(2)),
+                    "Deltas": decoded.ConsumptionPulses,
+                    "gateway": gatewayID,
+                    "rssi": message.rxInfo[index].rssi,
+                    "snr": message.rxInfo[index].loRaSNR,
+                    "sf": message.txInfo.loRaModulationInfo.spreadingFactor
+                };
+                return payload;
+                };
             };
-            if (decoded.MicroAlarme_Metrology_OverFlowSmallSize == 1) {
-                alarm.push("Over Flow Small Size");
-            };
-            if (decoded.MicroAlarme_Metrology_OverFlowLargeSize == 1) {
-                alarm.push("Over Flow Large Size");
-            };
-            if (decoded.MicroAlarme_System_Battery == 1) {
-                alarm.push("Bateria fraca");
-            };
-            if (decoded.MicroAlarme_System_ClockUpdated == 1) {
-                alarm.push("Clock Updated");
-            };
-            if (decoded.MicroAlarme_System_ModuleReconfigured == 1) {
-                alarm.push("Módulo reconfigurado");
-            };
-            if (decoded.MicroAlarme_System_NoiseDefense == 1) {
-                alarm.push("Noise Defense");
-            };
-            if (decoded.MicroAlarme_System_LowTemperature == 1) {
-                alarm.push("Gelo");
-            };
-            if (decoded.MicroAlarme_System_Number0fAlarmCycleAuthorizedReached == 1) {
-                alarm.push("Number 0f Alarm Cycle Authorized Reached");
-            };
-            if (decoded.MicroAlarme_Tamper_ReversedMeter == 1) {
-                alarm.push("Reversed Meter");
-            };
-            if (decoded.MicroAlarme_Tamper_Module_tampered == 1) {
-                alarm.push("Manipulação mecânica");
-            };
-            if (decoded.MicroAlarme_Tamper_AcquisitionStageFailure == 1) {
-                alarm.push("Acquisition Stage Failure");
-            };
-            if (decoded.MicroAlarme_WaterQuality_Backflow == 1) {
-                alarm.push("Fluxo inverso");
-            };
-            if (alarm.length == 0){
-                alarm.push("No Alarms");
-            }; 
-            var rxinfo_length = message.rxInfo.length;
-            var snr = [];
-            var index;
-            for (var a = 0; a < rxinfo_length; a++) {
-                snr.push (
-                    message.rxInfo[a].loRaSNR
-                );
-                var max = Math.max(...snr);
-                index = snr.indexOf(max);
-            };
-            var gatewayID = (Buffer.from(message.rxInfo[index].gatewayID, 'base64')).toString('hex');
-            var payload = {
-                "AppID": message.applicationID,
-                "Application": message.applicationName,
-                "DeviceName": message.tags.CONTADOR,
-                "Data": message.data,
-                "fPort": message.fPort,
-                "Alarm": alarm,
-                "Date": date,
-                "Datelog": datelog,
-                "Volume": parseFloat((decoded.Index0h00*0.001).toFixed(2)),
-                "Deltas": decoded.ConsumptionPulses,
-                "gateway": gatewayID,
-                "rssi": message.rxInfo[index].rssi,
-                "snr": message.rxInfo[index].loRaSNR,
-                "sf": message.txInfo.loRaModulationInfo.spreadingFactor
-            };
-            return payload;
-        };
     };   
 };
 

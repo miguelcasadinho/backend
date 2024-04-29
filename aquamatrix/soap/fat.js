@@ -77,13 +77,18 @@ const fatdataTask = async () => {
         const xml = await getxml(method);
         if (!xml || !xml.length) {
             console.log('Warning: Empty or invalid XML data received for date:', formdate);
-            return; // Ignore empty or invalid XML data
+            const fatdata = 'no data';
+            //console.log(fatdata);
+            return fatdata; // Ignore empty or invalid XML data
         }
-        console.log(xml.length, 'records');
-        const fatdata = await extractdata(xml);
-        // Handle the extracted data
-        console.log(fatdata.length, 'fats to insert');
-        return fatdata;
+        else{
+            console.log(xml.length, 'records');
+            const fatdata = await extractdata(xml);
+            // Handle the extracted data
+            console.log(fatdata.length, 'fats to insert');
+            return fatdata;
+        }
+
     } catch (error) {
         // Handle any errors in the Promise chain
         console.error('Error in fatdataTask:', error);

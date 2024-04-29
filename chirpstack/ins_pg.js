@@ -23,14 +23,21 @@ const insertFlow = async (payload) => {
       for (let i=0; i < payload.Deltas.length ; i++){
         let data = new Date(payload.Date_log);
         let hour =data.getHours();
-        hour=hour+1+i;
-        data.setHours(hour);
+        if (payload.rph !== undefined){
+            let min = data.getMinutes();
+            min=min+60+(60*i/payload.rph);
+            data.setMinutes(min);
+        }
+        else {
+            hour=hour+1+i;
+            data.setHours(hour);
+        } 
         await client.query(`INSERT INTO flow(device, date, flow) VALUES($1, $2, $3) ON CONFLICT (device, date) DO NOTHING`,
                           [payload.DeviceName, data, payload.Deltas[i]]);
       }
       // Commit the transaction
       await client.query('COMMIT');
-      console.log(`${payload.Application}, ${payload.DeviceName} , flow inserted successfully`);
+      //console.log(`${payload.Application}, ${payload.DeviceName} , flow inserted successfully`);
     } catch (err) {
       // Rollback the transaction if an error occurs
       await client.query('ROLLBACK');
@@ -58,7 +65,7 @@ const insertFlowDiehl = async (payload) => {
       }
       // Commit the transaction
       await client.query('COMMIT');
-      console.log(`${payload.Application}, ${payload.DeviceName} , flow inserted successfully`);
+      //console.log(`${payload.Application}, ${payload.DeviceName} , flow inserted successfully`);
     } catch (err) {
       // Rollback the transaction if an error occurs
       await client.query('ROLLBACK');
@@ -96,7 +103,7 @@ const insertFlowJanz2 = async (payload) => {
       }
       // Commit the transaction
       await client.query('COMMIT');
-      console.log(`${payload.Application}, ${payload.DeviceName} , flow inserted successfully`);
+      //console.log(`${payload.Application}, ${payload.DeviceName} , flow inserted successfully`);
     } catch (err) {
       // Rollback the transaction if an error occurs
       await client.query('ROLLBACK');
@@ -124,7 +131,7 @@ const insertFlow2 = async (payload) => {
       }
       // Commit the transaction
       await client.query('COMMIT');
-      console.log(`${payload.Application}, ${payload.DeviceName} , flow inserted successfully`);
+      //console.log(`${payload.Application}, ${payload.DeviceName} , flow inserted successfully`);
     } catch (err) {
       // Rollback the transaction if an error occurs
       await client.query('ROLLBACK');
@@ -318,7 +325,7 @@ const insertVolume = async (payload) => {
                             [payload.DeviceName, payload.Date, payload.Volume]);
       // Commit the transaction
       await client.query('COMMIT');
-      console.log(`${payload.Application}, ${payload.DeviceName} , volume inserted successfully`);
+      //console.log(`${payload.Application}, ${payload.DeviceName} , volume inserted successfully`);
     } catch (err) {
       // Rollback the transaction if an error occurs
       await client.query('ROLLBACK');
@@ -347,7 +354,7 @@ const insertVolumeNke = async (payload) => {
         }
         // Commit the transaction
         await client.query('COMMIT');
-        console.log(`${payload.Application}, ${payload.DeviceName} , volume inserted successfully`);
+        //console.log(`${payload.Application}, ${payload.DeviceName} , volume inserted successfully`);
     } catch (err) {
       // Rollback the transaction if an error occurs
       await client.query('ROLLBACK');
@@ -374,7 +381,7 @@ const insertVolumeDiehl = async (payload) => {
                             [payload.DeviceName, datavol, payload.Volume]);
       // Commit the transaction
       await client.query('COMMIT');
-      console.log(`${payload.Application}, ${payload.DeviceName} , volume inserted successfully`);
+      //console.log(`${payload.Application}, ${payload.DeviceName} , volume inserted successfully`);
     } catch (err) {
       // Rollback the transaction if an error occurs
       await client.query('ROLLBACK');
@@ -402,7 +409,7 @@ const insertAlarm = async (payload) => {
                             [payload.DeviceName, payload.Date, alarm]);
       // Commit the transaction
       await client.query('COMMIT');
-      console.log(`${payload.Application}, ${payload.DeviceName} , alarms inserted successfully`);
+      //console.log(`${payload.Application}, ${payload.DeviceName} , alarms inserted successfully`);
     } catch (err) {
       // Rollback the transaction if an error occurs
       await client.query('ROLLBACK');
@@ -425,7 +432,7 @@ const insertBattery = async (payload) => {
                         [payload.DeviceName, payload.Date, payload.Battery]);
       // Commit the transaction
       await client.query('COMMIT');
-      console.log(`${payload.Application}, ${payload.DeviceName} , battery details inserted successfully`);
+      //console.log(`${payload.Application}, ${payload.DeviceName} , battery details inserted successfully`);
     } catch (err) {
       // Rollback the transaction if an error occurs
       await client.query('ROLLBACK');
@@ -444,12 +451,18 @@ const insertCom = async (payload) => {
       // Begin a transaction
       await client.query('BEGIN');
       //Execute insert querie
-      var data_tr = new Date();
+      const data_tr = new Date();
+      const year = data_tr.getFullYear();
+      const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+      const day = String(data_tr.getDate()).padStart(2, '0');
+      const hour = String(data_tr.getHours()).padStart(2, '0');
+      const min = String(data_tr.getMinutes()).padStart(2, '0');
+      const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
       await client.query(`INSERT INTO transmission(gateway,device, date, rssi, snr, sf) VALUES($1, $2, $3, $4, $5, $6)`,
                          [payload.gateway, payload.DeviceName, data_tr, payload.rssi, payload.snr, payload.sf]);
       // Commit the transaction
       await client.query('COMMIT');
-      console.log(`${payload.Application}, ${payload.DeviceName} , communications details inserted successfully`);
+      console.log(`${formattedDate} => ${payload.Application}, Device:${payload.DeviceName}, data inserted successfully!`);
     } catch (err) {
       // Rollback the transaction if an error occurs
       await client.query('ROLLBACK');
@@ -473,7 +486,7 @@ const insertSensecap = async (payload) => {
                         payload.wind_speed, payload.wind_direction, payload.rain_gauge, payload.barometric_pressure]);
       // Commit the transaction
       await client.query('COMMIT');
-      console.log(`${payload.Application}, ${payload.DeviceName} , weather details inserted successfully`);
+      //console.log(`${payload.Application}, ${payload.DeviceName} , weather details inserted successfully`);
     } catch (err) {
       // Rollback the transaction if an error occurs
       await client.query('ROLLBACK');
@@ -495,7 +508,7 @@ const insertPslb = async (payload) => {
                         [payload.DeviceName, payload.Date, payload.Deltas*10, payload.Battery, payload.Lat, payload.Lon]);
       // Commit the transaction
       await client.query('COMMIT');
-      console.log(`${payload.Application}, ${payload.DeviceName} , pressure details inserted successfully`);
+      //console.log(`${payload.Application}, ${payload.DeviceName} , pressure details inserted successfully`);
     } catch (err) {
       // Rollback the transaction if an error occurs
       await client.query('ROLLBACK');
@@ -517,7 +530,7 @@ const insertLdds75 = async (payload) => {
                         [payload.DeviceName, payload.Date, payload.Battery, payload.Distance, payload.Lat, payload.Lon]);
       // Commit the transaction
       await client.query('COMMIT');
-      console.log(`${payload.Application}, ${payload.DeviceName} , distance details inserted successfully`);
+      //console.log(`${payload.Application}, ${payload.DeviceName} , distance details inserted successfully`);
     } catch (err) {
       // Rollback the transaction if an error occurs
       await client.query('ROLLBACK');

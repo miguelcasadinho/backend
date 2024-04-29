@@ -27,6 +27,13 @@ app.post(path, (req, res) => {
     var objectjson = JSON.parse(requestAsJson);
     //console.log(objectjson);
     var appID = objectjson.applicationID;
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     switch (appID) {
         case '34':
             let axioma_decoded = axiomaDecoder(objectjson);
@@ -34,7 +41,8 @@ app.post(path, (req, res) => {
                 //console.log(axioma_decoded);
                 insertPg(axiomaDecoder(objectjson));
             } else {
-                console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                //console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                console.log(`${formattedDate} => ${objectjson.applicationName}, Device:${objectjson.deviceName}, Payload not valid!`);
             }
             res.send('Data received successfully!');      
             break;
@@ -44,7 +52,8 @@ app.post(path, (req, res) => {
                 //console.log(nke_decoded);
                 insertPg(nkeDecoder(objectjson));
             } else {
-                console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                //console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                console.log(`${formattedDate} => ${objectjson.applicationName}, Device:${objectjson.deviceName}, Payload not valid!`);
             }
             res.send('Data received successfully!');      
             break;
@@ -54,7 +63,8 @@ app.post(path, (req, res) => {
                 //console.log(gladiator_decoded);
                 insertPg(gladiatorDecoder(objectjson));
             } else {
-                console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                //console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                console.log(`${formattedDate} => ${objectjson.applicationName}, Device:${objectjson.deviceName}, Payload not valid!`);
             }
             res.send('Data received successfully!');      
             break;
@@ -64,7 +74,8 @@ app.post(path, (req, res) => {
                 //console.log(sagem_decoded);
                 insertPg(sagemDecoder(objectjson));
             } else {
-                console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                //console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                console.log(`${formattedDate} => ${objectjson.applicationName}, Device:${objectjson.deviceName}, Payload not valid!`);
             }
             res.send('Data received successfully!');      
             break;
@@ -74,7 +85,8 @@ app.post(path, (req, res) => {
                 //console.log(xtr_decoded);
                 insertPg(xtrDecoder(objectjson));
             } else {
-                console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                //console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                console.log(`${formattedDate} => ${objectjson.applicationName}, Device:${objectjson.deviceName}, Payload not valid!`);
             }
             res.send('Data received successfully!');      
             break;
@@ -84,7 +96,8 @@ app.post(path, (req, res) => {
                 //console.log(arrow_decoded);
                 insertPg(arrowDecoder(objectjson));
             } else {
-                console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                //console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                console.log(`${formattedDate} => ${objectjson.applicationName}, Device:${objectjson.deviceName}, Payload not valid!`);
             }
             res.send('Data received successfully!');        
             break;
@@ -94,7 +107,8 @@ app.post(path, (req, res) => {
                 //console.log(janz2_decoded);
                 insertPg(janz2Decoder(objectjson));
             } else {
-                console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                //console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                console.log(`${formattedDate} => ${objectjson.applicationName}, Device:${objectjson.deviceName}, Payload not valid!`);
             }
             res.send('Data received successfully!');    
             break;
@@ -104,7 +118,8 @@ app.post(path, (req, res) => {
                 //console.log(diehl_decoded);
                 insertPg(diehlDecoder(objectjson));
             } else {
-                console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                //console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                console.log(`${formattedDate} => ${objectjson.applicationName}, Device:${objectjson.deviceName}, Payload not valid!`);
             }
             res.send('Data received successfully!');    
             break;
@@ -114,7 +129,8 @@ app.post(path, (req, res) => {
                 //console.log(pslb_decoded);
                 insertPg(sensecapDecoder(objectjson));   
             } else {
-                console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                //console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                console.log(`${formattedDate} => ${objectjson.applicationName}, Device:${objectjson.deviceName}, Payload not valid!`);
             }
             res.send('Data received successfully!');
             break;
@@ -124,7 +140,8 @@ app.post(path, (req, res) => {
                 //console.log(pslb_decoded);
                 insertPg(pslbDecoder(objectjson));   
             } else {
-                console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                //console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                console.log(`${formattedDate} => ${objectjson.applicationName}, Device:${objectjson.deviceName}, Payload not valid!`);
             }
             res.send('Data received successfully!');
             break;
@@ -134,7 +151,8 @@ app.post(path, (req, res) => {
                 //console.log(ldds75_decoded);
                 insertPg(ldds75Decoder(objectjson));   
             } else {
-                console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                //console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                console.log(`${formattedDate} => ${objectjson.applicationName}, Device:${objectjson.deviceName}, Payload not valid!`);
             }
             res.send('Data received successfully!');
             break;           
@@ -144,7 +162,8 @@ app.post(path, (req, res) => {
                 //console.log(janzLora_decoded);
                 insertPg(janzLoraDecoder(objectjson));  
             } else {
-                console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                //console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                console.log(`${formattedDate} => ${objectjson.applicationName}, Device:${objectjson.deviceName}, Payload not valid!`);
             }  
             res.send('Data received successfully!');
             break;

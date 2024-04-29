@@ -62,7 +62,7 @@ const convertToXlsx = async (data, fileName) => {
       sheet.addRow(row);
     });
     await workbook.xlsx.writeFile(fileName);
-    console.log(fileName, 'written successfully.');
+    //console.log(fileName, 'written successfully.');
     } catch (error) {
     console.error('Error converting to XLSX:', error);
     }
@@ -71,7 +71,7 @@ const convertToXlsx = async (data, fileName) => {
 const zeroregasdataTask = async () => {
     try {
         const zeroregasdata = await executeQuery(query);
-        console.log(zeroregasdata.length, "records fetched successfully");
+        //console.log(zeroregasdata.length, "records fetched successfully");
         await convertToXlsx(zeroregasdata, '/home/giggo/regas.xlsx');
     } catch (error) {
         console.error('Error fetching zero regas data:', error);

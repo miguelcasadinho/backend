@@ -42,7 +42,7 @@ const executeQuery = async (query, params = []) => {
 const falhas4hdataTask = async () => {
     try {
         const falhas4hdata = await executeQuery(query);
-        console.log(falhas4hdata.length, "records fetched successfully");
+        //console.log(falhas4hdata.length, "records fetched successfully");
         return falhas4hdata;
     } catch (error) {
         console.error('Error fetching falhas 4h data:', error);

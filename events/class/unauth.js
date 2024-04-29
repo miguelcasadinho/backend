@@ -42,7 +42,7 @@ const executeQuery = async (query, params = []) => {
 const unauthdataTask = async () => {
     try {
         const unauthdata = await executeQuery(query);
-        console.log(unauthdata.length, "records fetched successfully");
+        //console.log(unauthdata.length, "records fetched successfully");
         return unauthdata;
     } catch (error) {
         console.error('Error fetching zero GC data:', error);

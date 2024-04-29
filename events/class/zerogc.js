@@ -63,7 +63,7 @@ const executeQuery = async (query, params = []) => {
 const zerogcdataTask = async () => {
     try {
         const zerogcdata = await executeQuery(query);
-        console.log(zerogcdata.length, "records fetched successfully");
+        //console.log(zerogcdata.length, "records fetched successfully");
         return zerogcdata;
     } catch (error) {
         console.error('Error fetching zero GC data:', error);

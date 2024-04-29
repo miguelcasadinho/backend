@@ -2,6 +2,9 @@
 const axiomaDecoder = (message) => {
     if (message.hasOwnProperty('fPort') && message.hasOwnProperty('data')) {
         var fPort = message.fPort;
+        if (message.tags.hasOwnProperty('rph')) {
+            var rph = parseInt(message.tags.rph);
+        }
         if (fPort == 100) {
             var bytes = Buffer.from(message.data, 'base64');
             switch(bytes[4]) {
@@ -44,7 +47,12 @@ const axiomaDecoder = (message) => {
             };
             var deltas = [];
             for (var i=17; i<(bytes.length); i+=2) {
-                deltas[(i-17)/2] = parseFloat(((bytes[i] | bytes[i+1] << 8 )*0.001).toFixed(3));
+                if (message.tags.hasOwnProperty('rph')) {
+                    deltas[(i-17)/2] = parseFloat(((bytes[i] | bytes[i+1] << 8 )*0.001*rph).toFixed(3))
+                }
+                else {
+                    deltas[(i-17)/2] = parseFloat(((bytes[i] | bytes[i+1] << 8 )*0.001).toFixed(3));
+                }
             };
             var rxinfo_length = message.rxInfo.length;
             var snr = [];
@@ -70,6 +78,7 @@ const axiomaDecoder = (message) => {
                 "Volume_log": parseFloat(volume_log.toFixed(2)),
                 "Consumo": parseFloat((volume - volume_log).toFixed(2)),
                 "Deltas": deltas,
+                "rph": rph,
                 "gateway": gatewayID,
                 "rssi": message.rxInfo[index].rssi,
                 "snr": message.rxInfo[index].loRaSNR,

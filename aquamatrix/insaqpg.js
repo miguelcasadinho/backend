@@ -376,10 +376,12 @@ const inscoords = async () => {
 const insfat = async () => {
   try {
       const fatdata = await fatdataTask();
-      //console.log(fatdata);
-      await insertfatdata(fatdata);
-      //await pool.end();
-      //console.log('Connection pool closed.');
+      if (fatdata !== 'no data'){
+        //console.log(fatdata);
+        await insertfatdata(fatdata);
+        //await pool.end();
+        //console.log('Connection pool closed.');
+      }
   } catch (error) {
       console.error('Error:', error);
   }

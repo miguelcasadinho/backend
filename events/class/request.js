@@ -68,7 +68,7 @@ const requestdataTask = async () => {
     try {
         const requestdata = await executeQuery(query);
         if (requestdata.length > 0){
-          console.log(requestdata.length, "records fetched successfully");
+          //console.log(requestdata.length, "records fetched successfully");
         };
         return requestdata;
     } catch (error) {
@@ -78,3 +78,4 @@ const requestdataTask = async () => {
 };
 
 export { requestdataTask };
+requestdataTask();

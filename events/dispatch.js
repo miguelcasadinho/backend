@@ -35,6 +35,7 @@ const unauthsendEmail = async (data) => {
             let minute = ('0' + now.getMinutes()).slice(-2); // Using slice to pad with leading zero
             let second = ('0' + now.getSeconds()).slice(-2); // Using slice to pad with leading zero
             let data = day + '-' + month + '-' + year + ' pelas ' + hour + ':' + minute + ':' + second;
+            const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
             const mailOptions = {
                 from: 'mciot.pt@gmail.com',
                 to: 'miguel.casadinho@emas-beja.pt,pedro.rodrigues@emas-beja.pt,luis.janeiro@emas-beja.pt,sabrina.dores@emas-beja.pt,helio.placido@emas-beja.pt,nuno.barnabe@emas-beja.pt',
@@ -42,7 +43,7 @@ const unauthsendEmail = async (data) => {
                 text: 'Olá, no dia ' + data + ' a intervenção ' + intervencao + ", com o sintoma " + int_sintoma + " e trabalho " + work + ", na morada "  + morada + " foi concluida."
             };
             const info = await transporter.sendMail(mailOptions);
-            console.log('Email sent:', info.response);
+            console.log(`${formattedDate} => ${work} executed, Email sent:, ${info.response}`);
         }
     } catch (error) {
         console.error('Error sending email:', error);
@@ -52,6 +53,13 @@ const unauthsendEmail = async (data) => {
 
 const zeroregassendEmail = async () => {
     try {
+        const data_tr = new Date();
+        const year = data_tr.getFullYear();
+        const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+        const day = String(data_tr.getDate()).padStart(2, '0');
+        const hour = String(data_tr.getHours()).padStart(2, '0');
+        const min = String(data_tr.getMinutes()).padStart(2, '0');
+        const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
         const mailOptions = {
             from: 'mciot.pt@gmail.com',
             to: 'miguel.casadinho@emas-beja.pt,luis.janeiro@emas-beja.pt,Helio.Placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt',
@@ -66,7 +74,7 @@ const zeroregassendEmail = async () => {
             ]
         };
         const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent:', info.response);
+        console.log(`${formattedDate} => Green spaces events executed, Email sent:, ${info.response}`);
     } catch (error) {
         console.error('Error sending email:', error);
         // Consider adding retries or other error handling mechanisms here
@@ -75,6 +83,13 @@ const zeroregassendEmail = async () => {
 
 const zerogcsendEmail = async (data) => {
     try {
+        const data_tr = new Date();
+        const year = data_tr.getFullYear();
+        const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+        const day = String(data_tr.getDate()).padStart(2, '0');
+        const hour = String(data_tr.getHours()).padStart(2, '0');
+        const min = String(data_tr.getMinutes()).padStart(2, '0');
+        const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
         for (const entry of data) {
             const { local, device, name, morada, consumo } = entry;
             const mailOptions = {
@@ -84,7 +99,7 @@ const zerogcsendEmail = async (data) => {
                 text: `Olá, o contador ${device} instalado no local ${local} com o nome ${name} e morada ${morada} teve um consumo de ${consumo} m3 nas últimas 72 horas.`
             };
             const info = await transporter.sendMail(mailOptions);
-            console.log('Email sent:', info.response);
+            console.log(`${formattedDate} => Big consumers events executed, Email sent:, ${info.response}`);
         }
     } catch (error) {
         console.error('Error sending email:', error);
@@ -105,6 +120,7 @@ const falhas4hsendEmail = async (data) => {
             let minute = ('0' + now.getMinutes()).slice(-2); // Using slice to pad with leading zero
             let second = ('0' + now.getSeconds()).slice(-2); // Using slice to pad with leading zero
             let date = day + '-' + month + '-' + year + ' pelas ' + hour + ':' + minute + ':' + second;
+            const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
             const mailOptions = {
                 from: 'mciot.pt@gmail.com',
                 to: 'miguel.casadinho@emas-beja.pt,artur.janeiro@emas-beja.pt,goncalo.candeias@emas-beja.pt,joao.pirata@emas-beja.pt,gabriela.palma@emas-beja.pt,j.dias@emas-beja.pt',
@@ -112,7 +128,7 @@ const falhas4hsendEmail = async (data) => {
                 text: 'Olá, no dia ' + date + ' a intervenção ' + numero + ' com o sintoma ' + sintoma + ' e morada '  + morada + ' teve uma interrupção de abastecimento de ' + duracao_hours + ' horas.'            
             };
             const info = await transporter.sendMail(mailOptions);
-            console.log('Email sent:', info.response);
+            console.log(`${formattedDate} => 4 hours failures events executed, Email sent:, ${info.response}`);
         }
     } catch (error) {
         console.error('Error sending email:', error);
@@ -121,6 +137,13 @@ const falhas4hsendEmail = async (data) => {
 
 const request2telegram = async (data) => {
     if (data.length > 0) {
+        const data_tr = new Date();
+        const year = data_tr.getFullYear();
+        const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+        const day = String(data_tr.getDate()).padStart(2, '0');
+        const hour = String(data_tr.getHours()).padStart(2, '0');
+        const min = String(data_tr.getMinutes()).padStart(2, '0');
+        const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
         const telegrambot = async (message, body) => {
           try {
             await bot.sendMessage(chatId, `${message}\n<pre>${body}</pre>`, {
@@ -134,6 +157,7 @@ const request2telegram = async (data) => {
             const message = sintoma;
             const body = `${requisicao}, ${morada}`;
             await telegrambot(message, body);
+            console.log(`${formattedDate} => New requests events executed!`);
         };
     };
 };
