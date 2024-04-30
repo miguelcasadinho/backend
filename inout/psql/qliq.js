@@ -214,7 +214,7 @@ const qliqdataTask = async () => {
     try {
         const qliqdata = await executeQuery(query);
         //console.log(qliqdata);
-        console.log(qliqdata.length, "records fetched successfully");
+        //console.log(qliqdata.length, "records fetched successfully");
         return qliqdata;
     } catch (error) {
         console.error('Error fetching qliq data:', error);

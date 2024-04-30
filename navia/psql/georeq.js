@@ -105,7 +105,7 @@ const geocodeAddresses = async (addresses) => {
 const georeqTask = async () => {
     try {
         const georeqdata = await executeQuery(query);
-        console.log(georeqdata.length, "records fetched successfully");
+        //console.log(georeqdata.length, "records fetched successfully");
         //console.log(georeqdata);
         const geodata = await geocodeAddresses(georeqdata);
         //console.log(geodata);

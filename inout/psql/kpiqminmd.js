@@ -37,7 +37,7 @@ const kpiqminmddataTask = async () => {
     try {
         const kpiqminmddata = await executeQuery(query);
         //console.log(kpiqminmddata);
-        console.log(kpiqminmddata.length, "records fetched successfully");
+        //console.log(kpiqminmddata.length, "records fetched successfully");
         return kpiqminmddata;
     } catch (error) {
         console.error('Error fetching qmin qmd data:', error);

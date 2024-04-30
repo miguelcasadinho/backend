@@ -32,6 +32,13 @@ const insertqhourdata = async (qhourdata) => {
     try {
       // Begin a transaction
       await client.query('BEGIN');
+      const data_tr = new Date();
+      const year = data_tr.getFullYear();
+      const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+      const day = String(data_tr.getDate()).padStart(2, '0');
+      const hour = String(data_tr.getHours()).padStart(2, '0');
+      const min = String(data_tr.getMinutes()).padStart(2, '0');
+      const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
       // Iterate over the data and execute insert queries
       for (let i=0; i < qhourdata.length ; i++){
         for (let j=1; j < qhourdata[i].length -1; j++){
@@ -41,7 +48,7 @@ const insertqhourdata = async (qhourdata) => {
       }
       // Commit the transaction
       await client.query('COMMIT');
-      console.log('Data inserted successfully');
+      console.log(`${formattedDate} => ${qhourdata.length} zmc's qhour date inserted successfully!`);
     } catch (err) {
       // Rollback the transaction if an error occurs
       await client.query('ROLLBACK');
@@ -58,6 +65,13 @@ const insertvolmendata = async (volmendata) => {
   try {
     // Begin a transaction
     await client.query('BEGIN');
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     // Iterate over the data and execute insert queries
     for (let i=0; i < volmendata.length ; i++){
       await client.query(`INSERT INTO zmcvol(tag_id, date, volume) VALUES($1, $2, $3)`, 
@@ -65,7 +79,7 @@ const insertvolmendata = async (volmendata) => {
     }
     // Commit the transaction
     await client.query('COMMIT');
-    console.log('Data inserted successfully');
+    console.log(`${formattedDate} => ${volmendata.length} zmc's monthly volume inserted successfully!`);
   } catch (err) {
     // Rollback the transaction if an error occurs
     await client.query('ROLLBACK');
@@ -82,6 +96,13 @@ const insertqmin24data = async (data) => {
   try {
     // Begin a transaction
     await client.query('BEGIN');
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     // Iterate over the data and execute insert queries
     for (let i=0; i < data.length ; i++){
         await client.query(`INSERT INTO qmin(tag_id, date, flow)  VALUES($1, $2, $3)  ON CONFLICT (tag_id) DO UPDATE SET
@@ -89,7 +110,7 @@ const insertqmin24data = async (data) => {
     }
     // Commit the transaction
     await client.query('COMMIT');
-    console.log('Data inserted successfully');
+    console.log(`${formattedDate} => ${data.length} zmc's night qmin inserted successfully!`);
   } catch (err) {
     // Rollback the transaction if an error occurs
     await client.query('ROLLBACK');
@@ -106,13 +127,20 @@ const insertqmin4evdata = async (data) => {
   try {
     // Begin a transaction
     await client.query('BEGIN');
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     // Iterate over the data and execute insert queries
     for (let i=0; i < data.length ; i++){
         await client.query(`INSERT INTO qmin4ev(tag_id, date, flow)  VALUES($1, $2, $3)`, [Number(data[i].tag_ID), new Date(data[i].Date), Number(data[i].Value)]);
     }
     // Commit the transaction
     await client.query('COMMIT');
-    console.log('Data inserted successfully');
+    console.log(`${formattedDate} => ${data.length} zmc's 4ev night qmin inserted successfully!`);
   } catch (err) {
     // Rollback the transaction if an error occurs
     await client.query('ROLLBACK');
@@ -129,6 +157,13 @@ const insertqmin48data = async (data) => {
   try {
     // Begin a transaction
     await client.query('BEGIN');
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     // Iterate over the data and execute insert queries
     for (let i=0; i < data.length ; i++){
         await client.query(`INSERT INTO qmin48(tag_id, date, flow)  VALUES($1, $2, $3)  ON CONFLICT (tag_id) DO UPDATE SET
@@ -136,7 +171,7 @@ const insertqmin48data = async (data) => {
     }
     // Commit the transaction
     await client.query('COMMIT');
-    console.log('Data inserted successfully');
+    console.log(`${formattedDate} => ${data.length} zmc's last night qmin inserted successfully!`);
   } catch (err) {
     // Rollback the transaction if an error occurs
     await client.query('ROLLBACK');
@@ -153,6 +188,13 @@ const insertqliqdata = async (data) => {
   try {
     // Begin a transaction
     await client.query('BEGIN');
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     // Iterate over the data and execute insert queries
     for (let i=0; i < data.length ; i++){
         await client.query(`INSERT INTO zmcqliq(zmc, date, dis, tel, liq) VALUES($1, $2, $3, $4, $5)  ON CONFLICT (zmc, date) DO UPDATE SET
@@ -161,7 +203,7 @@ const insertqliqdata = async (data) => {
     }
     // Commit the transaction
     await client.query('COMMIT');
-    console.log('Data inserted successfully');
+    console.log(`${formattedDate} => ${data.length} zmc's qliq inserted successfully!`);
   } catch (err) {
     // Rollback the transaction if an error occurs
     await client.query('ROLLBACK');
@@ -178,6 +220,13 @@ const insertkpigisdata = async (data) => {
   try {
     // Begin a transaction
     await client.query('BEGIN');
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     // Iterate over the data and execute insert queries
     for (let i=0; i < data.length ; i++){
         await client.query(`INSERT INTO kpi(zmc, tub_l, ram_n, ram_lm) VALUES($1, $2, $3, $4)  ON CONFLICT (zmc) DO UPDATE SET
@@ -186,7 +235,7 @@ const insertkpigisdata = async (data) => {
     }
     // Commit the transaction
     await client.query('COMMIT');
-    console.log('Data inserted successfully');
+    console.log(`${formattedDate} => ${data.length} zmc's GIS data inserted successfully!`);
   } catch (err) {
     // Rollback the transaction if an error occurs
     await client.query('ROLLBACK');
@@ -203,6 +252,13 @@ const insertkpiaquadata = async (data) => {
   try {
     // Begin a transaction
     await client.query('BEGIN');
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     // Iterate over the data and execute insert queries
     for (let i=0; i < data.length ; i++){
         await client.query(`INSERT INTO kpi(zmc, cli, cli_dom) VALUES($1, $2, $3)  ON CONFLICT (zmc) DO UPDATE SET
@@ -211,7 +267,7 @@ const insertkpiaquadata = async (data) => {
     }
     // Commit the transaction
     await client.query('COMMIT');
-    console.log('Data inserted successfully');
+    console.log(`${formattedDate} => ${data.length} zmc's Aqua data inserted successfully!`);
   } catch (err) {
     // Rollback the transaction if an error occurs
     await client.query('ROLLBACK');
@@ -228,6 +284,13 @@ const insertkpiqminmddata = async (data) => {
   try {
     // Begin a transaction
     await client.query('BEGIN');
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     // Iterate over the data and execute insert queries
     for (let i=0; i < data.length ; i++){
         await client.query(`INSERT INTO kpi(zmc, qmin, qmd) VALUES($1, $2, $3)  ON CONFLICT (zmc) DO UPDATE SET
@@ -236,7 +299,7 @@ const insertkpiqminmddata = async (data) => {
     }
     // Commit the transaction
     await client.query('COMMIT');
-    console.log('Data inserted successfully');
+    console.log(`${formattedDate} => ${data.length} zmc's avg night qmin inserted successfully!`);
   } catch (err) {
     // Rollback the transaction if an error occurs
     await client.query('ROLLBACK');
@@ -253,6 +316,13 @@ const insertkpiqminliqdata = async (data) => {
   try {
     // Begin a transaction
     await client.query('BEGIN');
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     // Iterate over the data and execute insert queries
     for (let i=0; i < data.length ; i++){
         await client.query(`INSERT INTO kpi(zmc, qliq) VALUES($1, $2)  ON CONFLICT (zmc) DO UPDATE SET qliq = EXCLUDED.qliq`, 
@@ -260,7 +330,7 @@ const insertkpiqminliqdata = async (data) => {
     }
     // Commit the transaction
     await client.query('COMMIT');
-    console.log('Data inserted successfully');
+    console.log(`${formattedDate} => ${data.length} zmc's qmin liq inserted successfully!`);
   } catch (err) {
     // Rollback the transaction if an error occurs
     await client.query('ROLLBACK');

@@ -82,10 +82,10 @@ const fatdataTask = async () => {
             return fatdata; // Ignore empty or invalid XML data
         }
         else{
-            console.log(xml.length, 'records');
+            //console.log(xml.length, 'records');
             const fatdata = await extractdata(xml);
             // Handle the extracted data
-            console.log(fatdata.length, 'fats to insert');
+            //console.log(fatdata.length, 'fats to insert');
             return fatdata;
         }
 

@@ -478,7 +478,7 @@ const kpiaquadataTask = async () => {
     try {
         const kpiaquadata = await executeQuery(query);
         //console.log(kpiaquadata);
-        console.log(kpiaquadata.length, "records fetched successfully");
+        //onsole.log(kpiaquadata.length, "records fetched successfully");
         return kpiaquadata;
     } catch (error) {
         console.error('Error fetching kpiaqua data:', error);

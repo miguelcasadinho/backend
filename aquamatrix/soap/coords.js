@@ -8,7 +8,6 @@ import { GIS_CoordenadasPorRamal } from './methods/methods.js';
 config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../../.env') });
 
 let xml;
-let coordsdata = [];
 
 const getxml = async () => {
     try {
@@ -40,6 +39,7 @@ const getxml = async () => {
 };
 
 const extractdata = () => {
+    let coordsdata = [];
     return new Promise((resolve, reject) => {
         for (let i=0; i < xml.length; i++){
             if (Object.hasOwnProperty.bind(xml[i])('LOCAL')){
@@ -58,10 +58,10 @@ const extractdata = () => {
 const coordsdataTask = async () => {
     try {
         const xml = await getxml();
-        console.log(xml.length, 'records');
+        //console.log(xml.length, 'records');
         const coordsdata = await extractdata(xml);
         // Handle the extracted data
-        console.log(coordsdata.length, 'coords to insert');
+        //console.log(coordsdata.length, 'coords to insert');
         return coordsdata;
     } catch (error) {
         // Handle any errors in the Promise chain

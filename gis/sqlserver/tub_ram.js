@@ -44,7 +44,7 @@ const executeQuery = async () => {
 const tubramdataTask = async () => {
     try {
       const result = await executeQuery();
-      console.log(result.length, 'records retrieved');
+      //console.log(result.length, 'records retrieved');
       return result;
     } catch (error) {
       console.error('Error in tubramdataTask:', error);

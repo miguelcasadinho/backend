@@ -1399,7 +1399,7 @@ const executeQuery = async (query, params = []) => {
 const resoTask = async () => {
     try {
         const reqsodata = await executeQuery(query);
-        console.log(reqsodata.length, "records fetched successfully");
+        //console.log(reqsodata.length, "records fetched successfully");
         return reqsodata;
     } catch (error) {
         console.error('Error fetching requests, service orders data:', error);
@@ -1408,5 +1408,5 @@ const resoTask = async () => {
 };
 
 export { resoTask };
-resoTask()
+
 

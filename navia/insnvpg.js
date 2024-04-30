@@ -21,14 +21,11 @@ const deleteAllRecords  = async (tableName) => {
   try {
     // Begin a transaction
     await client.query('BEGIN');
-
     // Delete all records from the specified table
     await client.query(`DELETE FROM ${tableName}`);
-
     // Commit the transaction
     await client.query('COMMIT');
-    
-    console.log('All records deleted successfully from', tableName);
+    //console.log('All records deleted successfully from', tableName);
   } catch (err) {
     // Rollback the transaction if an error occurs
     await client.query('ROLLBACK');
@@ -45,6 +42,13 @@ const insertresodata = async (data) => {
     try {
       // Begin a transaction
       await client.query('BEGIN');
+      const data_tr = new Date();
+      const year = data_tr.getFullYear();
+      const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+      const day = String(data_tr.getDate()).padStart(2, '0');
+      const hour = String(data_tr.getHours()).padStart(2, '0');
+      const min = String(data_tr.getMinutes()).padStart(2, '0');
+      const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
       // Iterate over the data and execute insert queries
       let date = new Date();
       for (let i=0; i < data.length ; i++){
@@ -54,7 +58,7 @@ const insertresodata = async (data) => {
       }
       // Commit the transaction
       await client.query('COMMIT');
-      console.log('Data inserted successfully');
+      console.log(`${formattedDate} => ${data.length} records of navia requests per zmc inserted successfully!`);
     } catch (err) {
       // Rollback the transaction if an error occurs
       await client.query('ROLLBACK');
@@ -71,6 +75,13 @@ const insertgeoreqdata = async (data) => {
   try {
     // Begin a transaction
     await client.query('BEGIN');
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     // Iterate over the data and execute insert queries
     for (let i=0; i < data.length ; i++){
       await client.query(`INSERT INTO georequest(date, request, symptom, state, street, locality, zmc, lat, lon) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
@@ -78,7 +89,7 @@ const insertgeoreqdata = async (data) => {
     }
     // Commit the transaction
     await client.query('COMMIT');
-    console.log('Data inserted successfully');
+    console.log(`${formattedDate} => ${data.length} records of georreferenced navia open requests inserted successfully!`);
   } catch (err) {
     // Rollback the transaction if an error occurs
     await client.query('ROLLBACK');

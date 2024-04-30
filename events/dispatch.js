@@ -157,7 +157,7 @@ const request2telegram = async (data) => {
             const message = sintoma;
             const body = `${requisicao}, ${morada}`;
             await telegrambot(message, body);
-            console.log(`${formattedDate} => New requests events executed!`);
+            console.log(`${formattedDate} => New ${sintoma} requests registed!`);
         };
     };
 };

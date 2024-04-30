@@ -148,7 +148,7 @@ const executeQuery = async (query, params = []) => {
 const zmcinfometersTask = async () => {
     try {
         const zmcinfometersdata = await executeQuery(query);
-        console.log(zmcinfometersdata.length, "records fetched successfully");
+        //console.log(zmcinfometersdata.length, "records fetched successfully");
         return zmcinfometersdata;
     } catch (error) {
         console.error('Error fetching zmc meters data:', error);

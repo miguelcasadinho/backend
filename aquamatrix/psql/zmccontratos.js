@@ -215,7 +215,7 @@ const executeQuery = async (query, params = []) => {
 const zmccontratosTask = async () => {
     try {
         const zmccontratosdata = await executeQuery(query);
-        console.log(zmccontratosdata.length, "records fetched successfully");
+        //console.log(zmccontratosdata.length, "records fetched successfully");
         return zmccontratosdata;
     } catch (error) {
         console.error('Error fetching zmc contracts data:', error);

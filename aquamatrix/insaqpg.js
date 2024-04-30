@@ -28,6 +28,13 @@ const insertmetersdata = async (metersdata) => {
     try {
       // Begin a transaction
       await client.query('BEGIN');
+      const data_tr = new Date();
+      const year = data_tr.getFullYear();
+      const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+      const day = String(data_tr.getDate()).padStart(2, '0');
+      const hour = String(data_tr.getHours()).padStart(2, '0');
+      const min = String(data_tr.getMinutes()).padStart(2, '0');
+      const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
       // Iterate over the data and execute insert queries
       for (var i=0; i < metersdata.length ; i++){
         if ( Object.hasOwnProperty.bind(metersdata[i])('DtInstalacao') && Object.hasOwnProperty.bind(metersdata[i])('DtLeitura') ){
@@ -73,7 +80,7 @@ const insertmetersdata = async (metersdata) => {
       }
       // Commit the transaction
       await client.query('COMMIT');
-      console.log('Data inserted successfully');
+      console.log(`${formattedDate} => ${metersdata.length} records of GIS_DadosContadores inserted successfully!`);
     } catch (err) {
       // Rollback the transaction if an error occurs
       await client.query('ROLLBACK');
@@ -90,8 +97,15 @@ const insertclientsdata = async (clientsdata) => {
   try {
     // Begin a transaction
     await client.query('BEGIN');
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     // Iterate over the data and execute insert queries
-    for (var i=0; i < clientsdata.length ; i++){
+    for (let i=0; i < clientsdata.length ; i++){
       await client.query(`INSERT INTO clients(ramal, local, client, building, zone, area, sequence, sensitivity, situation, date_sit, name, phone)
                           VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) ON CONFLICT (client) DO UPDATE SET
                           zone = EXCLUDED.zone, area = EXCLUDED.area, sequence = EXCLUDED.sequence, sensitivity = EXCLUDED.sensitivity, 
@@ -102,7 +116,7 @@ const insertclientsdata = async (clientsdata) => {
     }
     // Commit the transaction
     await client.query('COMMIT');
-    console.log('Data inserted successfully');
+    console.log(`${formattedDate} => ${clientsdata.length} records of GIS_Clientes inserted successfully!`);
   } catch (err) {
     // Rollback the transaction if an error occurs
     await client.query('ROLLBACK');
@@ -119,6 +133,13 @@ const insertcoordsdata = async (coordsdata) => {
   try {
     // Begin a transaction
     await client.query('BEGIN');
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     // Iterate over the data and execute insert queries
     for (var i=0; i < coordsdata.length ; i++){
       await client.query(`INSERT INTO coord(ramal, local, lat, lon) VALUES($1, $2, $3, $4) ON CONFLICT (local) DO UPDATE SET
@@ -127,7 +148,7 @@ const insertcoordsdata = async (coordsdata) => {
     }
     // Commit the transaction
     await client.query('COMMIT');
-    console.log('Data inserted successfully');
+    console.log(`${formattedDate} => ${coordsdata.length} records of GIS_CoordenadasPorRamal inserted successfully!`);
   } catch (err) {
     // Rollback the transaction if an error occurs
     await client.query('ROLLBACK');
@@ -146,6 +167,13 @@ const insertfatdata = async (fatdata) => {
   try {
     // Begin a transaction
     await client.query('BEGIN');
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     // Iterate over the data and execute insert queries
     for (var i=0; i < fatdata.length ; i++){
       await client.query(`INSERT INTO dadosfaturacao(ramal, local, date, date_ini, date_fim, volume_fat) VALUES($1, $2, $3, $4, $5, $6)`,
@@ -153,7 +181,7 @@ const insertfatdata = async (fatdata) => {
     }
     // Commit the transaction
     await client.query('COMMIT');
-    console.log('Data inserted successfully');
+    console.log(`${formattedDate} => ${fatdata.length} records of GIS_DadosFaturacao inserted successfully!`);
   } catch (err) {
     // Rollback the transaction if an error occurs
     await client.query('ROLLBACK');
@@ -194,6 +222,13 @@ const insertcontradata = async (contradata) => {
   try {
     // Begin a transaction
     await client.query('BEGIN');
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     /*
     // Delete all existing records from the infocontrato table
     await deleteAllRecords('infocontrato');
@@ -227,7 +262,7 @@ const insertcontradata = async (contradata) => {
     }
     // Commit the transaction
     await client.query('COMMIT');
-    console.log('Data inserted successfully');
+    console.log(`${formattedDate} => ${contradata.length} records of GIS_InfoContrato inserted successfully!`);
   } catch (err) {
     // Rollback the transaction if an error occurs
     await client.query('ROLLBACK');
@@ -238,12 +273,19 @@ const insertcontradata = async (contradata) => {
   }
 };
 
-// Define an async function to insert fat
+// Define an async function to insert ramrua
 const insertramruadata = async (ramruadata) => {
   const client = await pool.connect();
   try {
     // Begin a transaction
     await client.query('BEGIN');
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     // Iterate over the data and execute insert queries
     for (var i=0; i < ramruadata.length ; i++){
       await client.query(`INSERT INTO ramaisrua(ramal, predio, zmc, dt_sit) VALUES($1, $2, $3, $4) 
@@ -252,7 +294,7 @@ const insertramruadata = async (ramruadata) => {
     }
     // Commit the transaction
     await client.query('COMMIT');
-    console.log('Data inserted successfully');
+    console.log(`${formattedDate} => ${ramruadata.length} records of GIS_RamaisRua inserted successfully!`);
   } catch (err) {
     // Rollback the transaction if an error occurs
     await client.query('ROLLBACK');
@@ -269,6 +311,13 @@ const insertzmccontratosdata = async (data) => {
   try {
     // Begin a transaction
     await client.query('BEGIN');
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     // Iterate over the data and execute insert queries
     for (let i=0; i < data.length ; i++){
       await client.query(`INSERT INTO zmccontratos(tag_id, contratos) VALUES($1, $2) ON CONFLICT (tag_id) DO UPDATE SET contratos = EXCLUDED.contratos`,
@@ -276,7 +325,7 @@ const insertzmccontratosdata = async (data) => {
     }
     // Commit the transaction
     await client.query('COMMIT');
-    console.log('Data inserted successfully');
+    console.log(`${formattedDate} => ${data.length} records of contratos por zmc inserted successfully!`);
   } catch (err) {
     // Rollback the transaction if an error occurs
     await client.query('ROLLBACK');
@@ -293,6 +342,13 @@ const insertinfometersdata = async (data) => {
   try {
     // Begin a transaction
     await client.query('BEGIN');
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     // Iterate over the data and execute insert queries
     for (let i=0; i < data.length ; i++){
       await client.query(`INSERT INTO infometers(tag_id, age, meters, bad, tocheck) VALUES($1, $2, $3, $4, $5) 
@@ -301,7 +357,7 @@ const insertinfometersdata = async (data) => {
     }
     // Commit the transaction
     await client.query('COMMIT');
-    console.log('Data inserted successfully');
+    console.log(`${formattedDate} => ${data.length} records of meters analysis inserted successfully!`);
   } catch (err) {
     // Rollback the transaction if an error occurs
     await client.query('ROLLBACK');
@@ -318,6 +374,13 @@ const insertzmcinfometersdata = async (data) => {
   try {
     // Begin a transaction
     await client.query('BEGIN');
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     // Iterate over the data and execute insert queries
     for (let i=0; i < data.length ; i++){
       await client.query(`INSERT INTO infometerszmc(tag_id, age, meters, bad, tocheck) VALUES($1, $2, $3, $4, $5) 
@@ -326,7 +389,7 @@ const insertzmcinfometersdata = async (data) => {
     }
     // Commit the transaction
     await client.query('COMMIT');
-    console.log('Data inserted successfully');
+    console.log(`${formattedDate} => ${data.length} records of meters analysis per zmc schema inserted successfully!`);
   } catch (err) {
     // Rollback the transaction if an error occurs
     await client.query('ROLLBACK');
@@ -448,3 +511,4 @@ const inszmcinfometers = async () => {
 };
 
 export { insmeters, insclients, inscoords, insfat, inscontra, insramrua, inszmccontratos, insinfometers, inszmcinfometers };
+

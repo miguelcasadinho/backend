@@ -71,7 +71,7 @@ const executeQuery = async (query, params = []) => {
 const infometersTask = async () => {
     try {
         const infometersdata = await executeQuery(query);
-        console.log(infometersdata.length, "records fetched successfully");
+        //console.log(infometersdata.length, "records fetched successfully");
         return infometersdata;
     } catch (error) {
         console.error('Error fetching meters data:', error);

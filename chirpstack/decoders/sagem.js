@@ -130,7 +130,9 @@ const sagemDecoder = (message) => {
             }
             else if (FOS == 0x2142){
                 offset = 13;
-                alarm = "FOS desconhecido";
+                //var netvolume = parseFloat(((bytes[9] | bytes[10] << 8  | bytes[11] << 16 | bytes[12] << 24) / 1000).toFixed(2));
+                var backflow = bytes[5] | bytes[6] << 8  | bytes[7] << 16 | bytes[8] << 24;
+                alarm = `Volume inverso: ${backflow} litro(s)`;
             }
             else if (FOS == 0x7a0e){
                 offset = 17;

@@ -86,7 +86,7 @@ const executeAllQueries = async () => {
 const volmensallora = async () => {
     try {
         const queryResults = await executeAllQueries();
-        console.log(queryResults.length, 'records retrieved');
+        //console.log(queryResults.length, 'records retrieved');
         //console.log(queryResults);
         return queryResults;
     } catch (error) {

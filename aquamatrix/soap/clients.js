@@ -8,7 +8,6 @@ import { GIS_Clientes } from './methods/methods.js';
 config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../../.env') });
 
 let xml;
-let clientsdata = [];
 
 const getxml = async () => {
     try {
@@ -41,6 +40,7 @@ const getxml = async () => {
 
 const extractdata = () => {
     return new Promise((resolve, reject) => {
+        let clientsdata = [];
         let date;
         for (let i=0; i < xml.length; i++){
             if (Object.hasOwnProperty.bind(xml[i])('DTSIT')){
@@ -137,10 +137,10 @@ const extractdata = () => {
 const clientsdataTask = async () => {
     try {
         const xml = await getxml();
-        console.log(xml.length, 'records');
+        //console.log(xml.length, 'records');
         const clientsdata = await extractdata(xml);
         // Handle the extracted data
-        console.log(clientsdata.length, 'clients to insert');
+        //console.log(clientsdata.length, 'clients to insert');
         return clientsdata;
     } catch (error) {
         // Handle any errors in the Promise chain

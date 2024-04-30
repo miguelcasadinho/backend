@@ -110,7 +110,7 @@ const executeAllQueries = async () => {
 const qmin48dataTask = async () => {
 try {
     const query = await executeAllQueries();
-    console.log(query.length, 'records to insert');
+    //console.log(query.length, 'records to insert');
     //console.log(query);
     return query;
 } catch (error) {

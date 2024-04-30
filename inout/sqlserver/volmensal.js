@@ -105,7 +105,7 @@ const volmendataTask = async () => {
     try {
       const query = await executeAllQueries();
       //console.log(volmendata);
-      console.log(volmendata.length, 'records to insert');
+      //console.log(volmendata.length, 'records to insert');
       return volmendata;
     } catch (error) {
       // Handle any errors in the Promise chain

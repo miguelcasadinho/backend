@@ -8,11 +8,9 @@ import { GIS_RamaisRua } from './methods/methods.js';
 config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../../.env') });
 
 let xml;
-let ramruadata = [];
-
 
 const getxml = async () => {
-    ramruadata = [];
+    let ramruadata = [];
     try {
         const response = await axios.post(process.env.aquaHost, GIS_RamaisRua, {
             headers: {
@@ -42,6 +40,7 @@ const getxml = async () => {
 };
 
 const extractdata = () => {
+    let ramruadata = [];
     return new Promise((resolve, reject) => {
         for (let i=0; i < xml.length; i++){
             if (Object.hasOwnProperty.bind(xml[i])('PREDIO') && Object.hasOwnProperty.bind(xml[i])('LOCALIDADE') && Object.hasOwnProperty.bind(xml[i])('ZMC') ){
@@ -124,10 +123,10 @@ const extractdata = () => {
 const ramruadataTask = async () => {
     try {
         const xml = await getxml();
-        console.log(xml.length, 'records');
+        //console.log(xml.length, 'records');
         const ramruadata = await extractdata(xml);
         // Handle the extracted data
-        console.log(ramruadata.length, 'records to insert');
+        //console.log(ramruadata.length, 'records to insert');
         return ramruadata;
     } catch (error) {
         // Handle any errors in the Promise chain

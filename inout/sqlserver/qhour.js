@@ -74,7 +74,7 @@ const executeAllQueries = async () => {
 const qhourdataTask = async () => {
   try {
     const query = await executeAllQueries();
-    console.log(qhourdata.length, 'records to insert');
+    //console.log(qhourdata.length, 'records to insert');
     return qhourdata;
   } catch (error) {
     // Handle any errors in the Promise chain

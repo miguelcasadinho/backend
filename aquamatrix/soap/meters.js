@@ -8,7 +8,6 @@ import { GIS_DadosContadores } from './methods/methods.js';
 config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../../.env') });
 
 let xml;
-let metersdata = [];
 
 const getxml = async () => {
     try {
@@ -41,7 +40,7 @@ const getxml = async () => {
 
 const extractdata = () => {
     return new Promise((resolve, reject) => {
-        metersdata = [];
+        let metersdata = [];
         for (let i=0; i < xml.length; i++){
             if (Object.hasOwnProperty.bind(xml[i])('DT_INSTALACAO') && Object.hasOwnProperty.bind(xml[i])('LOCAL') && Object.hasOwnProperty.bind(xml[i])('CLIENTE') 
             && Object.hasOwnProperty.bind(xml[i])('TARIFA') && Object.hasOwnProperty.bind(xml[i])('ULTIMA_LEITURA') 
@@ -423,10 +422,10 @@ const extractdata = () => {
 const metersdataTask = async () => {
     try {
         const xml = await getxml();
-        console.log(xml.length, 'records');
+        //console.log(xml.length, 'records');
         const metersdata = await extractdata(xml);
         // Handle the extracted data
-        console.log(metersdata.length, 'meters to insert');
+        //console.log(metersdata.length, 'meters to insert');
         return metersdata;
     } catch (error) {
         // Handle any errors in the Promise chain

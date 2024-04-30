@@ -8,7 +8,6 @@ import { GIS_InfoContrato } from './methods/methods.js';
 config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../../.env') });
 
 let xml;
-let contradata = [];
 
 const getxml = async () => {
     try {
@@ -41,7 +40,7 @@ const getxml = async () => {
 
 const extractdata = () => {
     return new Promise((resolve, reject) => {
-        contradata = [];
+        let contradata = [];
         for (let i=0; i < xml.length; i++){
             if (Object.hasOwnProperty.bind(xml[i])('DTINST') && (Object.hasOwnProperty.bind(xml[i])('ANDAR') && typeof xml[i].ANDAR[0] !== 'object') 
                 && Object.hasOwnProperty.bind(xml[i])('LOCALIDADE')){
@@ -420,10 +419,10 @@ const extractdata = () => {
 const contradataTask = async () => {
     try {
         const xml = await getxml();
-        console.log(xml.length, 'records');
+        //console.log(xml.length, 'records');
         const contradata = await extractdata(xml);
         // Handle the extracted data
-        console.log(contradata.length, 'contrats to insert');
+        //console.log(contradata.length, 'contrats to insert');
         return contradata;
     } catch (error) {
         // Handle any errors in the Promise chain
