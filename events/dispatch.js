@@ -117,9 +117,9 @@ const falhas4hsendEmail = async (data) => {
             let month = ('0' + (now.getMonth() + 1)).slice(-2); // Using slice to pad with leading zero
             let day = ('0' + now.getDate()).slice(-2); // Using slice to pad with leading zero
             let hour = ('0' + (now.getHours() + 1)).slice(-2); // Using slice to pad with leading zero, and incrementing hour properly
-            let minute = ('0' + now.getMinutes()).slice(-2); // Using slice to pad with leading zero
+            let min = ('0' + now.getMinutes()).slice(-2); // Using slice to pad with leading zero
             let second = ('0' + now.getSeconds()).slice(-2); // Using slice to pad with leading zero
-            let date = day + '-' + month + '-' + year + ' pelas ' + hour + ':' + minute + ':' + second;
+            let date = day + '-' + month + '-' + year + ' pelas ' + hour + ':' + min + ':' + second;
             const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
             const mailOptions = {
                 from: 'mciot.pt@gmail.com',

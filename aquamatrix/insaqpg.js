@@ -191,8 +191,8 @@ const insertfatdata = async (fatdata) => {
     client.release();
   }
 };
-/*
-// Define an async function to delete contracts
+
+//Define an async function to delete contracts
 const deleteAllRecords  = async (tableName) => {
   const client = await pool.connect();
   try {
@@ -205,7 +205,7 @@ const deleteAllRecords  = async (tableName) => {
     // Commit the transaction
     await client.query('COMMIT');
     
-    console.log('All records deleted successfully from', tableName);
+    //console.log('All records deleted successfully from', tableName);
   } catch (err) {
     // Rollback the transaction if an error occurs
     await client.query('ROLLBACK');
@@ -215,7 +215,7 @@ const deleteAllRecords  = async (tableName) => {
     client.release();
   }
 };
-*/
+
 // Define an async function to insert contracts
 const insertcontradata = async (contradata) => {
   const client = await pool.connect();
@@ -452,6 +452,7 @@ const insfat = async () => {
 
 const inscontra = async () => {
   try {
+      await deleteAllRecords('infocontrato');
       const contradata = await contradataTask();
       //console.log(contradata);
       await insertcontradata(contradata);
@@ -511,4 +512,4 @@ const inszmcinfometers = async () => {
 };
 
 export { insmeters, insclients, inscoords, insfat, inscontra, insramrua, inszmccontratos, insinfometers, inszmcinfometers };
-
+inscontra();

@@ -22,12 +22,12 @@ tub_ram_rule.date = 1; //(1-31)
 const tub_ram_job = schedule.scheduleJob(tub_ram_rule, instub_ram);
 
 // Define the insfat schedule
-const fat_rule = new schedule.RecurrenceRule();
+//const fat_rule = new schedule.RecurrenceRule();
 //fat_rule.minute =0; //(0-59)
 //fat_rule.hour = 5; //(0-23)
 //fat_rule.date = 1; //(1-31)
 // Schedule the insfat tasks
-const fat_job = schedule.scheduleJob(fat_rule, insfat);
+//const fat_job = schedule.scheduleJob(fat_rule, insfat);
 
 // Cancel the job if needed
 // job.cancel();
