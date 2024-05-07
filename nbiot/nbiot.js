@@ -27,9 +27,25 @@ client.on('connect', () => {
 
 // Event handler for when a message is received
 client.on('message', (topic, message) => {
-    //console.log('Received message:', message.toString());
-    //console.log(wlDecoder(message.toString()));
-    insertPg(wlDecoder(message.toString()));
+    // Handle messages for different topics
+    switch(topic) {
+        case 'overflow':
+            // Handle overflow topic message
+            //console.log('Received message:', message.toString());
+            //console.log(wlDecoder(message.toString()));
+            insertPg(wlDecoder(message.toString()));
+            break;
+        case 'topic2':
+            // Handle topic2 message
+            // insertPg or any other operation
+            break;
+        case 'topic3':
+            // Handle topic3 message
+            // insertPg or any other operation
+            break;
+        default:
+            console.log(`Received message on unknown topic: ${topic}`);
+    }
 });
 
 // Event handler for when the client is disconnected
