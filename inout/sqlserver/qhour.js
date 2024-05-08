@@ -28,7 +28,7 @@ const executeQuery = async (query) => {
       return result.recordset;
     } catch (err) {
       sql.close();
-      throw new err(`Error executing SQL query: ${err.message}`);
+      throw err(`Error executing SQL query: ${err.message}`);
     }
 };
 
@@ -45,7 +45,7 @@ const executeAllQueries = async () => {
                                           ORDER BY date desc`);
         qhourdata.push(result);
       }
-      if (flow_tags[i] == 285){
+      else if (flow_tags[i] == 285){
         const result = await executeQuery(`SELECT Tag_ID, DATEADD(MINUTE, 0, DATEADD(HOUR, DATEDIFF(HOUR, 0, Data), 0)) AS date,
                                           ROUND(SUM(Valor)/10/COUNT(Valor), 2) AS flow, count(*) as n
                                           FROM Go_Ready.dbo.Telegestao_data
@@ -65,7 +65,7 @@ const executeAllQueries = async () => {
       }
     }
     qhourdata = qhourdata.filter(item => item.length !== 0);
-    return qhourdata;
+    return qhourdata.flat();
   } catch (err) {
     throw err;
   }
@@ -74,8 +74,8 @@ const executeAllQueries = async () => {
 const qhourdataTask = async () => {
   try {
     const query = await executeAllQueries();
-    //console.log(qhourdata.length, 'records to insert');
-    return qhourdata;
+    //console.log(query.length, 'records to insert');
+    return query;
   } catch (error) {
     // Handle any errors in the Promise chain
     console.error('Error in qhourdataTask:', error);
@@ -83,4 +83,3 @@ const qhourdataTask = async () => {
 };
 
 export {qhourdataTask};
-

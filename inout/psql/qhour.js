@@ -53,7 +53,7 @@ const executeAllQueries = async () => {
                 qhourdata.push(result);
             }
         }
-        return qhourdata;
+        return qhourdata.flat();
     } catch (error) {
         throw error;
     }

@@ -44,7 +44,7 @@ const fat_job = schedule.scheduleJob(fat_rule, insfat);
 // Define the inscontra schedule
 const contra_rule0 = new schedule.RecurrenceRule();
 contra_rule0.minute = 30; //(0-59)
-contra_rule0.hour = 7; //(0-23)
+contra_rule0.hour = 6; //(0-23)
 const contra_rule1 = new schedule.RecurrenceRule();
 contra_rule1.minute = 30; //(0-59)
 contra_rule1.hour = 12; //(0-23)
@@ -85,7 +85,7 @@ infometers_rule.hour = 10; //(0-23)
 // Schedule the insclients tasks
 const infometers_job = schedule.scheduleJob(infometers_rule, insinfometers);
 
-// Define the meters data schedule
+// Define the zmc meters data schedule
 const zmcinfometers_rule = new schedule.RecurrenceRule();
 zmcinfometers_rule.minute = 45; //(0-59)
 zmcinfometers_rule.hour = 10; //(0-23)

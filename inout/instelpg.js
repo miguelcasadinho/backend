@@ -41,10 +41,8 @@ const insertqhourdata = async (qhourdata) => {
       const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
       // Iterate over the data and execute insert queries
       for (let i=0; i < qhourdata.length ; i++){
-        for (let j=1; j < qhourdata[i].length -1; j++){
           await client.query(`INSERT INTO zmcflowdis(tag_id, date, flow) VALUES($1, $2, $3) ON CONFLICT (tag_id, date) DO UPDATE SET
-                    flow = EXCLUDED.flow`, [qhourdata[i][j].Tag_ID, new Date(qhourdata[i][j].date), Number(qhourdata[i][j].flow)]);
-        }
+                    flow = EXCLUDED.flow`, [qhourdata[i].Tag_ID, new Date(qhourdata[i].date), Number(qhourdata[i].flow)]);
       }
       // Commit the transaction
       await client.query('COMMIT');
@@ -344,7 +342,7 @@ const insertkpiqminliqdata = async (data) => {
 const insqhour = async () => {
   try {
       const qhourdata = await qhourdataTask();
-      // console.log(qhourdata);
+      //console.log(qhourdata);
       await insertqhourdata(qhourdata); // Wait for insertqhourdata to finish
       const qhourloradata = await qhourlora();
       // console.log(qhourloradata);

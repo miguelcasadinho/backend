@@ -15,7 +15,7 @@ rule.tz = 'Europe/Lisbon';
 
 // Define the qhour schedule
 const qhour_rule = new schedule.RecurrenceRule();
-qhour_rule.minute = 15; //(0-59)
+qhour_rule.minute = 7; //(0-59)
 const qhour_job = schedule.scheduleJob(qhour_rule, insqhour);// Schedule the tasks
 
 // Define the volmen schedule

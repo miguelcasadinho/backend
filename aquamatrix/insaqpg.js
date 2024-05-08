@@ -512,4 +512,4 @@ const inszmcinfometers = async () => {
 };
 
 export { insmeters, insclients, inscoords, insfat, inscontra, insramrua, inszmccontratos, insinfometers, inszmcinfometers };
-inscontra();
+
