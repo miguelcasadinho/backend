@@ -35,7 +35,7 @@ const unauthsendEmail = async (data) => {
             let minute = ('0' + now.getMinutes()).slice(-2); // Using slice to pad with leading zero
             let second = ('0' + now.getSeconds()).slice(-2); // Using slice to pad with leading zero
             let data = day + '-' + month + '-' + year + ' pelas ' + hour + ':' + minute + ':' + second;
-            const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
+            const formattedDate = `${day}-${month}-${year} ${hour}:${minute}`;
             const mailOptions = {
                 from: 'mciot.pt@gmail.com',
                 to: 'miguel.casadinho@emas-beja.pt,pedro.rodrigues@emas-beja.pt,luis.janeiro@emas-beja.pt,sabrina.dores@emas-beja.pt,helio.placido@emas-beja.pt,nuno.barnabe@emas-beja.pt',

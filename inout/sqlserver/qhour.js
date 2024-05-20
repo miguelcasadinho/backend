@@ -28,7 +28,7 @@ const executeQuery = async (query) => {
       return result.recordset;
     } catch (err) {
       sql.close();
-      throw err(`Error executing SQL query: ${err.message}`);
+      throw new Error(`Error executing SQL query: ${err.message}`);
     }
 };
 

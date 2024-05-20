@@ -27,7 +27,7 @@ const volmen_job = schedule.scheduleJob(volmen_rule, insvolmen);// Schedule the 
 
 // Define the qmin schedule
 const qmin_rule = new schedule.RecurrenceRule();
-qmin_rule.minute = 4; //(0-59)
+qmin_rule.minute = 16; //(0-59)
 qmin_rule.hour = 9; //(0-23)
 const qmin_job = schedule.scheduleJob(qmin_rule, insqmin);// Schedule the tasks
 
@@ -39,7 +39,7 @@ const qliq_job = schedule.scheduleJob(qliq_rule, insqliq);// Schedule the tasks
 
 // Define the kpi schedule
 const kpi_rule = new schedule.RecurrenceRule();
-kpi_rule.minute = 10; //(0-59)
+kpi_rule.minute = 18; //(0-59)
 kpi_rule.hour = 9; //(0-23)
 const kpi_job = schedule.scheduleJob(kpi_rule, inskpi);// Schedule the tasks
 

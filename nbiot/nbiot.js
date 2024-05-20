@@ -2,7 +2,8 @@ import { config } from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 import { wlDecoder } from './decoders/water_leak.js';
-import { insertPg } from './ins_pg.js';
+import { cpl03Decoder } from './decoders/cpl03.js';
+import { insertPg, insertMeters } from './ins_pg.js';
 import mqtt from 'mqtt';
 
 config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../.env') });
@@ -15,13 +16,16 @@ const options = {
     //clientId: 'client_id' 
 };
 
+// MQTT topics you want to subscribe to
+const topics = ['overflow', 'cpl03'];
+
 // Connect to an MQTT broker with authentication
 const client = mqtt.connect(process.env.mqttMciotAddr, options);
 
 // Event handler for when the client is connected
 client.on('connect', () => {
     console.log('Connected to MQTT broker');
-    client.subscribe('overflow');
+    client.subscribe(topics);
     //client.publish('my/topic', 'Hello, MQTT!');
 });
 
@@ -30,14 +34,12 @@ client.on('message', (topic, message) => {
     // Handle messages for different topics
     switch(topic) {
         case 'overflow':
-            // Handle overflow topic message
-            //console.log('Received message:', message.toString());
             //console.log(wlDecoder(message.toString()));
             insertPg(wlDecoder(message.toString()));
             break;
-        case 'topic2':
-            // Handle topic2 message
-            // insertPg or any other operation
+        case 'cpl03':
+            //console.log(cpl03Decoder(message.toString()));
+            insertMeters(cpl03Decoder(message.toString()));
             break;
         case 'topic3':
             // Handle topic3 message
