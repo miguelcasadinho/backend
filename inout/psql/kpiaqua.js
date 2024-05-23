@@ -133,6 +133,13 @@ on infocontrato.ramal = ramaisrua.ramal where zmc = 'PANDORA') as t1,
 on infocontrato.ramal = ramaisrua.ramal where client_group = 'DOMÉSTICOS' and (zmc = 'PANDORA')) as t2
 union all
 SELECT t1.zmc, t1.clients, t2.clientsdom
+from (select 'Beja ZB1 - Moinhos Velhos' as zmc, Count(infocontrato.local) as clients FROM infocontrato 
+left join(select ramaisrua.ramal, ramaisrua.zmc from ramaisrua) as ramaisrua
+on infocontrato.ramal = ramaisrua.ramal where zmc = 'BejaMoinhosVelhos' or zmc = 'PARQUE NOMADA') as t1,
+(SELECT 'Beja ZB1 - Moinhos Velhos' as zmc, Count(infocontrato.local) as clientsdom FROM infocontrato left join(select ramaisrua.ramal, ramaisrua.zmc from ramaisrua) as ramaisrua
+on infocontrato.ramal = ramaisrua.ramal where client_group = 'DOMÉSTICOS' and (zmc = 'BejaMoinhosVelhos' or zmc = 'PARQUE NOMADA')) as t2
+union all
+SELECT t1.zmc, t1.clients, t2.clientsdom
 from (select 'Beja ZB1 - Parque Nómada' as zmc, Count(infocontrato.local) as clients FROM infocontrato 
 left join(select ramaisrua.ramal, ramaisrua.zmc from ramaisrua) as ramaisrua
 on infocontrato.ramal = ramaisrua.ramal where zmc = 'PARQUE NOMADA') as t1,

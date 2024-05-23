@@ -9,14 +9,16 @@ const cpl03Decoder = (message) => {
         //decoded.hexa = hexa;
         decoded.IMEI = hexa.substring(1,16);
         for (const device of devices) {
-            const { imei, pulse, meter, vol_ini, lit_pul, report } = device;
+            const { imei, pulse, meter, vol_ini, lit_pul, report, rph } = device;
             if ( imei === decoded.IMEI){
                 decoded.pulse = pulse;
                 decoded.device = meter;
                 decoded.vol_ini = vol_ini;
                 decoded.lit_pul = lit_pul;
-                decoded.report = report
+                decoded.report = report;
+                decoded.rph = rph
             }
+
         }
         switch(bytes[8]){
             case 0x00:
@@ -52,13 +54,13 @@ const cpl03Decoder = (message) => {
         }
         //decoded.deltasVol = deltasVol;
         if (decoded.pulse === 1){
-            decoded.volume = parseFloat(((((deltasVol[0].index1)*decoded.lit_pul)*0.001)+decoded.vol_ini).toFixed(2));
+            decoded.volume = parseFloat(((((deltasVol[1].index1)*decoded.lit_pul)*0.001)+decoded.vol_ini).toFixed(2));
         }
         else if (decoded.pulse === 2){
-            decoded.volume = parseFloat(((((deltasVol[0].index2)*decoded.lit_pul)*0.001)+decoded.vol_ini).toFixed(2));
+            decoded.volume = parseFloat(((((deltasVol[1].index2)*decoded.lit_pul)*0.001)+decoded.vol_ini).toFixed(2));
         }
         else if (decoded.pulse === 3){
-            decoded.volume = parseFloat(((((deltasVol[0].index3)*decoded.lit_pul)*0.001)+decoded.vol_ini).toFixed(2));
+            decoded.volume = parseFloat(((((deltasVol[1].index3)*decoded.lit_pul)*0.001)+decoded.vol_ini).toFixed(2));
         };
 
         var deltas = [];
@@ -66,19 +68,19 @@ const cpl03Decoder = (message) => {
             if (decoded.pulse === 1){
                 deltas.push({
                     date: deltasVol[j].date,
-                    flow: parseFloat(((deltasVol[j].index1*decoded.lit_pul*0.001) - (deltasVol[j+1].index1*decoded.lit_pul*0.001)).toFixed(3))
+                    flow: parseFloat((((deltasVol[j].index1*decoded.lit_pul*0.001) - (deltasVol[j+1].index1*decoded.lit_pul*0.001))*decoded.rph).toFixed(3))
                 });
             }
             else if (decoded.pulse === 2){
                 deltas.push({
                     date: deltasVol[j].date,
-                    flow: parseFloat(((deltasVol[j].index2*decoded.lit_pul*0.001) - (deltasVol[j+1].index2*decoded.lit_pul*0.001)).toFixed(3))
+                    flow: parseFloat((((deltasVol[j].index2*decoded.lit_pul*0.001) - (deltasVol[j+1].index2*decoded.lit_pul*0.001))*decoded.rph).toFixed(3))
                 });
             }
             else if (decoded.pulse === 3){
                 deltas.push({
                     date: deltasVol[j].date,
-                    flow: parseFloat(((deltasVol[j].index3*decoded.lit_pul*0.001) - (deltasVol[j+1].index3*decoded.lit_pul*0.001)).toFixed(3))
+                    flow: parseFloat((((deltasVol[j].index3*decoded.lit_pul*0.001) - (deltasVol[j+1].index3*decoded.lit_pul*0.001))*decoded.rph).toFixed(3))
                 });
             } 
         };

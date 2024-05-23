@@ -39,11 +39,15 @@ SELECT 'Beja ZA5' as zmc, avg(age) as age, sum(meters) as meters, sum(bad) as ba
 UNION ALL
 SELECT 'Beja ZB1' as zmc, avg(age) as age, sum(meters) as meters, sum(bad) as bad, sum(tocheck) as check FROM infometers where tag_id = 'ZB1' or tag_id = 'BAIRRO DA ESPERANÇA' or tag_id = 'MOINHOS SANTA MARIA BAIXA' or tag_id = 'PANDORA' or tag_id = 'PARQUE NOMADA' or tag_id = 'BEJAMOINHOSVELHOS' or tag_id = 'FONTE MOURO'
 UNION ALL
+SELECT 'Beja ZB1 - Fonte Mouro' as zmc, avg(age) as age, sum(meters) as meters, sum(bad) as bad, sum(tocheck) as check FROM infometers where tag_id = 'FONTE MOURO'
+UNION ALL
 SELECT 'Beja ZB1 - Bairro Esperança' as zmc, avg(age) as age, sum(meters) as meters, sum(bad) as bad, sum(tocheck) as check FROM infometers where tag_id = 'BAIRRO DA ESPERANÇA' or tag_id = 'FONTE MOURO'
 UNION ALL
 SELECT 'Beja ZB1 - Moinhos Santa Maria' as zmc, avg(age) as age, sum(meters) as meters, sum(bad) as bad, sum(tocheck) as check FROM infometers where tag_id = 'MOINHOS SANTA MARIA BAIXA'
 UNION ALL
 SELECT 'Beja ZB1 - Pandora' as zmc, avg(age) as age, sum(meters) as meters, sum(bad) as bad, sum(tocheck) as check FROM infometers where tag_id = 'PANDORA'
+UNION ALL
+SELECT 'Beja ZB1 - Moinhos Velhos' as zmc, avg(age) as age, sum(meters) as meters, sum(bad) as bad, sum(tocheck) as check FROM infometers where tag_id = 'BejaMoinhosVelhos' or tag_id = 'PARQUE NOMADA'
 UNION ALL
 SELECT 'Beja ZB1 - Parque Nómada' as zmc, avg(age) as age, sum(meters) as meters, sum(bad) as bad, sum(tocheck) as check FROM infometers where tag_id = 'PARQUE NOMADA'
 UNION ALL
@@ -56,6 +60,8 @@ UNION ALL
 SELECT 'Beja ZB2 - Ferreira de Castro' as zmc, avg(age) as age, sum(meters) as meters, sum(bad) as bad, sum(tocheck) as check FROM infometers where tag_id = 'FERREIRADECASTRO'
 UNION ALL
 SELECT 'Beja ZB2 - Julião Quintinha' as zmc, avg(age) as age, sum(meters) as meters, sum(bad) as bad, sum(tocheck) as check FROM infometers where tag_id = 'JULIAOQUINTINHA'
+UNION ALL
+SELECT 'Beja ZB2 - Tenente Valadim' as zmc, avg(age) as age, sum(meters) as meters, sum(bad) as bad, sum(tocheck) as check FROM infometers where tag_id = 'TENENTEVALADIM'
 UNION ALL
 SELECT 'Beja ZB2 - Patrocinio Dias' as zmc, avg(age) as age, sum(meters) as meters, sum(bad) as bad, sum(tocheck) as check FROM infometers where tag_id = 'PATROCINIODIAS'
 UNION ALL

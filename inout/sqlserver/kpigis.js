@@ -122,6 +122,12 @@ WHERE Proprietario = 'EMAS' AND (ZMC = 'ZMC-Pandora')) as t1,
 FROM InfraSIG.dbo.aRamais WHERE Proprietario = 'EMAS' AND (ZMC = 'ZMC-Pandora'))as t2
 union all
 SELECT t1.zmc as zmc, t1.Condutas_length, t2.Ramais_number, t2.Ramais_length_med
+FROM (SELECT 'Beja ZB1 - Moinhos Velhos' as zmc, CAST(SUM(Shape.STLength())/1000 AS DECIMAL(6,3)) as Condutas_length FROM aTubagens 
+WHERE Proprietario = 'EMAS' AND (ZMC = 'ZMC-BejaMoinhosVelhos' or ZMC = 'ZMC-Parque Nomada')) as t1,
+(SELECT 'Beja ZB1 - Moinhos Velhos' as zmc, COUNT(Shape.STLength()) as Ramais_number, CAST(SUM(Shape.STLength()) / COUNT(Shape.STLength())AS DECIMAL(5,2)) AS Ramais_length_med
+FROM InfraSIG.dbo.aRamais WHERE Proprietario = 'EMAS' AND (ZMC = 'ZMC-BejaMoinhosVelhos' or ZMC = 'ZMC-Parque Nomada'))as t2
+union all
+SELECT t1.zmc as zmc, t1.Condutas_length, t2.Ramais_number, t2.Ramais_length_med
 FROM (SELECT 'Beja ZB1 - Parque Nómada' as zmc, CAST(SUM(Shape.STLength())/1000 AS DECIMAL(6,3)) as Condutas_length FROM aTubagens 
 WHERE Proprietario = 'EMAS' AND (ZMC = 'ZMC-Parque Nomada')) as t1,
 (SELECT 'Beja ZB1 - Parque Nómada' as zmc, COUNT(Shape.STLength()) as Ramais_number, CAST(SUM(Shape.STLength()) / COUNT(Shape.STLength())AS DECIMAL(5,2)) AS Ramais_length_med

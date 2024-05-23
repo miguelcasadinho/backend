@@ -65,6 +65,9 @@ UNION ALL
 SELECT 'Beja ZB1 - Pandora' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
 where ramaisrua.zmc = 'PANDORA'
 UNION ALL
+SELECT 'Beja ZB1 - Moinhos Velhos' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
+where ramaisrua.zmc = 'BejaMoinhosVelhos' or ramaisrua.zmc = 'PARQUE NOMADA'
+UNION ALL
 SELECT 'Beja ZB1 - Parque Nómada' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
 where ramaisrua.zmc = 'PARQUE NOMADA'
 UNION ALL
