@@ -21,86 +21,56 @@ const configsql = {
 let qmindata = [];
 
 const executeQuery = async (query) => {
+    let pool;
     try {
-      const pool = await sql.connect(configsql);
+      pool = await sql.connect(configsql);
       const result = await pool.request().query(query);
-      sql.close();
       return result.recordset;
     } catch (err) {
-      sql.close();
-      throw new err(`Error executing SQL query: ${err.message}`);
+      throw new Error(`Error executing SQL query: ${err.message}`);
+    } finally {
+      if (pool) {
+        pool.close();
+      }
     }
-};
+  };
 
-const executeAllQueries = async () => {
+  const executeAllQueries = async () => {
     try {
       qmindata = [];
-      for (let i=0; i < flow_tags.length; i++){
-        if (flow_tags[i] == 488){
-            const result = await executeQuery(`
-                SELECT TOP(1) 
-                    tag_ID, 
-                    DATEADD(HOUR, 0, Data) AS Date, 
-                    Valor * 10 AS Value 
-                FROM 
-                    Go_Ready.dbo.Telegestao_data 
-                WHERE 
-                    Tag_ID = ${flow_tags[i]} 
-                    AND Data >= DATEADD(hour, -9, GETDATE()) 
-                    AND Valor = (
-                        SELECT MIN(Valor) 
-                        FROM Go_Ready.dbo.Telegestao_data 
-                        WHERE Data >= DATEADD(hour, -9, GETDATE()) 
-                        AND Tag_ID = ${flow_tags[i]}
-                    ) 
-                ORDER BY 
-                    Data ASC`);
-            qmindata.push(result);
+      for (let i = 0; i < flow_tags.length; i++) {
+        let multiplier = 1;
+        if (flow_tags[i] === 488) {
+          multiplier = 10;
+        } else if (flow_tags[i] === 285) {
+          multiplier = 0.1;
         }
-        else if (flow_tags[i] == 285){
-            const result = await executeQuery(`
-                SELECT TOP(1) 
-                    tag_ID, 
-                    DATEADD(HOUR, 0, Data) AS Date, 
-                    Valor / 10 AS Value 
-                FROM 
-                    Go_Ready.dbo.Telegestao_data 
-                WHERE 
-                    Tag_ID = ${flow_tags[i]} 
-                    AND Data >= DATEADD(hour, -9, GETDATE()) 
-                    AND Valor = (
-                        SELECT MIN(Valor) 
-                        FROM Go_Ready.dbo.Telegestao_data 
-                        WHERE Data >= DATEADD(hour, -9, GETDATE()) 
-                        AND Tag_ID = ${flow_tags[i]}
-                    ) 
-                ORDER BY 
-                    Data ASC`);
-            qmindata.push(result);
-        }
-        else {
-            const result = await executeQuery(`
-                SELECT TOP(1) 
-                    tag_ID, 
-                    DATEADD(HOUR, 0, Data) AS Date, 
-                    Valor AS Value 
-                FROM 
-                    Go_Ready.dbo.Telegestao_data 
-                WHERE 
-                    Tag_ID = ${flow_tags[i]} 
-                    AND Data >= DATEADD(hour, -9, GETDATE()) 
-                    AND Valor = (
-                        SELECT MIN(Valor) 
-                        FROM Go_Ready.dbo.Telegestao_data 
-                        WHERE Data >= DATEADD(hour, -9, GETDATE()) 
-                        AND Tag_ID = ${flow_tags[i]}
-                    ) 
-                ORDER BY 
-                    Data ASC`);
-            qmindata.push(result);
+  
+        const query = `
+          SELECT TOP(1) 
+            tag_ID, 
+            DATEADD(HOUR, 0, Data) AS Date, 
+            Valor * ${multiplier} AS Value 
+          FROM 
+            Go_Ready.dbo.Telegestao_data 
+          WHERE 
+            Tag_ID = ${flow_tags[i]} 
+            AND Data >= DATEADD(hour, -9, GETDATE()) 
+            AND Valor = (
+              SELECT MIN(Valor) 
+              FROM Go_Ready.dbo.Telegestao_data 
+              WHERE Data >= DATEADD(hour, -9, GETDATE()) 
+              AND Tag_ID = ${flow_tags[i]}
+            ) 
+          ORDER BY 
+            Data ASC`;
+  
+        const result = await executeQuery(query);
+        if (result.length > 0) {
+          qmindata.push(result);
         }
       }
-      qmindata = qmindata.filter(item => item.length !== 0);
+  
       return qmindata.flat();
     } catch (err) {
       throw err;
@@ -120,5 +90,4 @@ try {
 };
 
 export {qmindataTask};
-
 

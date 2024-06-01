@@ -46,3 +46,4 @@ const kpiqminmddataTask = async () => {
 };
     
 export { kpiqminmddataTask };
+

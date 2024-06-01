@@ -119,6 +119,27 @@ const insertBattery = async (payload) => {
   }
 };
 
+// Define an async function to insert cpl03 water meter volume
+const insertTransmission = async (payload) => {
+  const client = await pool.connect();
+  try {
+    // Begin a transaction
+    await client.query('BEGIN');
+    //Execute insert querie
+      await client.query(`INSERT INTO transmission(device, date, signal) VALUES($1, $2, $3)`,
+                          [payload.device, payload.deltas[0].date, payload.signal]);
+    // Commit the transaction
+    await client.query('COMMIT');
+  } catch (err) {
+    // Rollback the transaction if an error occurs
+    await client.query('ROLLBACK');
+    console.error('Error inserting data:', err);
+  } finally {
+    // Release the client back to the pool
+    client.release();
+  }
+};
+
 const insertPg = async (payload) => {
     try {
         var model = payload.model;
@@ -142,6 +163,7 @@ const insertMeters = async (payload) => {
         insertFlow(payload);
         insertVolume(payload);
         insertBattery(payload);
+        insertTransmission(payload);
         break;
       default:
         console.log('Unsupported Model:', payload.model);

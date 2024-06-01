@@ -41,9 +41,9 @@ const axiomaDecoder = (message) => {
                 var date =new Date(((bytes[0] | bytes[1] << 8 | bytes[2] << 16 | bytes[3] << 24)* 1000)+74822400000);
                 var date_log = new Date(((bytes[9] | bytes[10] << 8 | bytes[11] << 16 | bytes[12] << 24)* 1000)+74822400000);
             }
-            else if (message.deviceName == '6493678') {// bug - 2 hours parque nómada
-                var date =new Date(((bytes[0] | bytes[1] << 8 | bytes[2] << 16 | bytes[3] << 24)* 1000)+7200000);
-                var date_log = new Date(((bytes[9] | bytes[10] << 8 | bytes[11] << 16 | bytes[12] << 24)* 1000)+7200000);
+            else if (['6493678', '6493686'].includes(message.deviceName)) {// bug - 3 hours 
+                var date =new Date(((bytes[0] | bytes[1] << 8 | bytes[2] << 16 | bytes[3] << 24)* 1000)+10800000);
+                var date_log = new Date(((bytes[9] | bytes[10] << 8 | bytes[11] << 16 | bytes[12] << 24)* 1000)+10800000);
             }
             else {
                 var date =new Date((bytes[0] | bytes[1] << 8 | bytes[2] << 16 | bytes[3] << 24)* 1000);
