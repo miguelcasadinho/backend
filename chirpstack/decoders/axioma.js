@@ -37,7 +37,7 @@ const axiomaDecoder = (message) => {
             };
             var volume_log = (bytes[13] | bytes[14] << 8 | bytes[15] << 16 | bytes[16] << 24)* 0.001;
             var volume = (bytes[5] | bytes[6] << 8 | bytes[7] << 16 | bytes[8] << 24)* 0.001;
-            if (message.deviceName == '5229527') { // bug +- 2 years rega Mira Mortos
+            if (['5229527', '5229378'].includes(message.deviceName)) { // bug +- 2 years rega Mira Mortos
                 var date =new Date(((bytes[0] | bytes[1] << 8 | bytes[2] << 16 | bytes[3] << 24)* 1000)+74822400000);
                 var date_log = new Date(((bytes[9] | bytes[10] << 8 | bytes[11] << 16 | bytes[12] << 24)* 1000)+74822400000);
             }

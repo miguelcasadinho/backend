@@ -3,6 +3,7 @@ const nkeDecoder = (message) => {
         var fPort = message.fPort;
         var bytes = Buffer.from(message.data, 'base64');
         if (fPort == 125 && bytes.length > 15) {
+
           var ST_UNDEF = 0;
           var ST_BL = 1;
           var ST_U4 = 2;
