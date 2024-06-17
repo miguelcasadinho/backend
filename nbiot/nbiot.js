@@ -32,14 +32,26 @@ client.on('connect', () => {
 // Event handler for when a message is received
 client.on('message', (topic, message) => {
     // Handle messages for different topics
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     switch(topic) {
         case 'overflow':
             //console.log(wlDecoder(message.toString()));
             insertPg(wlDecoder(message.toString()));
             break;
         case 'cpl03':
-            //console.log(cpl03Decoder(message.toString()));
-            insertMeters(cpl03Decoder(message.toString()));
+            let decoded = cpl03Decoder(message.toString());
+            if (typeof decoded !== 'undefined'){
+                //console.log(cpl03Decoder(message.toString()));
+                insertMeters(cpl03Decoder(message.toString()));
+            } else {
+                console.log(`${formattedDate} => IMEI: ${message.toString().substring(1,16)}, don't have any meter associated!`);
+            }
             break;
         case 'topic3':
             // Handle topic3 message
