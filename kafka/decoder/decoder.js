@@ -22,7 +22,7 @@ const kafkaDecoder = async (message) => {
         return {
             device: '8868310',
             date: form_decoded['payload']['sample']['sampleTime'],
-            flow: form_decoded['payload']['sample']['value']['integer']*0.001,
+            flow: form_decoded['payload']['sample']['value']['integer']*0.001*10,
         }
 
     } catch (err) {
@@ -53,7 +53,7 @@ const kafkaDecoderVol = async (message) => {
             device: '8868310',
             date: form_decoded['payload']['sample']['sampleTime'],
             //flow: form_decoded['payload']['sample']['value']['consumption.composed_integer_thousandth_value']['integer'],
-            volume: parseFloat(((form_decoded['payload']['sample']['reading']['consumption.composed_integer_thousandth_reading']['integer']-21883910)*0.001).toFixed(2))
+            volume: parseFloat((((form_decoded['payload']['sample']['reading']['consumption.composed_integer_thousandth_reading']['integer'])-21880145)*0.001).toFixed(2))
         }
 
     } catch (err) {

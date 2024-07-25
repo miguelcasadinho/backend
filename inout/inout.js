@@ -33,8 +33,8 @@ const qmin_job = schedule.scheduleJob(qmin_rule, insqmin);// Schedule the tasks
 
 // Define the qliq schedule
 const qliq_rule = new schedule.RecurrenceRule();
-qliq_rule.minute = 15; //(0-59)
-qliq_rule.hour = 8; //(0-23)
+qliq_rule.minute = 19; //(0-59)
+qliq_rule.hour = 9; //(0-23)
 const qliq_job = schedule.scheduleJob(qliq_rule, insqliq);// Schedule the tasks
 
 // Define the kpi schedule
