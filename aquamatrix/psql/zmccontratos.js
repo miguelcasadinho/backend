@@ -15,190 +15,190 @@ const pool = new pg.Pool({
 
 const query = `
 SELECT 'Albernoa - Saída do reservatório' as zmc, count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'ALBERNOAZONAALTA' or ramaisrua.zmc = 'ALBERNOAZONABAIXA'
+where ramaisrua.zmc = 'ZMC-ALBERNOAZONAALTA' or ramaisrua.zmc = 'ZMC-ALBERNOAZONABAIXA'
 UNION ALL
 SELECT 'Albernoa - Zona Alta' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'ALBERNOAZONAALTA'
+where ramaisrua.zmc = 'ZMC-ALBERNOAZONAALTA'
 UNION ALL
 SELECT 'Albernoa - Zona Baixa' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'ALBERNOAZONABAIXA'
+where ramaisrua.zmc = 'ZMC-ALBERNOAZONABAIXA'
 UNION ALL
 SELECT 'Baleizão - Saída do reservatório' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'BALEIZÃO ZONA ALTA' or ramaisrua.zmc = 'BALEIZÃO ZONA BAIXA'
+where ramaisrua.zmc = 'ZMC-BALEIZÃO ZONA ALTA' or ramaisrua.zmc = 'ZMC-BALEIZÃO ZONA BAIXA'
 UNION ALL
 SELECT 'Baleizão - Zona Alta' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'BALEIZÃO ZONA ALTA'
+where ramaisrua.zmc = 'ZMC-BALEIZÃO ZONA ALTA'
 UNION ALL
 SELECT 'Baleizão - Zona Baixa' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'BALEIZÃO ZONA BAIXA'
+where ramaisrua.zmc = 'ZMC-BALEIZÃO ZONA BAIXA'
 UNION ALL
 SELECT 'Beja ZA1' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'ZA1' or ramaisrua.zmc = 'MOINHOS SANTA MARIA'
+where ramaisrua.zmc = 'ZMC-ZA1' or ramaisrua.zmc = 'ZMC-MOINHOS SANTA MARIA'
 UNION ALL
 SELECT 'Beja ZA1 - Moinhos Santa Maria' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'MOINHOS SANTA MARIA'
+where ramaisrua.zmc = 'ZMC-MOINHOS SANTA MARIA'
 UNION ALL
 SELECT 'Beja ZA2' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'ZA2'
+where ramaisrua.zmc = 'ZMC-ZA2'
 UNION ALL
 SELECT 'Beja ZA3' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'ZA3'
+where ramaisrua.zmc = 'ZMC-ZA3'
 UNION ALL
 SELECT 'Beja ZA4' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'ZA4'
+where ramaisrua.zmc = 'ZMC-ZA4'
 UNION ALL
 SELECT 'Beja ZA5' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'ZA5'
+where ramaisrua.zmc = 'ZMC-ZA5'
 UNION ALL
 SELECT 'Beja ZB1' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'ZB1' or ramaisrua.zmc = 'BAIRRO DA ESPERANÇA' or ramaisrua.zmc = 'MOINHOS SANTA MARIA BAIXA' or ramaisrua.zmc = 'PANDORA' or ramaisrua.zmc = 'PARQUE NOMADA' or ramaisrua.zmc = 'BEJAMOINHOSVELHOS' or ramaisrua.zmc = 'FONTE MOURO'
+where ramaisrua.zmc = 'ZMC-ZB1' or ramaisrua.zmc = 'ZMC-BAIRRO DA ESPERANÇA' or ramaisrua.zmc = 'ZMC-MOINHOS SANTA MARIA BAIXA' or ramaisrua.zmc = 'ZMC-PANDORA' or ramaisrua.zmc = 'ZMC-PARQUE NOMADA' or ramaisrua.zmc = 'ZMC-BEJAMOINHOSVELHOS' or ramaisrua.zmc = 'ZMC-FONTE MOURO'
 UNION ALL
 SELECT 'Beja ZB1 - Bairro Esperança' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'BAIRRO DA ESPERANÇA'
+where ramaisrua.zmc = 'ZMC-BAIRRO DA ESPERANÇA'
 UNION ALL
 SELECT 'Beja ZB1 - Fonte Mouro' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'FONTE MOURO'
+where ramaisrua.zmc = 'ZMC-FONTE MOURO'
 UNION ALL
 SELECT 'Beja ZB1 - Moinhos Santa Maria' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'MOINHOS SANTA MARIA BAIXA'
+where ramaisrua.zmc = 'ZMC-MOINHOS SANTA MARIA BAIXA'
 UNION ALL
 SELECT 'Beja ZB1 - Pandora' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'PANDORA'
+where ramaisrua.zmc = 'ZMC-PANDORA'
 UNION ALL
 SELECT 'Beja ZB1 - Moinhos Velhos' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'BejaMoinhosVelhos' or ramaisrua.zmc = 'PARQUE NOMADA'
+where ramaisrua.zmc = 'ZMC-BEJAMOINHOSVELHOS' or ramaisrua.zmc = 'ZMC-PARQUE NOMADA'
 UNION ALL
 SELECT 'Beja ZB1 - Parque Nómada' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'PARQUE NOMADA'
+where ramaisrua.zmc = 'ZMC-PARQUE NOMADA'
 UNION ALL
 SELECT 'Beja ZB2' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'ZB2' or ramaisrua.zmc = 'CIDADESAOPAULO' or ramaisrua.zmc = 'CONDOMINIO' or ramaisrua.zmc = 'FERREIRADECASTRO' or ramaisrua.zmc = 'JULIAOQUINTINHA' or ramaisrua.zmc = 'PADRÃO' or ramaisrua.zmc = 'PATROCINIODIAS'
+where ramaisrua.zmc = 'ZMC-ZB2' or ramaisrua.zmc = 'ZMC-CIDADESAOPAULO' or ramaisrua.zmc = 'ZMC-CONDOMINIO' or ramaisrua.zmc = 'ZMC-FERREIRADECASTRO' or ramaisrua.zmc = 'ZMC-JULIAOQUINTINHA' or ramaisrua.zmc = 'ZMC-PADRÃO' or ramaisrua.zmc = 'ZMC-PATROCINIODIAS' or ramaisrua.zmc = 'ZMC-TENENTEVALADIM'
 UNION ALL
 SELECT 'Beja ZB2 - Cidade de São Paulo' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'CIDADESAOPAULO'
+where ramaisrua.zmc = 'ZMC-CIDADESAOPAULO'
 UNION ALL
 SELECT 'Beja ZB2 - Condominio' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'CONDOMINIO' or ramaisrua.zmc = 'PADRÃO'
+where ramaisrua.zmc = 'ZMC-CONDOMINIO' or ramaisrua.zmc = 'ZMC-PADRÃO'
 UNION ALL
 SELECT 'Beja ZB2 - Ferreira de Castro' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'FERREIRADECASTRO'
+where ramaisrua.zmc = 'ZMC-FERREIRADECASTRO'
 UNION ALL
 SELECT 'Beja ZB2 - Julião Quintinha' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'JULIAOQUINTINHA'
+where ramaisrua.zmc = 'ZMC-JULIAOQUINTINHA'
 UNION ALL
 SELECT 'Beja ZB2 - Padrão' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'PADRÃO'
+where ramaisrua.zmc = 'ZMC-PADRÃO'
 UNION ALL
 SELECT 'Beja ZB2 - Patrocinio Dias' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'PATROCINIODIAS'
+where ramaisrua.zmc = 'ZMC-PATROCINIODIAS'
 UNION ALL
 SELECT 'Beja ZB2 - Tenente Valadim' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'TENENTEVALADIM'
+where ramaisrua.zmc = 'ZMC-TENENTEVALADIM'
 UNION ALL
 SELECT 'Beja ZB3' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'ZB3'
+where ramaisrua.zmc = 'ZMC-ZB3'
 UNION ALL
 SELECT 'Beja ZB4' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'ZB4' or ramaisrua.zmc = 'RAMIROCORREIA'
+where ramaisrua.zmc = 'ZMC-ZB4' or ramaisrua.zmc = 'ZMC-RAMIROCORREIA'
 UNION ALL
 SELECT 'Beja ZB5' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'ZB5'
+where ramaisrua.zmc = 'ZMC-ZB5'
 UNION ALL
 SELECT 'Beja ZI - Saída do reservatório' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'PELAME' or ramaisrua.zmc = 'URBANIZAÇÃO DO PELAME' or ramaisrua.zmc = 'ZI1' or ramaisrua.zmc = 'BAIRRO DA CONCEIÇÃO' or ramaisrua.zmc = 'BAIRROCONCEICAOSUBZONA' or ramaisrua.zmc = 'SAIBREIRAS' or ramaisrua.zmc = 'QUINTA DEL REI' or ramaisrua.zmc = 'PARQUE INDUSTRIAL' or ramaisrua.zmc = 'BAIRRO DE SÃO MIGUEL' or ramaisrua.zmc = 'ALDEIANOVACOITOS' or ramaisrua.zmc = 'BAIRRO DAS FLORES'
+where ramaisrua.zmc = 'ZMC-PELAME' or ramaisrua.zmc = 'ZMC-URBANIZAÇÃO DO PELAME' or ramaisrua.zmc = 'ZMC-ZI1' or ramaisrua.zmc = 'ZMC-BAIRRO DA CONCEIÇÃO' or ramaisrua.zmc = 'ZMC-BAIRROCONCEICAOSUBZONA' or ramaisrua.zmc = 'ZMC-SAIBREIRAS' or ramaisrua.zmc = 'ZMC-QUINTA DEL REI' or ramaisrua.zmc = 'ZMC-PARQUE INDUSTRIAL' or ramaisrua.zmc = 'ZMC-BAIRRO DE SÃO MIGUEL' or ramaisrua.zmc = 'ZMC-ALDEIANOVACOITOS' or ramaisrua.zmc = 'ZMC-BAIRRO DAS FLORES'
 UNION ALL
 SELECT 'Beja ZI - Bairro da Conceição' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'BAIRRO DA CONCEIÇÃO' or ramaisrua.zmc = 'BAIRROCONCEICAOSUBZONA' or ramaisrua.zmc = 'SAIBREIRAS'
+where ramaisrua.zmc = 'ZMC-BAIRRO DA CONCEIÇÃO' or ramaisrua.zmc = 'ZMC-BAIRROCONCEICAOSUBZONA' or ramaisrua.zmc = 'ZMC-SAIBREIRAS'
 UNION ALL
 SELECT 'Beja ZI - Bairro da Conceição Subzona' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'BAIRROCONCEICAOSUBZONA'
+where ramaisrua.zmc = 'ZMC-BAIRROCONCEICAOSUBZONA'
 UNION ALL
 SELECT 'Beja ZI - Bairro de São Miguel' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'BAIRRO DE SÃO MIGUEL' or ramaisrua.zmc = 'ALDEIANOVACOITOS' or ramaisrua.zmc = 'BAIRRO DAS FLORES'
+where ramaisrua.zmc = 'ZMC-BAIRRO DE SÃO MIGUEL' or ramaisrua.zmc = 'ZMC-ALDEIANOVACOITOS' or ramaisrua.zmc = 'ZMC-BAIRRO DAS FLORES'
 UNION ALL
 SELECT 'Beja ZI - Parque Industrial' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'PARQUE INDUSTRIAL' or ramaisrua.zmc = 'BAIRRO DE SÃO MIGUEL' or ramaisrua.zmc = 'ALDEIANOVACOITOS' or ramaisrua.zmc = 'BAIRRO DAS FLORES'
+where ramaisrua.zmc = 'ZMC-PARQUE INDUSTRIAL' or ramaisrua.zmc = 'ZMC-BAIRRO DE SÃO MIGUEL' or ramaisrua.zmc = 'ZMC-ALDEIANOVACOITOS' or ramaisrua.zmc = 'ZMC-BAIRRO DAS FLORES'
 UNION ALL
 SELECT 'Beja ZI - Pelame vivendas' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'URBANIZACAO DO PELAME'
+where ramaisrua.zmc = 'ZMC-URBANIZACAO DO PELAME'
 UNION ALL
 SELECT 'Beja ZI - Quinta Del Rey' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'QUINTA DEL REI'
+where ramaisrua.zmc = 'ZMC-QUINTA DEL REI'
 UNION ALL
 SELECT 'Beringel - Saída do reservatório' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'BERINGEL ZONA ALTA 1' or ramaisrua.zmc = 'BERINGEL ZONA ALTA 2' or ramaisrua.zmc = 'BERINGEL ZONA BAIXA 1' or ramaisrua.zmc = 'BERINGEL ZONA BAIXA 2'
+where ramaisrua.zmc = 'ZMC-BERINGEL ZONA ALTA 1' or ramaisrua.zmc = 'ZMC-BERINGEL ZONA ALTA 2' or ramaisrua.zmc = 'ZMC-BERINGEL ZONA BAIXA 1' or ramaisrua.zmc = 'ZMC-BERINGEL ZONA BAIXA 2'
 UNION ALL
 SELECT 'Beringel - Zona Baixa 1' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'BERINGEL ZONA BAIXA 1'
+where ramaisrua.zmc = 'ZMC-BERINGEL ZONA BAIXA 1'
 UNION ALL
 SELECT 'Beringel - Zona Baixa 2' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'BERINGEL ZONA BAIXA 2'
+where ramaisrua.zmc = 'ZMC-BERINGEL ZONA BAIXA 2'
 UNION ALL
 SELECT 'Beringel - Zona Norte' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'BERINGEL ZONA ALTA 1'
+where ramaisrua.zmc = 'ZMC-BERINGEL ZONA ALTA 1'
 UNION ALL
 SELECT 'Beringel - Zona Sul' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'BERINGEL ZONA ALTA 2' or ramaisrua.zmc = 'BERINGEL ZONA BAIXA 1' or ramaisrua.zmc = 'BERINGEL ZONA BAIXA 2'
+where ramaisrua.zmc = 'ZMC-BERINGEL ZONA ALTA 2' or ramaisrua.zmc = 'ZMC-BERINGEL ZONA BAIXA 1' or ramaisrua.zmc = 'ZMC-BERINGEL ZONA BAIXA 2'
 UNION ALL
 SELECT 'Boavista' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'BOAVISTA'
+where ramaisrua.zmc = 'ZMC-BOAVISTA'
 UNION ALL
 SELECT 'Cabeça Gorda - Saída do reservatório' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'CABEÇA GORDA ZONA 1' or ramaisrua.zmc = 'CABEÇA GORDA ZONA 2' or ramaisrua.zmc = 'CABEÇA GORDA ZONA 3' or ramaisrua.zmc = 'SALVADA ZONA 1' or ramaisrua.zmc = 'SALVADA ZONA 2'
+where ramaisrua.zmc = 'ZMC-CABEÇA GORDA ZONA 1' or ramaisrua.zmc = 'ZMC-CABEÇA GORDA ZONA 2' or ramaisrua.zmc = 'ZMC-CABEÇA GORDA ZONA 3' or ramaisrua.zmc = 'SALVADA ZONA 1' or ramaisrua.zmc = 'SALVADA ZONA 2'
 UNION ALL
 SELECT 'Mina da Juliana' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'MINA DA JULIANA'
+where ramaisrua.zmc = 'ZMC-MINA DA JULIANA'
 UNION ALL
 SELECT 'Mombeja' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'MOMBEJA'
+where ramaisrua.zmc = 'ZMC-MOMBEJA'
 UNION ALL
 SELECT 'Monte da Juliana' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'MONTE DA JULIANA'
+where ramaisrua.zmc = 'ZMC-MONTE DA JULIANA'
 UNION ALL
 SELECT 'Neves - Geral' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'NEVES ZONA ALTA' or ramaisrua.zmc = 'NEVES ZONA BAIXA' or ramaisrua.zmc = 'VILA AZEDO'
+where ramaisrua.zmc = 'ZMC-NEVES ZONA ALTA' or ramaisrua.zmc = 'ZMC-NEVES ZONA BAIXA' or ramaisrua.zmc = 'ZMC-VILA AZEDO'
 UNION ALL
 SELECT 'Neves - Porto Peles' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'PORTO PELES'
+where ramaisrua.zmc = 'ZMC-PORTO PELES'
 UNION ALL
 SELECT 'Neves - Saída do reservatório' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'ADUTORA NEVES' or ramaisrua.zmc = 'NEVES ALDEIA DE CIMA' or ramaisrua.zmc = 'NEVES ZONA ALTA' or ramaisrua.zmc = 'NEVES ZONA BAIXA' or ramaisrua.zmc = 'VILA AZEDO' or ramaisrua.zmc = 'PORTO PELES'
+where ramaisrua.zmc = 'ZMC-ADUTORA NEVES' or ramaisrua.zmc = 'ZMC-NEVES ALDEIA DE CIMA' or ramaisrua.zmc = 'ZMC-NEVES ZONA ALTA' or ramaisrua.zmc = 'ZMC-NEVES ZONA BAIXA' or ramaisrua.zmc = 'ZMC-VILA AZEDO' or ramaisrua.zmc = 'ZMC-PORTO PELES'
 UNION ALL
 SELECT 'Neves - Vila Azedo' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'VILA AZEDO'
+where ramaisrua.zmc = 'ZMC-VILA AZEDO'
 UNION ALL
 SELECT 'Penedo Gordo - Geral' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'PENEDO GORDO' or ramaisrua.zmc = 'PENEDOGORDOMOINHO'
+where ramaisrua.zmc = 'ZMC-PENEDO GORDO' or ramaisrua.zmc = 'ZMC-PENEDOGORDOMOINHO'
 UNION ALL
 SELECT 'Penedo Gordo - SubZona' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'PENEDOGORDOMOINHO'
+where ramaisrua.zmc = 'ZMC-PENEDOGORDOMOINHO'
 UNION ALL
 SELECT 'Quintos - Saída do reservatório' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'QUINTOS'
+where ramaisrua.zmc = 'ZMC-QUINTOS'
 UNION ALL
 SELECT 'Salvada' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'SALVADA ZONA 1' or ramaisrua.zmc = 'SALVADA ZONA 2'
+where ramaisrua.zmc = 'ZMC-SALVADA ZONA 1' or ramaisrua.zmc = 'ZMC-SALVADA ZONA 2'
 UNION ALL
 SELECT 'Santa Vitória' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'SANTA VITÓRIA'
+where ramaisrua.zmc = 'ZMC-SANTA VITÓRIA'
 UNION ALL
 SELECT 'São Brissos - Saída do reservatório' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'SÃO BRISSOS'
+where ramaisrua.zmc = 'ZMC-SÃO BRISSOS'
 UNION ALL
 SELECT 'São Matias - Saída do reservatório' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'SÃO MATIAS'
+where ramaisrua.zmc = 'ZMC-SÃO MATIAS'
 UNION ALL
 SELECT 'Trigaches - Geral' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'TRIGACHES'
+where ramaisrua.zmc = 'ZMC-TRIGACHES'
 UNION ALL
 SELECT 'Trigaches - Saída do reservatório' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'TRIGACHES'
+where ramaisrua.zmc = 'ZMC-TRIGACHES'
 UNION ALL
 SELECT 'Trindade - Saída do reservatório' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'TRINDADE'
+where ramaisrua.zmc = 'ZMC-TRINDADE'
 UNION ALL
 SELECT 'Vale de Russins - Saída do reservatório' as zmc,count(infocontrato.local) as contratos FROM infocontrato left join (SELECT ramaisrua.zmc, ramaisrua.ramal from ramaisrua) as ramaisrua on infocontrato.ramal = ramaisrua.ramal
-where ramaisrua.zmc = 'VALE DE RUSSINS'
+where ramaisrua.zmc = 'ZMC-VALE DE RUSSINS'
 ORDER BY zmc ASC
 `;
 
@@ -218,7 +218,7 @@ const executeQuery = async (query, params = []) => {
 const zmccontratosTask = async () => {
     try {
         const zmccontratosdata = await executeQuery(query);
-        //console.log(zmccontratosdata.length, "records fetched successfully");
+        //console.log(zmccontratosdata);
         return zmccontratosdata;
     } catch (error) {
         console.error('Error fetching zmc contracts data:', error);
