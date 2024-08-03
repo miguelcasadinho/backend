@@ -76,6 +76,67 @@ const insertFlow = async (payload) => {
     }
 };
 
+// Define an async function to insert flow xlogic water meters
+const getHistVolume = async (device) => {
+  const query = {
+      text: `
+          SELECT 
+              device,
+              date,
+              volume
+          FROM 
+              volume
+          WHERE
+              device = $1 AND date >= NOW() - INTERVAL '75 minutes';`,
+      values: [device]
+  };
+
+  try {
+      const client = await pool.connect();
+      const result = await client.query(query);
+      client.release();
+      return result.rows[0].volume;
+  } catch (error) {
+      console.error('Error executing query:', error);
+      throw new Error('Failed to execute query');
+  }
+};
+
+const insertXlogicFlow0 = async (payload, last_volume) => {
+  const client = await pool.connect();
+  try {
+    // Begin a transaction
+    await client.query('BEGIN');
+    //Execute insert querie
+      await client.query(`INSERT INTO flow(device, date, flow) VALUES($1, $2, $3)`,
+                          [payload.device, payload.date, payload.volume - last_volume]);
+    // Commit the transaction
+    await client.query('COMMIT');
+  } catch (err) {
+    // Rollback the transaction if an error occurs
+    await client.query('ROLLBACK');
+    console.error('Error inserting data:', err);
+  } finally {
+    // Release the client back to the pool
+    client.release();
+  }
+};
+
+const insertXlogicFlow = async (payload) => {
+  try {
+      const lastVolume = await getHistVolume(payload.device);
+      if (typeof lastVolume !== 'undefined'){
+          //console.log(lastVolume);
+          insertXlogicFlow0(payload, lastVolume);
+      }
+  } catch (error) {
+      console.error('Error in insertXlogicFlow:', error.message);
+      return [];
+  }
+};
+
+
+
 // Define an async function to insert cpl03 water meter volume
 const insertVolume = async (payload) => {
   const client = await pool.connect();
@@ -85,6 +146,27 @@ const insertVolume = async (payload) => {
     //Execute insert querie
       await client.query(`INSERT INTO volume(device, date, volume) VALUES($1, $2, $3)`,
                           [payload.device, payload.deltas[0].date, payload.volume]);
+    // Commit the transaction
+    await client.query('COMMIT');
+  } catch (err) {
+    // Rollback the transaction if an error occurs
+    await client.query('ROLLBACK');
+    console.error('Error inserting data:', err);
+  } finally {
+    // Release the client back to the pool
+    client.release();
+  }
+};
+
+// Define an async function to insert xlogic water meter volume
+const insertXlogicVolume = async (payload) => {
+  const client = await pool.connect();
+  try {
+    // Begin a transaction
+    await client.query('BEGIN');
+    //Execute insert querie
+      await client.query(`INSERT INTO volume(device, date, volume) VALUES($1, $2, $3)`,
+                          [payload.device, payload.date, payload.volume]);
     // Commit the transaction
     await client.query('COMMIT');
   } catch (err) {
@@ -119,7 +201,29 @@ const insertBattery = async (payload) => {
   }
 };
 
-// Define an async function to insert cpl03 water meter volume
+// Define an async function to insert xlogic water meter battery
+const insertXlogicBattery = async (payload) => {
+  const client = await pool.connect();
+  try {
+    // Begin a transaction
+    await client.query('BEGIN');
+    //Execute insert querie
+    var data_tr = new Date();
+    await client.query(`INSERT INTO battery(device, date, battery) VALUES($1, $2, $3)`,
+                      [payload.device, payload.date, payload.battery]);
+    // Commit the transaction
+    await client.query('COMMIT');
+  } catch (err) {
+    // Rollback the transaction if an error occurs
+    await client.query('ROLLBACK');
+    console.error('Error inserting data:', err);
+  } finally {
+    // Release the client back to the pool
+    client.release();
+  }
+};
+
+// Define an async function to insert cpl03 water meter transmission
 const insertTransmission = async (payload) => {
   const client = await pool.connect();
   try {
@@ -128,6 +232,27 @@ const insertTransmission = async (payload) => {
     //Execute insert querie
       await client.query(`INSERT INTO transmission(device, date, signal) VALUES($1, $2, $3)`,
                           [payload.device, payload.deltas[0].date, payload.signal]);
+    // Commit the transaction
+    await client.query('COMMIT');
+  } catch (err) {
+    // Rollback the transaction if an error occurs
+    await client.query('ROLLBACK');
+    console.error('Error inserting data:', err);
+  } finally {
+    // Release the client back to the pool
+    client.release();
+  }
+};
+
+// Define an async function to insert xlogic water meter transmission
+const insertXlogicTransmission = async (payload) => {
+  const client = await pool.connect();
+  try {
+    // Begin a transaction
+    await client.query('BEGIN');
+    //Execute insert querie
+      await client.query(`INSERT INTO transmission(device, date, snr, signal) VALUES($1, $2, $3, $4)`,
+                          [payload.device, payload.date, payload.SNR, payload.RSRQ]);
     // Commit the transaction
     await client.query('COMMIT');
   } catch (err) {
@@ -164,6 +289,12 @@ const insertMeters = async (payload) => {
         insertVolume(payload);
         insertBattery(payload);
         insertTransmission(payload);
+        break;
+      case 'X-Logic':
+        insertXlogicFlow(payload);
+        insertXlogicVolume(payload);
+        insertXlogicBattery(payload);
+        insertXlogicTransmission(payload);
         break;
       default:
         console.log('Unsupported Model:', payload.model);

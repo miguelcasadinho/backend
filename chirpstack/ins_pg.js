@@ -541,6 +541,90 @@ const insertLdds75 = async (payload) => {
     }
 };
 
+// Define an async function to insert x-logic devices volume (152)
+const insertXlogicVolume = async (payload) => {
+    const client = await pool.connect();
+    try {
+      // Begin a transaction
+      await client.query('BEGIN');
+      //Execute insert querie
+        await client.query(`INSERT INTO volume(device, date, volume) VALUES($1, $2, $3)`,
+                            [payload.DeviceName, payload.Date, payload.Volume_IN1]);
+      // Commit the transaction
+      await client.query('COMMIT');
+      //console.log(`${payload.Application}, ${payload.DeviceName} , volume inserted successfully`);
+    } catch (err) {
+      // Rollback the transaction if an error occurs
+      await client.query('ROLLBACK');
+      console.error('Error inserting data:', err);
+    } finally {
+      // Release the client back to the pool
+      client.release();
+    }
+};
+
+// Define an async function to insert x-logic devices flow (152)
+const getHistVolume = async (device) => {
+    const query = {
+        text: `
+            SELECT 
+                device,
+                date,
+                volume
+            FROM 
+                volume
+            WHERE
+                device = $1 AND date >= NOW() - INTERVAL '75 minutes';`,
+        values: [device]
+    };
+
+    try {
+        const client = await pool.connect();
+        const result = await client.query(query);
+        client.release();
+        return result.rows[0].volume;
+    } catch (error) {
+        console.error('Error executing query:', error);
+        throw new Error('Failed to execute query');
+    }
+};
+
+const insertXlogicFlow0 = async (payload, last_volume) => {
+    const client = await pool.connect();
+    try {
+      // Begin a transaction
+      await client.query('BEGIN');
+      //Execute insert querie
+        await client.query(`INSERT INTO flow(device, date, flow) VALUES($1, $2, $3)`,
+                            [payload.DeviceName, payload.Date, payload.Volume_IN1-last_volume]);
+      // Commit the transaction
+      await client.query('COMMIT');
+      //console.log(`${payload.Application}, ${payload.DeviceName} , volume inserted successfully`);
+    } catch (err) {
+      // Rollback the transaction if an error occurs
+      await client.query('ROLLBACK');
+      console.error('Error inserting data:', err);
+    } finally {
+      // Release the client back to the pool
+      client.release();
+    }
+};
+
+const insertXlogicFlow = async (payload) => {
+    try {
+        const lastVolume = await getHistVolume(payload.DeviceName);
+        //console.log(queryResults.length, 'records retrieved');
+        if (typeof lastVolume !== 'undefined'){
+            //console.log(lastVolume);
+            insertXlogicFlow0(payload, lastVolume);
+        }
+    } catch (error) {
+        console.error('Error in insertXlogicFlow:', error.message);
+        return [];
+    }
+};
+
+
 const insertPg = async (payload) => {
     try {
         switch (payload.AppID) {
@@ -620,6 +704,12 @@ const insertPg = async (payload) => {
                 }
                 insertVolume(payload);
                 insertAlarm(payload);
+                insertCom(payload);
+                break;
+            case '152':
+                insertXlogicFlow(payload);
+                insertXlogicVolume(payload);
+                insertBattery(payload);
                 insertCom(payload);
                 break;
             default:

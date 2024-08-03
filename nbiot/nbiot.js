@@ -3,6 +3,7 @@ import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 import { wlDecoder } from './decoders/water_leak.js';
 import { cpl03Decoder } from './decoders/cpl03.js';
+import { xlogicDecoder } from './decoders/xlogic.js';
 import { insertPg, insertMeters } from './ins_pg.js';
 import mqtt from 'mqtt';
 
@@ -17,7 +18,7 @@ const options = {
 };
 
 // MQTT topics you want to subscribe to
-const topics = ['overflow', 'cpl03'];
+const topics = ['overflow', 'cpl03', 'xlogic'];
 
 // Connect to an MQTT broker with authentication
 const client = mqtt.connect(process.env.mqttMciotAddr, options);
@@ -45,15 +46,25 @@ client.on('message', (topic, message) => {
             insertPg(wlDecoder(message.toString()));
             break;
         case 'cpl03':
-            let decoded = cpl03Decoder(message.toString());
-            if (typeof decoded !== 'undefined'){
+            let cpl03_decoded = cpl03Decoder(message.toString());
+            if (typeof cpl03_decoded !== 'undefined'){
                 //console.log(cpl03Decoder(message.toString()));
                 insertMeters(cpl03Decoder(message.toString()));
             } else {
                 console.log(`${formattedDate} => IMEI: ${message.toString().substring(1,16)}, don't have any meter associated!`);
             }
             break;
+        case 'xlogic':
+            let xlogic_decoded = xlogicDecoder(message.toString('hex'));
+            if (typeof xlogic_decoded !== 'undefined'){
+                //console.log(xlogic_decoded);
+                insertMeters(xlogic_decoded);
+            } else {
+                console.log(`${formattedDate} => Don't find any meter associated!`);
+            }
+            break;
         case 'topic3':
+            console.log('topic3');
             // Handle topic3 message
             // insertPg or any other operation
             break;

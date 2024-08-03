@@ -10,6 +10,7 @@ import { xtrDecoder } from './decoders/xtr.js';
 import { pslbDecoder } from './decoders/ps-lb.js';
 import { ldds75Decoder} from  './decoders/ldds75.js';
 import { sensecapDecoder} from  './decoders/sensecap.js';
+import { xlogicDecoder } from './decoders/xlogic.js';
 import { insertPg } from './ins_pg.js';
 import express from 'express';
 import bodyParser from 'body-parser';
@@ -166,6 +167,17 @@ app.post(path, (req, res) => {
                 console.log(`${formattedDate} => ${objectjson.applicationName}, Device:${objectjson.deviceName}, Payload not valid!`);
             }  
             res.send('Data received successfully!');
+            break;
+        case '152':
+            let xlogic_decoded = xlogicDecoder(objectjson);
+            if (typeof xlogic_decoded !== 'undefined'){
+                //console.log(xlogic_decoded);
+                insertPg(xlogicDecoder(objectjson));
+            } else {
+                //console.log('AppID ', objectjson.applicationName, ",", objectjson.deviceName, "=> Payload not valid!");
+                console.log(`${formattedDate} => ${objectjson.applicationName}, Device:${objectjson.deviceName}, Payload not valid!`);
+            }
+            res.send('Data received successfully!');        
             break;
         default:
             res.send('Data received successfully!');
