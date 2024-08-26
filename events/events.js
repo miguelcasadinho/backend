@@ -1,5 +1,5 @@
 import schedule from 'node-schedule';
-import { disunauth, diszerogc, diszeroregas, disfalhas4h, disrequest } from './dispatch.js';
+import { disunauth, diszerogc, diszeroregas, disfalhas4h, disrequest, disasbestos } from './dispatch.js';
 
 /*
 //schedule rules
@@ -47,3 +47,9 @@ const requests_rule = new schedule.RecurrenceRule();
 requests_rule.second = 0; //(0-59, OPTIONAL)
 // Schedule the insclientss tasks
 const requests_job = schedule.scheduleJob(requests_rule, disrequest);
+
+// Define the requests schedule
+const asbestos_rule = new schedule.RecurrenceRule();
+asbestos_rule.minute = 0; //(0-59, OPTIONAL)
+// Schedule the insclientss tasks
+const asbestos_job = schedule.scheduleJob(asbestos_rule, disasbestos);

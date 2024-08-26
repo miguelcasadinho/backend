@@ -30,7 +30,7 @@ const query = `
         FROM infocontrato
     ) AS infocontrato ON volume.device = infocontrato.device
     LEFT JOIN (
-        SELECT clients.local, clients.sensitivity FROM clients
+        SELECT clients.local, clients.sensitivity FROM clients where clients.situation not in ('LIQUIDADO', 'ANULADO')
     ) AS clients ON infocontrato.local = clients.local
     LEFT JOIN (
         SELECT DISTINCT ON (volume.device) 

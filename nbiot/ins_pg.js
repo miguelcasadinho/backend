@@ -250,11 +250,19 @@ const insertXlogicTransmission = async (payload) => {
   try {
     // Begin a transaction
     await client.query('BEGIN');
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     //Execute insert querie
       await client.query(`INSERT INTO transmission(device, date, snr, signal) VALUES($1, $2, $3, $4)`,
                           [payload.device, payload.date, payload.SNR, payload.RSRQ]);
     // Commit the transaction
     await client.query('COMMIT');
+    console.log(`${formattedDate} => ${payload.device}, data inserted successfully!`);
   } catch (err) {
     // Rollback the transaction if an error occurs
     await client.query('ROLLBACK');

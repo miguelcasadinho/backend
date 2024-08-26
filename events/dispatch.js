@@ -6,6 +6,7 @@ import { zeroregasdataTask } from './class/zeroregas.js';
 import { unauthdataTask } from './class/unauth.js';
 import { falhas4hdataTask } from './class/falhas4h.js';
 import { requestdataTask } from './class/request.js';
+import { asbestosdataTask } from './class/asbestos.js';
 import nodemailer from 'nodemailer';
 import TelegramBot from 'node-telegram-bot-api';
 
@@ -162,6 +163,42 @@ const request2telegram = async (data) => {
     };
 };
 
+const asbestossendEmail = async (data) => {
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
+    try {
+        for (const entry of data) {
+            const { id_service_order, number, date, creator, responsible, sympton, address, begin, end, operator1, operator2, operator3, supervisor } = entry;
+            let now = new Date(date);
+            let year = now.getFullYear();
+            let month = ('0' + (now.getMonth() + 1)).slice(-2); // Using slice to pad with leading zero
+            let day = ('0' + now.getDate()).slice(-2); // Using slice to pad with leading zero
+            let hour = ('0' + (now.getHours() + 1)).slice(-2); // Using slice to pad with leading zero, and incrementing hour properly
+            let min = ('0' + now.getMinutes()).slice(-2); // Using slice to pad with leading zero
+            let second = ('0' + now.getSeconds()).slice(-2); // Using slice to pad with leading zero
+            let int_date = day + '-' + month + '-' + year + ' pelas ' + hour + ':' + min + ':' + second;
+            const mailOptions = {
+                from: 'mciot.pt@gmail.com',
+                to: 'ana.madeira@emas-beja.pt,antonio.conceicao@emas-beja.pt,carla.cavaco@emas-beja.pt,miguel.casadinho@emas-beja.pt,ricardo.gomes@emas-beja.pt',
+                subject: 'Intervenção em amianto',
+                text: `Prezados colegas da EMAS de Beja,\n
+                No dia ${int_date}, a ordem de serviço ${number} criada pelo ${creator} e entregue ao ${responsible}, com o sintoma ${sympton} e localização em ${address}, teve uma intervenção em fibrocimento, para mais informações consultar a aplicação Navia.\n
+                https://navia.emas-beja.pt/Tarefas/Intervencoes/verDetalhes.php?id_intervencao=${id_service_order}&referer=consulta_os`
+            };
+            const info = await transporter.sendMail(mailOptions);
+            console.log(`${formattedDate} => Asbestos events executed, Email sent:, ${info.response}`);
+        }
+    } catch (error) {
+        console.error('Error sending email:', error);
+        // Consider adding retries or other error handling mechanisms here
+    }
+};
+
 const disunauth = async () => {
     try {
         const unauthdata = await unauthdataTask();
@@ -207,4 +244,13 @@ const disrequest = async () => {
     }
 };
 
-export { disunauth, diszerogc, diszeroregas, disfalhas4h, disrequest };
+const disasbestos = async () => {
+    try {
+        const asbestosdata = await asbestosdataTask();
+        await asbestossendEmail(asbestosdata);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
+export { disunauth, diszerogc, diszeroregas, disfalhas4h, disrequest, disasbestos };

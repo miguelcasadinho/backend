@@ -18,6 +18,16 @@ const devices = [
         rph: 4
     },
     {
+        imei: '863663062773263',
+        model: 'CPL03-NB',
+        pulse: 1,
+        meter: '233014365',
+        vol_ini: 749.78,
+        lit_pul: 10,
+        report: '1h_6h',
+        rph: 1
+    },
+    {
         imei: '123456789',
         model: 'CPL03-NB',
         pulse: 1,
