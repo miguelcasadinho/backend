@@ -14,65 +14,68 @@ const pool = new pg.Pool({
 });
 
 const query = `
-    SELECT 
-        vw.service_orders.id_service_order, vw.service_orders.number, vw.service_orders.date_hour_executed as date, vw.service_orders.user_create as creator, vw.service_orders.user_responsible as responsible, 
-        vw.service_orders.symptom as sympton, vw.service_orders.address as address, inicio.value_time as begin, fim.value_time as end, operador1.value_domain as operator1, 
-        operador2.value_domain as operator2, operador3.value_domain as operator3, responsavel.value_domain as supervisor
-    FROM 
-        vw.service_orders
-    LEFT JOIN (
-    SELECT 
-        *
-    FROM 
-        vw.records WHERE records.variable = 'Intervenção em fibrocimento') as records 
-    ON 
-        vw.service_orders.id_service_order = records.id_service_order
-    LEFT JOIN (
-    SELECT 
-        *
-    FROM 
-        vw.records WHERE records.variable = 'Intervenção em fibrocimento - início') as inicio 
-    ON 
-        vw.service_orders.id_service_order = records.id_service_order
-    LEFT JOIN (
-    SELECT 
-        *
-    FROM 
-        vw.records WHERE records.variable = 'Intervenção em fibrocimento - fim') as fim 
-    ON 
-        vw.service_orders.id_service_order = records.id_service_order
-    LEFT JOIN (
-    SELECT 
-        *
-    FROM 
-        vw.records WHERE records.variable = 'Intervenção em fibrocimento - operador 1') as operador1 
-    ON 
-        vw.service_orders.id_service_order = records.id_service_order
-    LEFT JOIN (
-    SELECT 
-        *
-    FROM 
-        vw.records WHERE records.variable = 'Intervenção em fibrocimento - operador 2') as operador2 
-    ON 
-        vw.service_orders.id_service_order = records.id_service_order
-    LEFT JOIN (
-    SELECT 
-        *
-    FROM 
-        vw.records WHERE records.variable = 'Intervenção em fibrocimento - operador 3') as operador3 
-    ON 
-        vw.service_orders.id_service_order = records.id_service_order
-    LEFT JOIN (
-    SELECT 
-        *
-    FROM 
-        vw.records WHERE records.variable = 'Intervenção em fibrocimento - responsável técnico') as responsavel 
-    ON 
-        vw.service_orders.id_service_order = records.id_service_order
-    WHERE 
-    records.value_domain = 'Sim'
-    AND
-    vw.service_orders.date_hour_executed >= now() - interval '1 hour'
+SELECT 
+    vw.service_orders.id_service_order, 
+    vw.service_orders.number, 
+    vw.service_orders.date_hour_executed AS date, 
+    vw.service_orders.user_create AS creator, 
+    vw.service_orders.user_responsible AS responsible, 
+    vw.service_orders.symptom AS sympton, 
+    vw.service_orders.address AS address, 
+    inicio.value_time AS begin, 
+    fim.value_time AS end, 
+    operador1.value_domain AS operator1, 
+    operador2.value_domain AS operator2, 
+    operador3.value_domain AS operator3, 
+    responsavel.value_domain AS supervisor
+FROM 
+    vw.service_orders
+LEFT JOIN (
+    SELECT * 
+    FROM vw.records 
+    WHERE variable = 'Intervenção em fibrocimento'
+) AS records_main 
+ON vw.service_orders.id_service_order = records_main.id_service_order
+LEFT JOIN (
+    SELECT * 
+    FROM vw.records 
+    WHERE variable = 'Intervenção em fibrocimento - início'
+) AS inicio 
+ON vw.service_orders.id_service_order = inicio.id_service_order
+LEFT JOIN (
+    SELECT * 
+    FROM vw.records 
+    WHERE variable = 'Intervenção em fibrocimento - fim'
+) AS fim 
+ON vw.service_orders.id_service_order = fim.id_service_order
+LEFT JOIN (
+    SELECT * 
+    FROM vw.records 
+    WHERE variable = 'Intervenção em fibrocimento - operador 1'
+) AS operador1 
+ON vw.service_orders.id_service_order = operador1.id_service_order
+LEFT JOIN (
+    SELECT * 
+    FROM vw.records 
+    WHERE variable = 'Intervenção em fibrocimento - operador 2'
+) AS operador2 
+ON vw.service_orders.id_service_order = operador2.id_service_order
+LEFT JOIN (
+    SELECT * 
+    FROM vw.records 
+    WHERE variable = 'Intervenção em fibrocimento - operador 3'
+) AS operador3 
+ON vw.service_orders.id_service_order = operador3.id_service_order
+LEFT JOIN (
+    SELECT * 
+    FROM vw.records 
+    WHERE variable = 'Intervenção em fibrocimento - responsável técnico'
+) AS responsavel 
+ON vw.service_orders.id_service_order = responsavel.id_service_order
+WHERE 
+    records_main.value_domain = 'Sim'
+AND 
+    vw.service_orders.date_hour_executed >= now() - INTERVAL '24 hour';
 `;
 
 const executeQuery = async (query, params = []) => {
@@ -91,7 +94,7 @@ const executeQuery = async (query, params = []) => {
 const asbestosdataTask = async () => {
     try {
         const asbestosdata = await executeQuery(query);
-        console.log(asbestosdata);
+        //console.log(asbestosdata);
         return asbestosdata;
     } catch (error) {
         console.error('Error fetching asbestos data:', error);
@@ -100,4 +103,3 @@ const asbestosdataTask = async () => {
 };
 
 export { asbestosdataTask };
-

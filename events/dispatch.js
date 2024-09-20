@@ -39,7 +39,8 @@ const unauthsendEmail = async (data) => {
             const formattedDate = `${day}-${month}-${year} ${hour}:${minute}`;
             const mailOptions = {
                 from: 'mciot.pt@gmail.com',
-                to: 'miguel.casadinho@emas-beja.pt,pedro.rodrigues@emas-beja.pt,luis.janeiro@emas-beja.pt,sabrina.dores@emas-beja.pt,helio.placido@emas-beja.pt,nuno.barnabe@emas-beja.pt',
+                to: 'pedro.rodrigues@emas-beja.pt,luis.janeiro@emas-beja.pt,sabrina.dores@emas-beja.pt,helio.placido@emas-beja.pt,nuno.barnabe@emas-beja.pt',
+                bcc: 'miguel.casadinho@emas-beja.pt',
                 subject: work,
                 text: 'Olá, no dia ' + data + ' a intervenção ' + intervencao + ", com o sintoma " + int_sintoma + " e trabalho " + work + ", na morada "  + morada + " foi concluida."
             };
@@ -63,7 +64,8 @@ const zeroregassendEmail = async () => {
         const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
         const mailOptions = {
             from: 'mciot.pt@gmail.com',
-            to: 'miguel.casadinho@emas-beja.pt,luis.janeiro@emas-beja.pt,Helio.Placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt',
+            to: 'luis.janeiro@emas-beja.pt,Helio.Placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt',
+            bcc: 'miguel.casadinho@emas-beja.pt',
             subject: 'Anómalia regas',
             text: 'Bom dia, segue em anexo as regas sem consumos nos últimos 7 dias.',
             attachments: [
@@ -95,7 +97,8 @@ const zerogcsendEmail = async (data) => {
             const { local, device, name, morada, consumo } = entry;
             const mailOptions = {
                 from: 'mciot.pt@gmail.com',
-                to: 'miguel.casadinho@emas-beja.pt,luis.janeiro@emas-beja.pt,Helio.Placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt',
+                to: 'luis.janeiro@emas-beja.pt,Helio.Placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt',
+                bcc: 'miguel.casadinho@emas-beja.pt',
                 subject: 'Anómalia grande cliente',
                 text: `Olá, o contador ${device} instalado no local ${local} com o nome ${name} e morada ${morada} teve um consumo de ${consumo} m3 nas últimas 72 horas.`
             };
@@ -111,7 +114,7 @@ const zerogcsendEmail = async (data) => {
 const falhas4hsendEmail = async (data) => {
     try {
         for (const entry of data) {
-            const { int_date, numero, sintoma, morada, duracao } = entry;
+            const { int_date, id_service_order, numero, sintoma, morada, duracao } = entry;
             let duracao_hours = parseFloat((duracao/60/60).toFixed(2));
             let now = new Date(int_date);
             let year = now.getFullYear();
@@ -124,9 +127,13 @@ const falhas4hsendEmail = async (data) => {
             const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
             const mailOptions = {
                 from: 'mciot.pt@gmail.com',
-                to: 'miguel.casadinho@emas-beja.pt,artur.janeiro@emas-beja.pt,goncalo.candeias@emas-beja.pt,joao.pirata@emas-beja.pt,gabriela.palma@emas-beja.pt,j.dias@emas-beja.pt',
-                subject: 'Falha superior a 4 horas',
-                text: 'Olá, no dia ' + date + ' a intervenção ' + numero + ' com o sintoma ' + sintoma + ' e morada '  + morada + ' teve uma interrupção de abastecimento de ' + duracao_hours + ' horas.'            
+                to: 'artur.janeiro@emas-beja.pt,goncalo.candeias@emas-beja.pt',
+                cc: 'gabriela.palma@emas-beja.pt,joao.pirata@emas-beja.pt,j.dias@emas-beja.pt',
+                bcc: 'miguel.casadinho@emas-beja.pt',
+                subject: `Falha superior a 4 horas`,
+                text: `Prezados colegas da EMAS de Beja,\n 
+                No dia ${date}, a intervenção ${numero}, com o sintoma ${sintoma} e morada ${morada}, teve uma interrupção de abastecimento de ${duracao_hours} horas, para mais informações consultar a aplicação Navia.\n
+                https://navia.emas-beja.pt/Tarefas/Intervencoes/verDetalhes.php?id_intervencao=${id_service_order}&referer=consulta_os`            
             };
             const info = await transporter.sendMail(mailOptions);
             console.log(`${formattedDate} => 4 hours failures events executed, Email sent:, ${info.response}`);
@@ -178,16 +185,18 @@ const asbestossendEmail = async (data) => {
             let year = now.getFullYear();
             let month = ('0' + (now.getMonth() + 1)).slice(-2); // Using slice to pad with leading zero
             let day = ('0' + now.getDate()).slice(-2); // Using slice to pad with leading zero
-            let hour = ('0' + (now.getHours() + 1)).slice(-2); // Using slice to pad with leading zero, and incrementing hour properly
+            let hour = ('0' + (now.getHours() )).slice(-2); // Using slice to pad with leading zero, and incrementing hour properly
             let min = ('0' + now.getMinutes()).slice(-2); // Using slice to pad with leading zero
             let second = ('0' + now.getSeconds()).slice(-2); // Using slice to pad with leading zero
             let int_date = day + '-' + month + '-' + year + ' pelas ' + hour + ':' + min + ':' + second;
             const mailOptions = {
                 from: 'mciot.pt@gmail.com',
-                to: 'ana.madeira@emas-beja.pt,antonio.conceicao@emas-beja.pt,carla.cavaco@emas-beja.pt,miguel.casadinho@emas-beja.pt,ricardo.gomes@emas-beja.pt',
+                to: 'donatila.marques@emas-beja.pt,ricardo.gomes@emas-beja.pt',
+                cc: 'ana.madeira@emas-beja.pt,antonio.conceicao@emas-beja.pt,carla.cavaco@emas-beja.pt,carlos.guerreiro@emas-beja.pt',
+                bcc: 'miguel.casadinho@emas-beja.pt',
                 subject: 'Intervenção em amianto',
                 text: `Prezados colegas da EMAS de Beja,\n
-                No dia ${int_date}, a ordem de serviço ${number} criada pelo ${creator} e entregue ao ${responsible}, com o sintoma ${sympton} e localização em ${address}, teve uma intervenção em fibrocimento, para mais informações consultar a aplicação Navia.\n
+                No dia ${int_date}, foi executada a ordem de serviço ${number}, com o sintoma ${sympton} e localização em ${address}. Esta intervenção, criada pelo sr. ${creator} e entregue ao sr. ${responsible}, foi efectuada em tubagens contendo amianto, para mais informações consultar a aplicação Navia.\n
                 https://navia.emas-beja.pt/Tarefas/Intervencoes/verDetalhes.php?id_intervencao=${id_service_order}&referer=consulta_os`
             };
             const info = await transporter.sendMail(mailOptions);

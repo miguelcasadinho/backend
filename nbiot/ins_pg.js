@@ -1,6 +1,7 @@
 import { config } from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
+import { ds2teleDecoder } from './decoders/ds2tele.js';
 import pg from 'pg';
 
 config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../.env') });
@@ -43,6 +44,36 @@ const insertWl = async (payload) => {
       // Release the client back to the pool
       client.release();
     }
+};
+
+// Define an async function to insert door sensor
+const insertDs = async (payload) => {
+  const client = await pool.connect();
+  try {
+    // Begin a transaction
+    await client.query('BEGIN');
+    //Execute insert querie
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
+    await client.query(`INSERT INTO door_status(date, device, model, door_status, signal, battery) 
+                      VALUES($1, $2, $3, $4, $5, $6)`,
+                      [payload.data, payload.IMEI, payload.model, payload.door_status, payload.signal, payload.battery]);
+    // Commit the transaction
+    await client.query('COMMIT');
+    console.log(`${formattedDate} => ${payload.IMEI}, data inserted successfully!`);
+  } catch (err) {
+    // Rollback the transaction if an error occurs
+    await client.query('ROLLBACK');
+    console.error('Error inserting data:', err);
+  } finally {
+    // Release the client back to the pool
+    client.release();
+  }
 };
 
 // Define an async function to insert flow cpl03 water meters
@@ -279,6 +310,10 @@ const insertPg = async (payload) => {
         switch (model) {
             case 'WL03A-NB':
                 insertWl(payload);
+            break;
+            case 'DS03A-NB':
+              insertDs(payload);
+              ds2teleDecoder(payload);
             break;
             default:
                 console.log('Unsupported Model:', payload.model);

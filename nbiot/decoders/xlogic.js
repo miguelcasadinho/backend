@@ -301,6 +301,7 @@ const xlogicDecoder = (message) => {
         decoded.RSRQ = bytes[35];
         decoded.SNR = bytes[36];
 
+        console.log(decoded);
         return decoded;
         }
 

@@ -1,5 +1,10 @@
 const devices = [
     {
+        imei: '861275077970982',
+        model: 'DS03A-NB',
+        asset: 'Reservatório das Neves'
+    },
+    {
         imei: '863663062967642',
         model: 'X-Logic',
         pulse: 1,
@@ -28,14 +33,14 @@ const devices = [
         rph: 1
     },
     {
-        imei: '123456789',
+        imei: '12345',
         model: 'CPL03-NB',
         pulse: 1,
         meter: 'xpto',
         vol_ini: 0,
         lit_pul: 10,
-        report: '15min_4h',
-        rph: 4
+        report: '15m_6h',
+        rph: 1
     }
 ]
 

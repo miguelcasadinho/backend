@@ -91,3 +91,4 @@ try {
 
 export {qmindataTask};
 
+//qmindataTask();

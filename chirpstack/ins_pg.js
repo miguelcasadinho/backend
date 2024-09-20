@@ -582,7 +582,10 @@ const getHistVolume = async (device) => {
         const client = await pool.connect();
         const result = await client.query(query);
         client.release();
-        return result.rows[0].volume;
+        console.log('result: ',  result.rows.length );
+        if (result.rows.length > 0){
+                return result.rows[0].volume;
+        }
     } catch (error) {
         console.error('Error executing query:', error);
         throw new Error('Failed to execute query');
@@ -615,8 +618,8 @@ const insertXlogicFlow = async (payload) => {
         const lastVolume = await getHistVolume(payload.DeviceName);
         //console.log(queryResults.length, 'records retrieved');
         if (typeof lastVolume !== 'undefined'){
-            //console.log(lastVolume);
-            insertXlogicFlow0(payload, lastVolume);
+            //console.log('Volume Log: ', lastVolume);
+            insertXlogicFlow0(payload, lastVolume); 
         }
     } catch (error) {
         console.error('Error in insertXlogicFlow:', error.message);
@@ -709,6 +712,13 @@ const insertPg = async (payload) => {
             case '152':
                 insertXlogicFlow(payload);
                 insertXlogicVolume(payload);
+                insertBattery(payload);
+                insertCom(payload);
+                break;
+            case '153':
+                insertFlow2(payload);
+                insertVolume(payload);
+                insertAlarm(payload);
                 insertBattery(payload);
                 insertCom(payload);
                 break;

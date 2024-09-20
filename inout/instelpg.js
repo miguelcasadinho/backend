@@ -134,7 +134,7 @@ const insertqmin4evdata = async (data) => {
     const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     // Iterate over the data and execute insert queries
     for (let i=0; i < data.length ; i++){
-        await client.query(`INSERT INTO qmin4ev(tag_id, date, flow)  VALUES($1, $2, $3)`, [Number(data[i].tag_ID), new Date(data[i].Date), Number(data[i].Value)]);
+        await client.query(`INSERT INTO qmin4ev(tag_id, date, flow)  VALUES($1, $2, $3) ON CONFLICT (tag_id, date) DO NOTHING`, [Number(data[i].tag_ID), new Date(data[i].Date), Number(data[i].Value)]);
     }
     // Commit the transaction
     await client.query('COMMIT');
