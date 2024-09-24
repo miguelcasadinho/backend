@@ -592,6 +592,38 @@ const getHistVolume = async (device) => {
     }
 };
 
+// Define an async function to insert x-logic devices flow (152)
+const getLastHistVolume = async (device) => {
+    const query = {
+        text: `
+            SELECT 
+                device,
+                date,
+                volume
+            FROM 
+                volume
+            WHERE
+                device = $1 AND date >= NOW() - INTERVAL '24 hours'
+            ORDER BY 
+                date DESC
+            LIMIT 1;`,
+        values: [device]
+    };
+
+    try {
+        const client = await pool.connect();
+        const result = await client.query(query);
+        client.release();
+        console.log('result: ',  result.rows.length );
+        if (result.rows.length > 0){
+                return result.rows[0].volume;
+        }
+    } catch (error) {
+        console.error('Error executing query:', error);
+        throw new Error('Failed to execute query');
+    }
+};
+
 const insertXlogicFlow0 = async (payload, last_volume) => {
     const client = await pool.connect();
     try {
@@ -615,7 +647,7 @@ const insertXlogicFlow0 = async (payload, last_volume) => {
 
 const insertXlogicFlow = async (payload) => {
     try {
-        const lastVolume = await getHistVolume(payload.DeviceName);
+        const lastVolume = await getLastHistVolume(payload.DeviceName);
         //console.log(queryResults.length, 'records retrieved');
         if (typeof lastVolume !== 'undefined'){
             //console.log('Volume Log: ', lastVolume);

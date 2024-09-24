@@ -43,15 +43,16 @@ const alarm2telegram = async (data) => {
 
     const asset = data.asset;
     const status = data.door_status;
-    const text = status === 1 
-        ? `${asset} - A porta foi aberta` 
-        : `${asset} - A porta foi fechada`;
 
-    const message = 'Alarme de intrusão';
-    const body = text;
+    if (status === 1){
+        const text = `${asset} - A porta foi aberta`;
+        const message = 'Alarme de intrusão';
+        const body = text;
     
     await telegrambot(message, body);
     console.log(`${formattedDate} => ${asset} - Intrusion alarm sent!`);
+    }
+    
 };
 
 // Decodifica a mensagem e verifica se é necessário enviar um alarme
