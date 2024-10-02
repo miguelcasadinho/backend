@@ -37,7 +37,7 @@ const insertmetersdata = async (metersdata) => {
       const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
       // Iterate over the data and execute insert queries
       for (var i=0; i < metersdata.length ; i++){
-        if ( Object.hasOwnProperty.bind(metersdata[i])('DtInstalacao') && Object.hasOwnProperty.bind(metersdata[i])('DtLeitura') ){
+        if ( metersdata[i].DtInstalacao !== null && metersdata[i].DtLeitura !== null ){
           await client.query(`INSERT INTO meters(ramal, local, client, street, num_pol, floor, device, date_inst, dn, class, brand, model, volume, date_leit)
                             VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)  ON CONFLICT (device) DO UPDATE SET
                                 ramal = EXCLUDED.ramal, local = EXCLUDED.local, client = EXCLUDED.client, street = EXCLUDED.street, num_pol = EXCLUDED.num_pol,
@@ -47,7 +47,7 @@ const insertmetersdata = async (metersdata) => {
                             metersdata[i].Andar, metersdata[i].Contador, new Date(metersdata[i].DtInstalacao), Number(metersdata[i].Diametro), metersdata[i].Classe, 
                             metersdata[i].Marca, metersdata[i].Modelo, Number(metersdata[i].Volume), new Date(metersdata[i].DtLeitura)]);
         }
-        else if ( Object.hasOwnProperty.bind(metersdata[i])('DtInstalacao') && !Object.hasOwnProperty.bind(metersdata[i])('DtLeitura') ){
+        else if ( metersdata[i].DtInstalacao !== null && metersdata[i].DtLeitura === null  ){
           await client.query(`INSERT INTO meters(ramal, local, client, street, num_pol, floor, device, date_inst, dn, class, brand, model, volume)
                             VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)  ON CONFLICT (device) DO UPDATE SET
                                 ramal = EXCLUDED.ramal, local = EXCLUDED.local, client = EXCLUDED.client, street = EXCLUDED.street, num_pol = EXCLUDED.num_pol,
@@ -57,7 +57,7 @@ const insertmetersdata = async (metersdata) => {
                             metersdata[i].Andar, metersdata[i].Contador, new Date(metersdata[i].DtInstalacao), Number(metersdata[i].Diametro), metersdata[i].Classe, 
                             metersdata[i].Marca, metersdata[i].Modelo, Number(metersdata[i].Volume)]);
         }
-        else if ( !Object.hasOwnProperty.bind(metersdata[i])('DtInstalacao') && Object.hasOwnProperty.bind(metersdata[i])('DtLeitura') ){
+        else if ( metersdata[i].DtInstalacao === null && metersdata[i].DtLeitura !== null  ){
           await client.query(`INSERT INTO meters(ramal, local, client, street, num_pol, floor, device, dn, class, brand, model, volume, date_leit)
                             VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)  ON CONFLICT (device) DO UPDATE SET
                                 ramal = EXCLUDED.ramal, local = EXCLUDED.local, client = EXCLUDED.client, street = EXCLUDED.street, num_pol = EXCLUDED.num_pol,
@@ -235,7 +235,7 @@ const insertcontradata = async (contradata) => {
     */
     // Iterate over the data and execute insert queries
     for (var i=0; i < contradata.length ; i++){
-      if ( !Object.hasOwnProperty.bind(contradata[i])('DtInst') ){
+      if (contradata[i].DtInst === null){
         await client.query(`INSERT INTO infocontrato(ramal, local, client, name, street, num_pol, floor, locality, zone, area, sequence, situation, 
                             client_group, client_tariff, estimated) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
                             ON CONFLICT (local) DO UPDATE SET client = EXCLUDED.client, name = EXCLUDED.name, street = EXCLUDED.street, num_pol = EXCLUDED.num_pol,

@@ -4,6 +4,7 @@ import { dirname, resolve } from 'path';
 import { wlDecoder } from './decoders/water_leak.js';
 import { cpl03Decoder } from './decoders/cpl03.js';
 import { xlogicDecoder } from './decoders/xlogic.js';
+import { ds03aDecoder } from './decoders/ds03a.js';
 import { insertPg, insertMeters } from './ins_pg.js';
 import mqtt from 'mqtt';
 
@@ -11,17 +12,17 @@ config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../.env') });
 
 // MQTT broker connection options
 const options = {
-    port: process.env.mqttMciotPort,
-    username: process.env.mqttMciotUser,
-    password: process.env.mqttMciotPass,
+    port: process.env.mqttIotserverPort,
+    username: process.env.mqttIotserverUser,
+    password: process.env.mqttIotserverPass,
     //clientId: 'client_id' 
 };
 
 // MQTT topics you want to subscribe to
-const topics = ['overflow', 'cpl03', 'xlogic'];
+const topics = ['overflow', 'cpl03', 'xlogic', 'ds03a'];
 
 // Connect to an MQTT broker with authentication
-const client = mqtt.connect(process.env.mqttMciotAddr, options);
+const client = mqtt.connect(process.env.mqttIotserverAddr, options);
 
 // Event handler for when the client is connected
 client.on('connect', () => {
@@ -61,6 +62,15 @@ client.on('message', (topic, message) => {
                 insertMeters(xlogic_decoded);
             } else {
                 console.log(`${formattedDate} => Don't find any meter associated!`);
+            }
+            break;
+        case 'ds03a':
+            let ds03a_decoded = ds03aDecoder(message.toString());
+            if (typeof ds03a_decoded !== 'undefined'){
+                //console.log(ds03a_decoded);
+                insertPg(ds03a_decoded);
+            } else {
+                console.log(`${formattedDate} => Don't find any asset associated!`);
             }
             break;
         case 'topic3':

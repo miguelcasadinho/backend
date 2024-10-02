@@ -192,7 +192,7 @@ const asbestossendEmail = async (data) => {
             const mailOptions = {
                 from: 'mciot.pt@gmail.com',
                 to: 'donatila.marques@emas-beja.pt,ricardo.gomes@emas-beja.pt',
-                cc: 'ana.madeira@emas-beja.pt,antonio.conceicao@emas-beja.pt,carla.cavaco@emas-beja.pt,carlos.guerreiro@emas-beja.pt',
+                cc: 'ana.madeira@emas-beja.pt,antonio.conceicao@emas-beja.pt,joao.pirata@emas-beja.pt,carlos.guerreiro@emas-beja.pt',
                 bcc: 'miguel.casadinho@emas-beja.pt',
                 subject: 'Intervenção em amianto',
                 text: `Prezados colegas da EMAS de Beja,\n

@@ -111,14 +111,17 @@ const insertFlow = async (payload) => {
 const getHistVolume = async (device) => {
   const query = {
       text: `
-          SELECT 
-              device,
-              date,
-              volume
-          FROM 
-              volume
-          WHERE
-              device = $1 AND date >= NOW() - INTERVAL '75 minutes';`,
+      SELECT 
+          device,
+          date,
+          volume
+      FROM 
+          volume
+      WHERE
+          device = $1 AND date >= NOW() - INTERVAL '24 hours'
+      ORDER BY 
+          date DESC
+      LIMIT 1;`,
       values: [device]
   };
 

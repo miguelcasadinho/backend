@@ -5,7 +5,16 @@ const ldds75Decoder = (message) => {
         if (fPort == 2) {
             var bytes = Buffer.from(message.data, 'base64');
             var distance= (bytes[2]<<8 | bytes[3])/1000;
-            var battery = ((bytes[0]<<8 | bytes[1]) & 0x3FFF)/1000;
+            var voltage = ((bytes[0]<<8 | bytes[1]) & 0x3FFF)/1000;
+            if (voltage >= 3.64) {
+                var bat = 3.64
+              }
+              else if (voltage <= 3.00) {
+                var bat = 3.00
+              }
+              else
+              var bat = voltage;
+            let battery = parseFloat((((bat-3)*100)/0.64).toFixed(2));
             var rxinfo_length = message.rxInfo.length;
             var snr = [];
             var index;
