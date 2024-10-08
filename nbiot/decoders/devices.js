@@ -21,7 +21,7 @@ const devices = [
         meter: '202035132',
         vol_ini: 130253.41,
         lit_pul: 10,
-        report: '15min_6h',
+        report: '15m_6h',
         rph: 4
     },
     {

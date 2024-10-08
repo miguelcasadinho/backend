@@ -89,7 +89,7 @@ const contradataTask = async () => {
         //console.log(xml.length, 'records');
         const contradata = await extractdata(xml);
         // Handle the extracted data
-        //console.log(contradata.length, 'contrats to insert');
+        console.log(contradata.length, 'contrats to insert');
         return contradata;
     } catch (error) {
         // Handle any errors in the Promise chain
@@ -98,3 +98,4 @@ const contradataTask = async () => {
 };
 
 export { contradataTask };
+contradataTask();

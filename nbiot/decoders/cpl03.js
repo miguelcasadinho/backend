@@ -1,7 +1,61 @@
-import { devices } from './devices.js';
+import { config } from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
+import pg from 'pg';
 
-const cpl03Decoder = (message) => {
+config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../../.env') });
+
+const pool  = new pg.Pool({
+    host: process.env.psqlGiggoHost,
+    port: process.env.psqlGiggoPort,
+    user: process.env.psqlGiggoUser,
+    password: process.env.psqlGiggoPassword,
+    database: process.env.psqlGiggoDatabase
+});
+
+
+
+// Define an async function to get NB-IoT devices
+const getDevices = async (device) => {
+    const query = {
+        text: `
+    SELECT 
+        nbiot_devices_id,
+        asset,
+        model,
+        sn,
+        imei,
+        at_pin,
+        p_n,
+        h_w,
+        number,
+        pin,
+        puk,
+        pulse,
+        lit_pul,
+        vol_ini::float,  -- Cast vol_ini to float
+        meter,
+        rph,
+        report
+    FROM 
+        nbiot_devices`
+    };
+
     try {
+        const client = await pool.connect();
+        const result = await client.query(query);
+        client.release();
+        //console.log(result.rows)
+        return result.rows;
+    } catch (error) {
+        console.error('Error executing query:', error);
+        throw new Error('Failed to execute query');
+    }
+};
+
+const cpl03Decoder = async (message) => {
+    try {
+        const devices = await getDevices();
         let bytes = Buffer.from(message, 'hex');
         let hexa = message;
         let decoded = {};
@@ -24,7 +78,6 @@ const cpl03Decoder = (message) => {
             let bat = Math.min(3.64, Math.max(3.00, decoded.battery));
             decoded.battery = parseFloat((((bat - 3) * 100) / 0.64).toFixed(2));
             decoded.signal = bytes[12];
-            
             let samples = ((bytes.length)-13)/14;
             let offset = 13;
             var deltasVol = [];
@@ -71,7 +124,7 @@ const cpl03Decoder = (message) => {
                 } 
             };
             decoded.deltas = deltas;
-    
+
             return decoded;
         }
     } catch (error) {

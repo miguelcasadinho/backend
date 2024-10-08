@@ -32,7 +32,7 @@ client.on('connect', () => {
 });
 
 // Event handler for when a message is received
-client.on('message', (topic, message) => {
+client.on('message', async (topic, message) => {
     // Handle messages for different topics
     const data_tr = new Date();
     const year = data_tr.getFullYear();
@@ -47,16 +47,16 @@ client.on('message', (topic, message) => {
             insertPg(wlDecoder(message.toString()));
             break;
         case 'cpl03':
-            let cpl03_decoded = cpl03Decoder(message.toString());
+            let cpl03_decoded = await cpl03Decoder(message.toString());
             if (typeof cpl03_decoded !== 'undefined'){
                 //console.log(cpl03Decoder(message.toString()));
-                insertMeters(cpl03Decoder(message.toString()));
+                insertMeters(cpl03_decoded);
             } else {
                 console.log(`${formattedDate} => IMEI: ${message.toString().substring(1,16)}, don't have any meter associated!`);
             }
             break;
         case 'xlogic':
-            let xlogic_decoded = xlogicDecoder(message.toString('hex'));
+            let xlogic_decoded = await xlogicDecoder(message.toString('hex'));
             if (typeof xlogic_decoded !== 'undefined'){
                 //console.log(xlogic_decoded);
                 insertMeters(xlogic_decoded);
@@ -65,7 +65,7 @@ client.on('message', (topic, message) => {
             }
             break;
         case 'ds03a':
-            let ds03a_decoded = ds03aDecoder(message.toString());
+            let ds03a_decoded = await ds03aDecoder(message.toString());
             if (typeof ds03a_decoded !== 'undefined'){
                 //console.log(ds03a_decoded);
                 insertPg(ds03a_decoded);
