@@ -78,7 +78,7 @@ const qmin48dataTask = async () => {
   try {
     const query = await executeAllQueries();
     //console.log(query.length, 'records to insert');
-    //console.log(query);
+    console.log(query);
     return query;
   } catch (error) {
     // Handle any errors in the Promise chain
@@ -87,4 +87,4 @@ const qmin48dataTask = async () => {
 };
 
 export { qmin48dataTask };
-
+qmin48dataTask();

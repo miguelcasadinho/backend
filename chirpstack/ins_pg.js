@@ -13,6 +13,45 @@ const pool  = new pg.Pool({
     database: process.env.psqlGiggoDatabase
 });
 
+// Define an async function to insert Arquiled devices flow
+const insertFlowArq = async (payload) => {
+    const client = await pool.connect();
+    try {
+      // Begin a transaction
+      await client.query('BEGIN');
+            // Iterate over the data and execute insert queries
+      for (let i=0; i < payload.Deltas.length ; i++){  
+        let data = new Date(payload.Date);
+        let currentMinutes = data.getMinutes();
+        if (currentMinutes >= 50) {
+            data.setHours(data.getHours() + 1);
+        }
+        else {
+            data.setHours(data.getHours());
+        }
+        data.setMinutes(0);
+        data.setSeconds(0);
+        data.setMilliseconds(0);   
+  
+        let hour = data.getHours();
+        hour=hour-i;
+        data.setHours(hour);
+        await client.query(`INSERT INTO flow(device, date, flow) VALUES($1, $2, $3) ON CONFLICT (device, date) DO NOTHING`,
+                          [payload.DeviceName, data, payload.Deltas[i]]);
+      }
+      // Commit the transaction
+      await client.query('COMMIT');
+      //console.log(`${payload.Application}, ${payload.DeviceName} , flow inserted successfully`);
+    } catch (err) {
+      // Rollback the transaction if an error occurs
+      await client.query('ROLLBACK');
+      console.error('Error inserting data:', err);
+    } finally {
+      // Release the client back to the pool
+      client.release();
+    }
+};
+
 // Define an async function to insert Axioma devices flow (34)
 const insertFlow = async (payload) => {
     const client = await pool.connect();
@@ -748,7 +787,7 @@ const insertPg = async (payload) => {
                 insertCom(payload);
                 break;
             case '153':
-                insertFlow2(payload);
+                insertFlowArq(payload);
                 insertVolume(payload);
                 insertAlarm(payload);
                 insertBattery(payload);

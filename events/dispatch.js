@@ -7,6 +7,7 @@ import { unauthdataTask } from './class/unauth.js';
 import { falhas4hdataTask } from './class/falhas4h.js';
 import { requestdataTask } from './class/request.js';
 import { asbestosdataTask } from './class/asbestos.js';
+import { execPython } from './class/readings.js';
 import nodemailer from 'nodemailer';
 import TelegramBot from 'node-telegram-bot-api';
 
@@ -208,6 +209,38 @@ const asbestossendEmail = async (data) => {
     }
 };
 
+const readingsSendEmail = async (csv_name) => {
+    try {
+        const data_tr = new Date();
+        const year = data_tr.getFullYear();
+        const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+        const day = String(data_tr.getDate()).padStart(2, '0');
+        const hour = String(data_tr.getHours()).padStart(2, '0');
+        const min = String(data_tr.getMinutes()).padStart(2, '0');
+        const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
+        const mailOptions = {
+            from: 'mciot.pt@gmail.com',
+            to: 'miguel.casadinho@emas-beja.pt',
+            bcc: 'miguel.casadinho@emas-beja.pt',
+            subject: 'Leituras de telemetria',
+            text: `Bom dia,\n
+            Segue em anexo o ficheiro csv das leituras de telemetria.`,
+            attachments: [
+                {
+                    filename: csv_name,
+                    path: '/home/giggo/nodejs/events/' + csv_name,
+                    cid: 'csv_name'
+                }
+            ]
+        };
+        const info = await transporter.sendMail(mailOptions);
+        console.log(`${formattedDate} => Readings sent, Email sent:, ${info.response}`);
+    } catch (error) {
+        console.error('Error sending email:', error);
+        // Consider adding retries or other error handling mechanisms here
+    }
+};
+
 const disunauth = async () => {
     try {
         const unauthdata = await unauthdataTask();
@@ -262,4 +295,14 @@ const disasbestos = async () => {
     }
 };
 
-export { disunauth, diszerogc, diszeroregas, disfalhas4h, disrequest, disasbestos };
+const disreadings = async () => {
+    try {
+        const readings = await execPython();
+        //console.log(readings);
+        await readingsSendEmail(readings);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
+export { disunauth, diszerogc, diszeroregas, disfalhas4h, disrequest, disasbestos, disreadings };

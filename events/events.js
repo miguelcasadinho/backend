@@ -1,5 +1,5 @@
 import schedule from 'node-schedule';
-import { disunauth, diszerogc, diszeroregas, disfalhas4h, disrequest, disasbestos } from './dispatch.js';
+import { disunauth, diszerogc, diszeroregas, disfalhas4h, disrequest, disasbestos, disreadings } from './dispatch.js';
 
 /*
 //schedule rules
@@ -28,12 +28,12 @@ zerogc_rule.dayOfWeek = 4; //(0 - 7) (0 or 7 is Sun)
 const zerogc_job = schedule.scheduleJob(zerogc_rule, diszerogc);
 
 // Define the zeros regas schedule
-const zeroregas_rule = new schedule.RecurrenceRule();
-zeroregas_rule.minute = 30; //(0-59)
-zeroregas_rule.hour = 8; //(0-23)
-zeroregas_rule.dayOfWeek = 1; //(0 - 7) (0 or 7 is Sun)
+//const zeroregas_rule = new schedule.RecurrenceRule();
+//zeroregas_rule.minute = 30; //(0-59)
+//zeroregas_rule.hour = 8; //(0-23)
+//zeroregas_rule.dayOfWeek = 1; //(0 - 7) (0 or 7 is Sun)
 // Schedule the insclientss tasks
-const zeroregas_job = schedule.scheduleJob(zeroregas_rule, diszeroregas);
+//const zeroregas_job = schedule.scheduleJob(zeroregas_rule, diszeroregas);
 
 // Define the 4h failures schedule
 const falhas4h_rule = new schedule.RecurrenceRule();
@@ -54,3 +54,12 @@ asbestos_rule.minute = 14; //(0-59)
 asbestos_rule.hour = 8; //(0-23)
 // Schedule the insclientss tasks
 const asbestos_job = schedule.scheduleJob(asbestos_rule, disasbestos);
+
+// Define the readings schedule
+const readings_rule = new schedule.RecurrenceRule();
+readings_rule.minute = 24; //(0-59)
+readings_rule.hour = 8; //(0-23)
+readings_rule.date = 11; //(1-31)
+// Schedule the readings tasks
+const readings_job = schedule.scheduleJob(readings_rule, disreadings);
+
