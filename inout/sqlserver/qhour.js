@@ -36,6 +36,9 @@ const executeAllQueries = async () => {
   try {
     qhourdata = [];
     for (let i=0; i < flow_tags.length; i++){
+
+
+      /*
       if (flow_tags[i] == 488){
         const result = await executeQuery(`SELECT Tag_ID, DATEADD(MINUTE, 0, DATEADD(HOUR, DATEDIFF(HOUR, 0, Data), 0)) AS date,
                                           ROUND(SUM(Valor)*10/COUNT(Valor), 2) AS flow, count(*) as n
@@ -60,6 +63,35 @@ const executeAllQueries = async () => {
                                           FROM Go_Ready.dbo.Telegestao_data
                                           where Data >=  DATEADD(hour, -25, GETDATE()) AND Tag_ID = ${flow_tags[i]}
                                           GROUP BY DATEADD(MINUTE, 0, DATEADD(HOUR, DATEDIFF(HOUR, 0, Data), 0)), Tag_ID
+                                          ORDER BY date desc`);
+        qhourdata.push(result);
+      }
+        */
+      // Remove 1 hour to the calculated date
+      if (flow_tags[i] == 488){
+        const result = await executeQuery(`SELECT Tag_ID, DATEADD(HOUR, -1, DATEADD(MINUTE, 0, DATEADD(HOUR, DATEDIFF(HOUR, 0, Data), 0))) AS date,
+                                          ROUND(SUM(Valor)*10/COUNT(Valor), 2) AS flow, count(*) as n
+                                          FROM Go_Ready.dbo.Telegestao_data
+                                          where Data >=  DATEADD(hour, -25, GETDATE()) AND Tag_ID = ${flow_tags[i]}
+                                          GROUP BY DATEADD(HOUR, -1, DATEADD(MINUTE, 0, DATEADD(HOUR, DATEDIFF(HOUR, 0, Data), 0))), Tag_ID
+                                          ORDER BY date desc`);
+        qhourdata.push(result);
+      }
+      else if (flow_tags[i] == 285){
+        const result = await executeQuery(`SELECT Tag_ID, DATEADD(HOUR, -1, DATEADD(MINUTE, 0, DATEADD(HOUR, DATEDIFF(HOUR, 0, Data), 0))) AS date,
+                                          ROUND(SUM(Valor)/10/COUNT(Valor), 2) AS flow, count(*) as n
+                                          FROM Go_Ready.dbo.Telegestao_data
+                                          where Data >=  DATEADD(hour, -25, GETDATE()) AND Tag_ID = ${flow_tags[i]}
+                                          GROUP BY DATEADD(HOUR, -1, DATEADD(MINUTE, 0, DATEADD(HOUR, DATEDIFF(HOUR, 0, Data), 0))), Tag_ID
+                                          ORDER BY date desc`);
+        qhourdata.push(result);
+      }
+      else {
+        const result = await executeQuery(`SELECT Tag_ID, DATEADD(HOUR, -1, DATEADD(MINUTE, 0, DATEADD(HOUR, DATEDIFF(HOUR, 0, Data), 0))) AS date,
+                                          ROUND(SUM(Valor)/COUNT(Valor), 2) AS flow, count(*) as n
+                                          FROM Go_Ready.dbo.Telegestao_data
+                                          where Data >=  DATEADD(hour, -25, GETDATE()) AND Tag_ID = ${flow_tags[i]}
+                                          GROUP BY DATEADD(HOUR, -1, DATEADD(MINUTE, 0, DATEADD(HOUR, DATEDIFF(HOUR, 0, Data), 0))), Tag_ID
                                           ORDER BY date desc`);
         qhourdata.push(result);
       }

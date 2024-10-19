@@ -24,10 +24,10 @@ const insertFlowArq = async (payload) => {
         let data = new Date(payload.Date);
         let currentMinutes = data.getMinutes();
         if (currentMinutes >= 50) {
-            data.setHours(data.getHours() + 1);
+            data.setHours(data.getHours());
         }
         else {
-            data.setHours(data.getHours());
+            data.setHours(data.getHours() -1);
         }
         data.setMinutes(0);
         data.setSeconds(0);

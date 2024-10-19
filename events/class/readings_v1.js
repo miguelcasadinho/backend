@@ -146,7 +146,7 @@ const createCsv = async (documents) => {
         // Dynamic filename with timestamp
         const timestamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15); 
         const filename = `csv_${timestamp}.csv`;
-        // Save the CSV with UTF-16LE encoding
+        // Save the CSV with UTF-16le encoding
         fs.writeFile(`/home/giggo/nodejs/events/${filename}`, csv, 'utf16le', (err) => {
             if (err) {
               console.error('Error saving CSV file:', err); 
@@ -264,9 +264,9 @@ const readingsTask = async () => {
         //console.log(form_readings);
         //const changeQuotes = await changeQuotation(form_readings);
         //console.log(changeQuotes);
-        const update_file = await updateXlsx(form_readings);
+        //const update_file = await updateXlsx(form_readings);
         //const save_file = await createCsv2(changeQuotes);
-        //const save_file = await createCsv(readings);
+        const save_file = await createCsv(readings);
         //return save_file;
     } catch (error) {
         // Handle any errors in the Promise chain

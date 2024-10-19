@@ -12,8 +12,8 @@ const GIS_DadosContadores =
     <soap:Body>
         <GIS_DadosContadores xmlns="http://tempuri.org/">
         <Empresa>${process.env.aquaUser}</Empresa>
-        <!--<ramal></ramal>-->
-        <!--<local></local>-->
+        <!--<ramal>1209002</ramal>-->
+        <!--<local>17460</local>-->
         <itemInicial>1</itemInicial>
         <nrItemsObter>50000</nrItemsObter>
         </GIS_DadosContadores>

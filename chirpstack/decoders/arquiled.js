@@ -2,13 +2,13 @@ const arquiledDecoder = (message) => {
     if (message.hasOwnProperty('fPort') && message.hasOwnProperty('data')) {
         let bytes = Buffer.from(message.data, 'base64');
 
-        if ( ((bytes[1] >> 6) & 0x11) == 0 && (bytes[0] & 0x11111) == 1 ){
+        if ( ((bytes[1] >> 6) & 0x03) == 0 && (bytes[0] & 0x1F) == 1 ){
 
-            let classe = (bytes[1] >> 6) & 0x11; 
-            let subclasse = bytes[0] & 0x11111;
-            let versaoHeader = (bytes[0] >> 5) & 0x111; 
-            let versaoMensagem = bytes[1] & 0x111111;
-            let bat = (bytes[3] >> 4) & 0x1111;
+            let classe = (bytes[1] >> 6) & 0x03; 
+            let subclasse = bytes[0] & 0x1F;
+            let versaoHeader = (bytes[0] >> 5) & 0x07; 
+            let versaoMensagem = bytes[1] & 0x3F;
+            let bat = (bytes[3] >> 4) & 0x0F;
             let battery;
 
             switch(bat){
@@ -64,7 +64,7 @@ const arquiledDecoder = (message) => {
                     battery = 0;
             }
 
-            let alarms = (bytes[3] & 0x1111);
+            let alarms = (bytes[3] & 0x0F);
             let alarm;
 
             switch(alarms){
@@ -113,7 +113,7 @@ const arquiledDecoder = (message) => {
             let multiply = [];
             let j=0;
             for (let i=37;i<43;i++) {
-                switch(bytes[i] & 0x11){
+                switch(bytes[i] & 0x03){
                     case 0:
                         multiply[j] = 1;
                     break;
@@ -130,7 +130,7 @@ const arquiledDecoder = (message) => {
                         multiply[j] = 0;
                 }
                 j++;
-                switch(bytes[i] >> 2 & 0x11){
+                switch(bytes[i] >> 2 & 0x03){
                     case 0:
                         multiply[j] = 1;
                     break;
@@ -147,7 +147,7 @@ const arquiledDecoder = (message) => {
                         multiply[j] = 0;
                 }
                 j++;
-                switch(bytes[i] >> 4 & 0x11){
+                switch(bytes[i] >> 4 & 0x03){
                     case 0:
                         multiply[j] = 1;
                     break;
@@ -164,7 +164,7 @@ const arquiledDecoder = (message) => {
                         multiply[j] = 0;
                 }
                 j++;
-                switch(bytes[i] >> 6 & 0x11){
+                switch(bytes[i] >> 6 & 0x03){
                     case 0:
                         multiply[j] = 1;
                     break;

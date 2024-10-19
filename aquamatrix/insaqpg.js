@@ -44,7 +44,7 @@ const insertmetersdata = async (metersdata) => {
                                 floor = EXCLUDED.floor, date_inst = EXCLUDED.date_inst, dn = EXCLUDED.dn, class = EXCLUDED.class, brand = EXCLUDED.brand, 
                                 model = EXCLUDED.model, volume = EXCLUDED.volume, date_leit = EXCLUDED.date_leit`,
                             [Number(metersdata[i].Ramal), Number(metersdata[i].Local), Number(metersdata[i].Cliente), metersdata[i].Rua, metersdata[i].NPolicia, 
-                            metersdata[i].Andar, metersdata[i].Contador, new Date(metersdata[i].DtInstalacao), Number(metersdata[i].Diametro), metersdata[i].Classe, 
+                            metersdata[i].Andar, metersdata[i].Numero, new Date(metersdata[i].DtInstalacao), Number(metersdata[i].Diametro), metersdata[i].Classe, 
                             metersdata[i].Marca, metersdata[i].Modelo, Number(metersdata[i].Volume), new Date(metersdata[i].DtLeitura)]);
         }
         else if ( metersdata[i].DtInstalacao !== null && metersdata[i].DtLeitura === null  ){
@@ -54,7 +54,7 @@ const insertmetersdata = async (metersdata) => {
                                 floor = EXCLUDED.floor, date_inst = EXCLUDED.date_inst, dn = EXCLUDED.dn, class = EXCLUDED.class, brand = EXCLUDED.brand, 
                                 model = EXCLUDED.model, volume = EXCLUDED.volume`,
                             [Number(metersdata[i].Ramal), Number(metersdata[i].Local), Number(metersdata[i].Cliente), metersdata[i].Rua, metersdata[i].NPolicia, 
-                            metersdata[i].Andar, metersdata[i].Contador, new Date(metersdata[i].DtInstalacao), Number(metersdata[i].Diametro), metersdata[i].Classe, 
+                            metersdata[i].Andar, metersdata[i].Numero, new Date(metersdata[i].DtInstalacao), Number(metersdata[i].Diametro), metersdata[i].Classe, 
                             metersdata[i].Marca, metersdata[i].Modelo, Number(metersdata[i].Volume)]);
         }
         else if ( metersdata[i].DtInstalacao === null && metersdata[i].DtLeitura !== null  ){
@@ -64,7 +64,7 @@ const insertmetersdata = async (metersdata) => {
                                 floor = EXCLUDED.floor, dn = EXCLUDED.dn, class = EXCLUDED.class, brand = EXCLUDED.brand, 
                                 model = EXCLUDED.model, volume = EXCLUDED.volume, date_leit = EXCLUDED.date_leit`,
                             [Number(metersdata[i].Ramal), Number(metersdata[i].Local), Number(metersdata[i].Cliente), metersdata[i].Rua, metersdata[i].NPolicia, 
-                            metersdata[i].Andar, metersdata[i].Contador, Number(metersdata[i].Diametro), metersdata[i].Classe, 
+                            metersdata[i].Andar, metersdata[i].Numero, Number(metersdata[i].Diametro), metersdata[i].Classe, 
                             metersdata[i].Marca, metersdata[i].Modelo, Number(metersdata[i].Volume), new Date(metersdata[i].DtLeitura)]);
         }
         else {
@@ -74,7 +74,7 @@ const insertmetersdata = async (metersdata) => {
                                 floor = EXCLUDED.floor, dn = EXCLUDED.dn, class = EXCLUDED.class, brand = EXCLUDED.brand, 
                                 model = EXCLUDED.model, volume = EXCLUDED.volume`,
                             [Number(metersdata[i].Ramal), Number(metersdata[i].Local), Number(metersdata[i].Cliente), metersdata[i].Rua, metersdata[i].NPolicia, 
-                            metersdata[i].Andar, metersdata[i].Contador, Number(metersdata[i].Diametro), metersdata[i].Classe, 
+                            metersdata[i].Andar, metersdata[i].Numero, Number(metersdata[i].Diametro), metersdata[i].Classe, 
                             metersdata[i].Marca, metersdata[i].Modelo, Number(metersdata[i].Volume)]);
         }
       }
