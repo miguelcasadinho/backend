@@ -3,6 +3,7 @@ import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 import pg from 'pg';
 import axios from 'axios';
+import { devices } from './pulse_reader.js'
 
 config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../.env') });
 
@@ -23,20 +24,25 @@ async function makeRequest() {
     }
   }
   
-async function cleanData(data) {
+async function cleanData(msg) {
   try {
+    let data = [...msg]; // Make a copy of msg to avoid mutating original
     let array = [];
     for (let i = 0; i < data.length; i++) {
       const moteidsn = data[i].moteidsn || '';
       const readtext = data[i].readtext || '';
-      const device = moteidsn.substring(moteidsn.indexOf('/') + 1).trim();
-      const brand = moteidsn.substring(0, moteidsn.indexOf('/')).trim();
+      let device = '';
+      let brand = '';
+      if (moteidsn.includes('/')) {
+        device = moteidsn.substring(moteidsn.indexOf('/') + 1).trim();
+        brand = moteidsn.substring(0, moteidsn.indexOf('/')).trim();
+      }
       const volumeStr = readtext.substring(0, readtext.indexOf(' m')).trim().replace(",", ".");
       const volume = parseFloat(volumeStr) || 0;  // Handle NaN case
       const alarm = data[i].event_pt || 'no alarms';
 
       // Verifica se todos os valores são válidos antes de adicionar ao array
-      if (data[i].time && device && brand && volume) {
+      if (data[i].time && device && brand && !isNaN(volume)) {
         array.push({
           "Date": data[i].time,
           "Device": device,
@@ -67,7 +73,7 @@ const insReadings = async (data) => {
     var formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     // Iterate over the data and execute insert queries
     for (let i=0; i < data.length ; i++){
-      if (data[i].Brand == 'AW' || data[i].Brand == 'AG'){
+      if (data[i].Brand == 'AW' || data[i].Brand == 'AG' || data[i].Brand == 'JMW' || data[i].Brand == 'NKE'){
         await client.query(`INSERT INTO readings(device, date, volume)  VALUES($1, $2, $3) ON CONFLICT (device, date) DO NOTHING`, 
           [Number(data[i].Device), new Date(data[i].Date), Number(data[i].Volume)]);
       }
@@ -100,7 +106,7 @@ const insAlarms = async (data) => {
     var formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     // Iterate over the data and execute insert queries
     for (let i=0; i < data.length ; i++){
-      if (data[i].Brand == 'AW' || data[i].Brand == 'AG'){
+      if (data[i].Brand == 'AW' || data[i].Brand == 'AG' || data[i].Brand == 'JMW' || data[i].Brand == 'NKE'){
         await client.query(`INSERT INTO alarm2(device, date, alarm)  VALUES($1, $2, $3) ON CONFLICT (device, date) DO NOTHING`, 
           [Number(data[i].Device), new Date(data[i].Date), data[i].Alarm]);
       }
@@ -123,16 +129,27 @@ async function readings(data) {
   try {
     const fetch = await makeRequest();
     const clean = await cleanData(fetch);
-    // Get current date and the cut-off date (one month ago)
+    // Get current date and the cut-off date (1 day ago)
     const currentDate = new Date();
-    const cutOffDate = new Date(currentDate.setHours(currentDate.getHours() - 48));
-    // Filter out records older than one month
+    const cutOffDate = new Date(currentDate.setHours(currentDate.getHours() - 24));
+    // Filter out records older than e days
     const recentRecords = clean.filter(record => new Date(record.Date) >= cutOffDate);
     // Sort the filtered records by Date (ascending)
     recentRecords.sort((a, b) => new Date(b.Date) - new Date(a.Date));
-    await insReadings(recentRecords);
-    await insAlarms(recentRecords);
-    //console.log(recentRecords);
+    // Clone the recentRecords before modifying Device values
+    const modifiedRecords = recentRecords.map(record => ({ ...record }));
+    // Map devices for quick lookup
+    const deviceMap = new Map(devices.map(device => [device.sn, device.meter]));
+    // Replace serial numbers with meter names in the cloned records
+    modifiedRecords.forEach(record => {
+      if (deviceMap.has(record.Device)) {
+        record.Device = deviceMap.get(record.Device);
+      }
+    });
+    // Insert the modified records (with Device substitution)
+    await insReadings(modifiedRecords);
+    await insAlarms(modifiedRecords);
+    // Return the original recentRecords (without Device substitution)
     return recentRecords;
   } catch (error) {
     console.error('Error in readings:', error);

@@ -5,6 +5,7 @@ import { config } from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 import pg from 'pg';
+import { devices } from './pulse_reader.js'
 
 config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../.env') });
 
@@ -24,10 +25,10 @@ async function getFlow() {
         
         let array = [];
         for (let i = 0; i < volume.length; i++) {
-            if (volume[i].Brand == 'AW' || volume[i].Brand == 'AG'){
+            if (volume[i].Brand == 'AW' || volume[i].Brand == 'AG' || volume[i].Brand == 'JMW' || volume[i].Brand == 'NKE'){
             const device = `${volume[i].Brand}-${volume[i].Device}`;
             const date = new Date();
-            date.setDate(date.getDate() - 2); // Get date 2 days ago
+            date.setDate(date.getDate() - 1); // Get date 1 day ago
             const start = new Date(date).toISOString();
             const end = new Date().toISOString();
             
@@ -84,6 +85,15 @@ const insFlow = async (data) => {
 async function flowVision() {
     try {
       const getflow = await getFlow();
+      // Map devices for quick lookup
+      const deviceMap = new Map(devices.map(device => [device.sn, device.meter]));
+
+      // Replace serial numbers with meter names
+      getflow.forEach(record => {
+        if (deviceMap.has(record.Device)) {
+          record.Device = deviceMap.get(record.Device);
+        }
+      });
       await insFlow(getflow);
     } catch (error) {
       console.error('Error in flowvision:', error);
@@ -103,16 +113,17 @@ rule.dayOfWeek = 0; //(0 - 7) (0 or 7 is Sun)
 rule.tz = 'Europe/Lisbon';
 */
 
+
 const rule = new schedule.RecurrenceRule();
 rule.minute = 5; //(0-59)
 rule.hour = 8; //(0-23)
 // Schedule the tasks
 const job = schedule.scheduleJob(rule, flowVision);
 
-/*
+
+
 const rule2 = new schedule.RecurrenceRule();
 rule2.minute = 5; //(0-59)
 rule2.hour = 20; //(0-23)
 // Schedule the tasks
 const job2 = schedule.scheduleJob(rule2, flowVision);
-*/
