@@ -21,11 +21,11 @@ const fetchData = async () => {
 
         // Wait for the username input to be visible and fill it
         await page.waitForSelector('#AtusLogin_UserName', { visible: true });
-        await page.type('#AtusLogin_UserName', 'Hplacido'); // Fill username
+        await page.type('#AtusLogin_UserName', process.env.cityMindUser); // Fill username
 
         // Wait for the password input to be visible and fill it
         await page.waitForSelector('#AtusLogin_Password', { visible: true });
-        await page.type('#AtusLogin_Password', 'helio2022'); // Fill password
+        await page.type('#AtusLogin_Password', process.env.cityMindPass); // Fill password
 
         // Wait for the login button to be visible and click it
         await page.waitForSelector('#AtusLogin_LoginButton', { visible: true });
@@ -98,3 +98,6 @@ fetchData();
         
 
 */
+    
+            
+        

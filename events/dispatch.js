@@ -220,7 +220,7 @@ const readingsSendEmail = async (csv_name) => {
         const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
         const mailOptions = {
             from: 'mciot.pt@gmail.com',
-            to: 'miguel.casadinho@emas-beja.pt',
+            to: 'rui.fernandes@emas-beja.pt',
             bcc: 'miguel.casadinho@emas-beja.pt',
             subject: 'Leituras de telemetria',
             text: `Bom dia,\n

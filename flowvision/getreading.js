@@ -75,7 +75,7 @@ const insReadings = async (data) => {
     for (let i=0; i < data.length ; i++){
       if (data[i].Brand == 'AW' || data[i].Brand == 'AG' || data[i].Brand == 'JMW' || data[i].Brand == 'NKE'){
         await client.query(`INSERT INTO readings(device, date, volume)  VALUES($1, $2, $3) ON CONFLICT (device, date) DO NOTHING`, 
-          [Number(data[i].Device), new Date(data[i].Date), Number(data[i].Volume)]);
+          [data[i].Device, new Date(data[i].Date), Number(data[i].Volume)]);
       }
     }
     // Commit the transaction
