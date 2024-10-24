@@ -25,7 +25,11 @@ const fetchData = async () => {
     // Check if the file exists and delete it if it does
     if (fs.existsSync(readingsFile)) {
         fs.unlinkSync(readingsFile);
-    };
+        console.log('File deleted!')
+    }
+    else {
+        console.log('File do not exists!')
+    }
 
 
     const browser = await puppeteer.launch({
@@ -105,7 +109,7 @@ const fetchData = async () => {
                 }
             }, 100); // Check every 100 ms
         });
-
+        console.log('File downloaded successfully!');
     }catch (error) {
         console.error('Error fetching data:', error);
     } finally {
@@ -151,7 +155,7 @@ const cleanData = async () => {
         });
 
         // Log the resulting array
-        //console.log('CSV Array:', dataArray);
+        console.log('Records to insert:', dataArray.length);
 
         let readings = [];
         const targetDevices = ['9020829','9015063','9016166','9015421','9022436','9015271'];
@@ -200,7 +204,7 @@ const cleanData = async () => {
                 });
             }
         };
-        //console.log(readings);
+        console.log('Clean records to insert:', readings.length);
         return readings;
     }catch (error) {
             console.error('Error fetching data:', error);
@@ -243,8 +247,8 @@ const insReadings = async (data) => {
 const fetch = async() => {
     try {
         await fetchData();
-    const readings = await cleanData();
-    await insReadings(readings);
+    const csv2obj = await cleanData();
+    await insReadings(csv2obj);
     }catch (error) {
         console.error('Error fetch:', error);
     } 
@@ -271,7 +275,5 @@ const job = schedule.scheduleJob(rule, fetch);
 
 
 
-
-    
             
         
