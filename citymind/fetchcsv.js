@@ -14,14 +14,17 @@ const pool  = new pg.Pool({
     port: process.env.psqlGiggoPort,
     user: process.env.psqlGiggoUser,
     password: process.env.psqlGiggoPassword,
-    database: process.env.psqlGiggoDatabase
+    database: process.env.psqlGiggoDatabase,
+    max: 2000,       // Adjust based on your needs
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 2000,
 });
 
 
 const fetchData = async () => {
 
     const readingsFile = './downloads/Read.csv';
-
+/*
     // Check if the file exists and delete it if it does
     if (fs.existsSync(readingsFile)) {
         fs.unlinkSync(readingsFile);
@@ -30,8 +33,7 @@ const fetchData = async () => {
     else {
         console.log('File do not exists!')
     }
-
-
+*/
     const browser = await puppeteer.launch({
         executablePath: '/usr/bin/chromium', 
         headless: true,
@@ -39,11 +41,12 @@ const fetchData = async () => {
     });
     
     const page = await browser.newPage();
+    console.log('Browser start!');
     const downloadPath = './downloads'; // Define the download folder
 
     try {
         await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36');
-        
+        console.log('Set Agent!');
         // Create the download directory if it doesn't exist
         if (!fs.existsSync(downloadPath)) {
             fs.mkdirSync(downloadPath);
@@ -51,7 +54,7 @@ const fetchData = async () => {
 
         // Navigate to the login page
         await page.goto('https://city-mind.com/default.aspx', { waitUntil: 'networkidle0' });
-
+        console.log('Load login page!')
         // Log the content of the page for debugging
         //const pageContent = await page.content();
         //console.log(pageContent); // Check if the page loaded correctly
@@ -59,32 +62,33 @@ const fetchData = async () => {
         // Wait for the username input to be visible and fill it
         await page.waitForSelector('#AtusLogin_UserName', { visible: true });
         await page.type('#AtusLogin_UserName', process.env.cityMindUser); // Fill username
-
+        console.log('Fill the name!')
         // Wait for the password input to be visible and fill it
         await page.waitForSelector('#AtusLogin_Password', { visible: true });
         await page.type('#AtusLogin_Password', process.env.cityMindPass); // Fill password
-
+        console.log('Fill the password!')
         // Wait for the login button to be visible and click it
         await page.waitForSelector('#AtusLogin_LoginButton', { visible: true });
         await Promise.all([page.click('#AtusLogin_LoginButton'), page.waitForNavigation({ waitUntil: 'networkidle0' })]);
-
+        console.log('Push login button!')
         // Navigate to the specific report URL
         await page.goto('https://city-mind.com/Pages/ReadReport.aspx?rid=13&from=m')
-
+        console.log('Load reports page!')
         // Select values from dropdowns 
         await page.select('#ctl00_mainArea_rpw_srcbr_ddlentity1', '-1');
         await page.select('#ctl00_mainArea_rpw_srcbr_ddlentity2', '-1');
-
+        console.log('Fill all | all report!')
         // Wait for the 'hora da leitura' dropdown and select 'Yesterday'
         await page.waitForSelector('#ctl00_mainArea_rpw_srcbr_ctl54_ddlOperators', { visible: true });
         await page.select('#ctl00_mainArea_rpw_srcbr_ctl54_ddlOperators', 'Yesterday');
-
+        console.log('Fill yesterday!')
         // Wait for the mostrar button to be visible and click it
         await page.waitForSelector('#ctl00_mainArea_rpw_srcbr_btnShow', { visible: true });
         await Promise.all([
             page.click('#ctl00_mainArea_rpw_srcbr_btnShow'),
             page.waitForNavigation({ waitUntil: 'networkidle0' })
         ]);
+        console.log('Push show button!')
    
         // Setup file download behavior before clicking the export button
         const client = await page.target().createCDPSession();
@@ -92,11 +96,12 @@ const fetchData = async () => {
             behavior: 'allow',
             downloadPath: downloadPath  // Save the file in the download directory
         });
+        console.log('Set download behavior!')
 
         // Wait for the export csv button to be visible and click it
         await page.waitForSelector('#ctl00_mainArea_rpw_ActionMenu1_pMenu_ctl01_pItem', { visible: true });
         await page.click('#ctl00_mainArea_rpw_ActionMenu1_pMenu_ctl01_pItem');
-
+        console.log('Push export button!')
         // Wait for the file to download (you may want to implement a delay or wait for the file to appear in the directory)
         const csvFilePath = path.join(downloadPath, 'Read.csv'); // Use the actual file name or detect it dynamically
 
@@ -112,9 +117,9 @@ const fetchData = async () => {
         console.log('File downloaded successfully!');
     }catch (error) {
         console.error('Error fetching data:', error);
-    } finally {
-        await browser.close(); 
-    }
+    } //finally {
+        //await browser.close(); 
+    //}
 };
 
 
@@ -124,6 +129,7 @@ const cleanData = async () => {
         const csvFilePath = './downloads/Read.csv';
         // Read the CSV file into a variable
         let csvData = fs.readFileSync(csvFilePath, 'utf16le');
+        console.log('csv length: ', csvData.length);
 
         // Transforming the CSV data into an array of objects
         const headers = [
@@ -155,7 +161,7 @@ const cleanData = async () => {
         });
 
         // Log the resulting array
-        console.log('Records to insert:', dataArray.length);
+        console.log('Meters to insert:', dataArray.length);
 
         let readings = [];
         const targetDevices = ['9020829','9015063','9016166','9015421','9022436','9015271'];
@@ -204,7 +210,7 @@ const cleanData = async () => {
                 });
             }
         };
-        console.log('Clean records to insert:', readings.length);
+        console.log('Clean meters to insert:', readings.length);
         return readings;
     }catch (error) {
             console.error('Error fetching data:', error);
@@ -213,10 +219,13 @@ const cleanData = async () => {
 
 // Define an async function to insert readings
 const insReadings = async (data) => {
+    console.log('Meters received to insert: ', data.length);
     const client = await pool.connect();
+    console.log('Connected to PSQL!');
     try {
       // Begin a transaction
       await client.query('BEGIN');
+      console.log('Query started!');
       const data_tr = new Date();
       const year = data_tr.getFullYear();
       const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
@@ -225,12 +234,27 @@ const insReadings = async (data) => {
       const min = String(data_tr.getMinutes()).padStart(2, '0');
       var formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
       // Iterate over the data and execute insert queries
-      for (let i=0; i < data.length ; i++){
-          await client.query(`INSERT INTO readings2(device, date, volume)  VALUES($1, $2, $3) ON CONFLICT (device, date) DO NOTHING`, 
-            [data[i].Device, new Date(data[i].Date), Number(data[i].Volume)]);  
-      }
+      //for (let i=0; i < data.length ; i++){
+        //console.log(`Inserting data for device: ${data[i].Device}, date: ${data[i].Date}, volume: ${data[i].Volume}`);
+            try {
+                const insertValues = data.map(d => `('${d.Device}', '${new Date(d.Date).toISOString()}', ${Number(d.Volume)})`).join(",");
+                await client.query(`INSERT INTO readings2(device, date, volume) VALUES ${insertValues} ON CONFLICT (device, date) DO NOTHING`);
+                /*
+                await client.query(
+                    `INSERT INTO readings2(device, date, volume) VALUES($1, $2, $3) ON CONFLICT (device, date) DO NOTHING`, 
+                    [data[i].Device, new Date(data[i].Date), Number(data[i].Volume)]
+                );
+                */
+            } catch (err) {
+                console.error(`Error inserting data at index ${i}:`, err);
+                throw err; // Re-throw to trigger rollback
+            }
+        
+      //}
+      console.log('Query set!');
       // Commit the transaction
       await client.query('COMMIT');
+      console.log('Query commited!');
     } catch (err) {
       // Rollback the transaction if an error occurs
       await client.query('ROLLBACK');
@@ -239,6 +263,8 @@ const insReadings = async (data) => {
       console.log(`${formattedDate} => ${data.length} readings inserted successfully!`);
       // Release the client back to the pool
       client.release();
+      fs.unlinkSync('./downloads/Read.csv');
+      console.log('File deleted!');
     }
   };
 
@@ -246,9 +272,9 @@ const insReadings = async (data) => {
 
 const fetch = async() => {
     try {
-        await fetchData();
+    const get = await fetchData();
     const csv2obj = await cleanData();
-    await insReadings(csv2obj);
+    const insert = await insReadings(csv2obj);
     }catch (error) {
         console.error('Error fetch:', error);
     } 
@@ -272,6 +298,12 @@ rule.minute = 5; //(0-59)
 rule.hour = 7; //(0-23)
 // Schedule the tasks
 const job = schedule.scheduleJob(rule, fetch);
+
+const rule2 = new schedule.RecurrenceRule();
+rule2.minute = 16; //(0-59)
+rule2.hour = 13; //(0-23)
+// Schedule the tasks
+const job2 = schedule.scheduleJob(rule2, fetch);
 
 
 
