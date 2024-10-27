@@ -65,14 +65,14 @@ const cpl03Decoder = async (message) => {
 
         const device = devices.find(device => device.imei === decoded.IMEI);
         if (device) {
-            const { pulse, meter, vol_ini, lit_pul, report, rph } = device;
+            const { pulse, meter, vol_ini, lit_pul, report, rph, model } = device;
             decoded.pulse = pulse;
             decoded.device = meter;
             decoded.vol_ini = vol_ini;
             decoded.lit_pul = lit_pul;
             decoded.report = report;
             decoded.rph = rph;
-            decoded.model = bytes[8] === 0x00 ? "CPL03-NB" : "not identify";
+            decoded.model = model;
             decoded.version= bytes[9]*0.01;
             decoded.battery = (bytes[11] | bytes[10] << 8)/1000;
             let bat = Math.min(3.64, Math.max(3.00, decoded.battery));

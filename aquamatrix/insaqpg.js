@@ -11,6 +11,7 @@ import { ramruadataTask } from './soap/ramaisrua.js';
 import { zmccontratosTask } from './psql/zmccontratos.js';
 import { infometersTask } from './psql/infometers.js';
 import { zmcinfometersTask } from './psql/zmcinfometers.js';
+import { estimTask } from './psql/estimated12m.js';
 
 config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../.env') });
 
@@ -192,7 +193,7 @@ const insertfatdata = async (fatdata) => {
   }
 };
 
-//Define an async function to delete contracts
+//Define an async function to delete all records
 const deleteAllRecords  = async (tableName) => {
   const client = await pool.connect();
   try {
@@ -400,6 +401,42 @@ const insertzmcinfometersdata = async (data) => {
   }
 };
 
+// Define an async function to insert estimated
+const insertestimated = async (data) => {
+  const client = await pool.connect();
+  try {
+    // Begin a transaction
+    await client.query('BEGIN');
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
+
+    // Iterate over the data and execute insert queries
+    let date = new Date();
+    for (var i=0; i < data.length ; i++){
+        await client.query(`INSERT INTO estimated(local, date, volume) VALUES($1, $2, $3)`,
+                            [data[i].local, date, Number(data[i].volume_avg)]);
+      
+    }
+    // Commit the transaction
+    await client.query('COMMIT');
+    console.log(`${formattedDate} => ${data.length} records of 12 months estimated inserted successfully!`);
+  } catch (err) {
+    // Rollback the transaction if an error occurs
+    await client.query('ROLLBACK');
+    console.error('Error inserting data:', err);
+  } finally {
+    // Release the client back to the pool
+    client.release();
+  }
+};
+
+
+
 const insmeters = async () => {
   try {
       const metersdata = await metersdataTask();
@@ -511,5 +548,18 @@ const inszmcinfometers = async () => {
   }
 };
 
-export { insmeters, insclients, inscoords, insfat, inscontra, insramrua, inszmccontratos, insinfometers, inszmcinfometers };
+const insestimated = async () => {
+  try {
+    await deleteAllRecords('estimated');
+    const estimated = await estimTask();
+    //console.log(estimated);
+    await insertestimated(estimated);
+    //await pool.end();
+    //console.log('Connection pool closed.');
+} catch (error) {
+    console.error('Error:', error);
+}
+};
+
+export { insmeters, insclients, inscoords, insfat, inscontra, insramrua, inszmccontratos, insinfometers, inszmcinfometers, insestimated };
 

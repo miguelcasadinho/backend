@@ -301,7 +301,7 @@ const job = schedule.scheduleJob(rule, fetch);
 
 const rule2 = new schedule.RecurrenceRule();
 rule2.minute = 16; //(0-59)
-rule2.hour = 13; //(0-23)
+rule2.hour = 7; //(0-23)
 // Schedule the tasks
 const job2 = schedule.scheduleJob(rule2, fetch);
 
