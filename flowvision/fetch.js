@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 import pg from 'pg';
 import { devices } from './pulse_reader.js'
+//import fs from 'fs';
 
 config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../.env') });
 
@@ -38,7 +39,7 @@ async function getFlow() {
             for (let j = 0; j < caudal.length; j++) {
                 array.push({
                     "Date": caudal[j][0],  
-                    "Device": volume[i].Device,
+                    "Device": (volume[i].Device).toString(),
                     "Flow": caudal[j][1]   
                 });
             }
@@ -67,7 +68,7 @@ const insFlow = async (data) => {
       // Iterate over the data and execute insert queries
       for (let i=0; i < data.length ; i++){
           await client.query(`INSERT INTO flow2(device, date, flow)  VALUES($1, $2, $3) ON CONFLICT (device, date) DO NOTHING`, 
-            [Number(data[i].Device), new Date(data[i].Date), Number(data[i].Flow)]);
+            [data[i].Device, new Date(data[i].Date), Number(data[i].Flow)]);
       }
       // Commit the transaction
       await client.query('COMMIT');
@@ -76,7 +77,7 @@ const insFlow = async (data) => {
       await client.query('ROLLBACK');
       console.error('Error inserting data:', err);
     } finally {
-        console.log(`${formattedDate} => ${data.length} => flows inserted successfully!`);
+        console.log(`${formattedDate} => ${data.length} flows inserted successfully!`);
       // Release the client back to the pool
       client.release();
     }
@@ -94,6 +95,16 @@ async function flowVision() {
           record.Device = deviceMap.get(record.Device);
         }
       });
+      /*
+      const rows = getflow.map(item => `${item.Date}, ${item.Device}, ${item.Flow}`).join('\n');
+      fs.writeFile('./output.csv', rows, (err) => {
+        if (err) {
+          console.error('Erro ao salvar CSV:', err);
+        } else {
+          console.log('Arquivo CSV criado com sucesso!');
+        }
+      });
+      */
       await insFlow(getflow);
     } catch (error) {
       console.error('Error in flowvision:', error);
@@ -121,8 +132,8 @@ rule.hour = 8; //(0-23)
 const job = schedule.scheduleJob(rule, flowVision);
 
 const rule2 = new schedule.RecurrenceRule();
-rule2.minute = 4; //(0-59)
-rule2.hour = 13; //(0-23)
+rule2.minute = 5; //(0-59)
+rule2.hour = 12; //(0-23)
 // Schedule the tasks
 const job2 = schedule.scheduleJob(rule2, flowVision);
 

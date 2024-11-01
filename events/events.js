@@ -80,6 +80,6 @@ const readings_job2 = schedule.scheduleJob(readings_rule2, disreadings);
 const readings_rule3 = new schedule.RecurrenceRule();
 readings_rule3.minute = 24; //(0-59)
 readings_rule3.hour = 8; //(0-23)
-readings_rule3.date = 31; //(1-31)
+readings_rule3.date = 30; //(1-31)
 // Schedule the readings tasks
 const readings_job3 = schedule.scheduleJob(readings_rule3, disreadings);
