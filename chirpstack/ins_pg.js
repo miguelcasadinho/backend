@@ -181,7 +181,105 @@ const insertFlow2 = async (payload) => {
     }
 };
 
-const insertFlowArrow2 = (payload) => {
+
+const getArrowVol11h = async (payload) => {
+    try {
+        //const { DeviceName, Date } = payload;
+        const data12h = new Date(payload.Date);
+        data12h.setHours(12, 0, 0, 0);
+        const data10h = new Date(data12h);
+        data10h.setHours(10);
+
+        const query = {
+            text: `
+            SELECT 
+                date,
+                volume
+            FROM 
+                volume
+            WHERE
+                device = $1 AND date > $2 AND date < $3;`,
+            values: [payload.DeviceName, data10h, data12h]
+        };
+
+        const client = await pool.connect();
+        const result = await client.query(query);
+        client.release();
+
+        return result.rows.length > 0 ? parseFloat(result.rows[0].volume) : null;
+    } catch (error) {
+        console.error('Error executing getArrowVol11h:', error.message || error);
+        throw new Error('Failed to retrieve volume data');
+    }
+};
+
+const getArrowVol13hto23h = async ({ Deltas }) => {
+    if (!Array.isArray(Deltas)) {
+        throw new Error('Deltas must be an array');
+    }
+    return Deltas.reduce((acc, delta) => acc + delta, 0);
+};
+
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+const insertFlowArrow2 = async (payload) => {
+    const client = await pool.connect();
+    try {
+        const { DeviceName, Date: payloadDate, Deltas, Volume, Volume_fin } = payload;
+        const delta24h = Volume_fin - Volume;
+
+        await delay(5000); // Adjustable if needed
+
+        const vol11h = await getArrowVol11h(payload);
+        if (vol11h === null) {
+            console.warn('Volume at 11h is missing.');
+            return;
+        }
+
+        const vol13hto23h = await getArrowVol13hto23h(payload);
+        const delta12h = Math.max(0, (Volume_fin - vol11h) - (vol13hto23h + delta24h));
+
+        await client.query('BEGIN');
+
+        const baseDate = new Date(payloadDate);
+        for (let i = 0; i < Deltas.length; i++) {
+            const data = new Date(baseDate);
+            data.setHours(data.getHours() - i);
+
+            await client.query(
+                `INSERT INTO flow(device, date, flow) VALUES($1, $2, $3)
+                ON CONFLICT (device, date) DO NOTHING`,
+                [DeviceName, data, Deltas[i]]
+            );
+        }
+
+        const data12h = new Date(payloadDate);
+        data12h.setHours(12, 0, 0, 0);
+        await client.query(
+            `INSERT INTO flow(device, date, flow) VALUES($1, $2, $3)
+            ON CONFLICT (device, date) DO NOTHING`,
+            [DeviceName, data12h, delta12h]
+        );
+
+        const data24h = new Date(payloadDate);
+        data24h.setHours(0, 0, 0, 0);
+        await client.query(
+            `INSERT INTO flow(device, date, flow) VALUES($1, $2, $3)
+            ON CONFLICT (device, date) DO NOTHING`,
+            [DeviceName, data24h, delta24h]
+        );
+
+        await client.query('COMMIT');
+    } catch (err) {
+        await client.query('ROLLBACK');
+        console.error('Error inserting data:', err);
+    } finally {
+        if (client) client.release();
+    }
+};
+
+
+const insertFlowArrow3 = (payload) => {
     var d24 = (payload.Volume_fin - payload.Volume);
     var vol11h;
     var d12;
@@ -738,7 +836,7 @@ const insertPg = async (payload) => {
                     insertFlow2(payload);
                 }
                 else if (payload.fPort == 2) {
-                    insertFlowArrow2(payload);//falta otimizar
+                    insertFlowArrow2(payload);
                 }
                 insertVolume(payload);
                 insertAlarm(payload);
@@ -771,7 +869,7 @@ const insertPg = async (payload) => {
                 break;
             case '119':
                 if (payload.fPort == 1){
-                    insertFlow2(payload);
+                    await insertFlow2(payload);
                 }
                 else if (payload.fPort == 2) {
                     insertFlowArrow2(payload);

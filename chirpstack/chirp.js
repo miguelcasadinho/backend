@@ -1,7 +1,7 @@
 import { axiomaDecoder } from './decoders/axioma.js';
 import { sagemDecoder } from './decoders/sagem.js';
 import { gladiatorDecoder } from './decoders/gladiator.js';
-import { arrowDecoder } from './decoders/arrow.js';
+import { arrowDecoder } from './decoders/maddalena.js';
 import { janzLoraDecoder } from './decoders/janz_lora.js';
 import { janz2Decoder } from './decoders/janz2.js';
 import { diehlDecoder } from './decoders/diehl.js';

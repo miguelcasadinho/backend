@@ -126,6 +126,7 @@ const arrowDecoder = (message) => {
                 "snr": message.rxInfo[index].loRaSNR,
                 "sf": message.txInfo.loRaModulationInfo.spreadingFactor
             };
+            console.log(payload)
             return payload;
         };
     };   

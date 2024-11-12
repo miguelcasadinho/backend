@@ -132,7 +132,7 @@ rule.hour = 8; //(0-23)
 const job = schedule.scheduleJob(rule, flowVision);
 
 const rule2 = new schedule.RecurrenceRule();
-rule2.minute = 5; //(0-59)
+rule2.minute = 35; //(0-59)
 rule2.hour = 12; //(0-23)
 // Schedule the tasks
 const job2 = schedule.scheduleJob(rule2, flowVision);
