@@ -44,7 +44,10 @@ const unauthsendEmail = async (data) => {
                 to: 'pedro.rodrigues@emas-beja.pt,luis.janeiro@emas-beja.pt,sabrina.dores@emas-beja.pt,helio.placido@emas-beja.pt,nuno.barnabe@emas-beja.pt',
                 bcc: 'miguel.casadinho@emas-beja.pt',
                 subject: work,
-                text: 'Olá, no dia ' + data + ' a intervenção ' + intervencao + ", com o sintoma " + int_sintoma + " e trabalho " + work + ", na morada "  + morada + " foi concluida."
+                html:`
+                <h3>Prezados colegas da EMAS de Beja,</h3>
+                <p>No dia ' + data + ' a intervenção ' + intervencao + ", com o sintoma " + int_sintoma + " e trabalho " + work + ", na morada "  + morada + " foi concluida.</p>
+                `
             };
             const info = await transporter.sendMail(mailOptions);
             console.log(`${formattedDate} => ${work} executed, Email sent:, ${info.response}`);
@@ -69,7 +72,10 @@ const zeroregassendEmail = async () => {
             to: 'luis.janeiro@emas-beja.pt,Helio.Placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt',
             bcc: 'miguel.casadinho@emas-beja.pt',
             subject: 'Anómalia regas',
-            text: 'Bom dia, segue em anexo as regas sem consumos nos últimos 7 dias.',
+            html:`
+            <h3>Prezados colegas da EMAS de Beja,</h3>
+            <p>Encontrarão em anexo as regas sem consumos nos últimos 7 dias.</p>
+            `,
             attachments: [
                 {
                     filename: 'regas.xlsx',
@@ -102,7 +108,10 @@ const zerogcsendEmail = async (data) => {
                 to: 'luis.janeiro@emas-beja.pt,Helio.Placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt',
                 bcc: 'miguel.casadinho@emas-beja.pt',
                 subject: 'Anómalia grande cliente',
-                text: `Olá, o contador ${device} instalado no local ${local} com o nome ${name} e morada ${morada} teve um consumo de ${consumo} m3 nas últimas 72 horas.`
+                html:`
+                <h3>Prezados colegas da EMAS de Beja,</h3>
+                <p>O contador ${device} instalado no local ${local} com o nome ${name} e morada ${morada} teve um consumo de ${consumo} m3 nas últimas 72 horas.</p>
+                `
             };
             const info = await transporter.sendMail(mailOptions);
             console.log(`${formattedDate} => Big consumers events executed, Email sent:, ${info.response}`);
@@ -133,9 +142,11 @@ const falhas4hsendEmail = async (data) => {
                 cc: 'gabriela.palma@emas-beja.pt,joao.pirata@emas-beja.pt,j.dias@emas-beja.pt',
                 bcc: 'miguel.casadinho@emas-beja.pt',
                 subject: `Falha superior a 4 horas`,
-                text: `Prezados colegas da EMAS de Beja,\n 
-                No dia ${date}, a intervenção ${numero}, com o sintoma ${sintoma} e morada ${morada}, teve uma interrupção de abastecimento de ${duracao_hours} horas, para mais informações consultar a aplicação Navia.\n
-                https://navia.emas-beja.pt/Tarefas/Intervencoes/verDetalhes.php?id_intervencao=${id_service_order}&referer=consulta_os`            
+                html:`
+                <h3>Prezados colegas da EMAS de Beja,</h3>
+                <p>No dia ${date}, a intervenção ${numero}, com o sintoma ${sintoma} e morada ${morada}, teve uma interrupção de abastecimento de ${duracao_hours} horas, para mais informações consultar a aplicação Navia.</p>
+                <a href="https://navia.emas-beja.pt/Tarefas/Intervencoes/verDetalhes.php?id_intervencao=${id_service_order}&referer=consulta_os target="_blank">Visualizar intervenção</a>
+                `
             };
             const info = await transporter.sendMail(mailOptions);
             console.log(`${formattedDate} => 4 hours failures events executed, Email sent:, ${info.response}`);
@@ -197,9 +208,11 @@ const asbestossendEmail = async (data) => {
                 cc: 'ana.madeira@emas-beja.pt,antonio.conceicao@emas-beja.pt,joao.pirata@emas-beja.pt,carlos.guerreiro@emas-beja.pt',
                 bcc: 'miguel.casadinho@emas-beja.pt',
                 subject: 'Intervenção em amianto',
-                text: `Prezados colegas da EMAS de Beja,\n
-                No dia ${int_date}, foi executada a ordem de serviço ${number}, com o sintoma ${sympton} e localização em ${address}. Esta intervenção, criada pelo sr. ${creator} e entregue ao sr. ${responsible}, foi efectuada em tubagens contendo amianto, para mais informações consultar a aplicação Navia.\n
-                https://navia.emas-beja.pt/Tarefas/Intervencoes/verDetalhes.php?id_intervencao=${id_service_order}&referer=consulta_os`
+                html:`
+                <h3>Prezados colegas da EMAS de Beja,</h3>
+                <p>No dia ${int_date}, foi executada a ordem de serviço ${number}, com o sintoma ${sympton} e localização em ${address}. Esta intervenção, criada pelo sr. ${creator} e entregue ao sr. ${responsible}, foi efectuada em tubagens contendo amianto, para mais informações consultar a aplicação Navia.</p>
+                <a href="https://navia.emas-beja.pt/Tarefas/Intervencoes/verDetalhes.php?id_intervencao=${id_service_order}&referer=consulta_os" target="_blank">Visualizar intervenção</a>
+                `
             };
             const info = await transporter.sendMail(mailOptions);
             console.log(`${formattedDate} => Asbestos events executed, Email sent:, ${info.response}`);
@@ -224,8 +237,10 @@ const readingsSendEmail = async (csv_name) => {
             to: 'rui.fernandes@emas-beja.pt',
             bcc: 'miguel.casadinho@emas-beja.pt',
             subject: 'Leituras de telemetria',
-            text: `Bom dia,\n
-            Segue em anexo o ficheiro csv das leituras de telemetria.`,
+            html:`
+            <h3>Caro Rui,</h3>
+            <p>Segue em anexo o ficheiro csv das leituras de telemetria.</p>
+            `,
             attachments: [
                 {
                     filename: csv_name,
@@ -272,11 +287,6 @@ const dpeirqsendEmail = async (data) => {
                 <p>No dia ${int_date}, foi executada a ordem de serviço ${number}, com o sintoma <b>${symptom}</b> e localização em <i>${address}</i>. Esta intervenção, foi executada pelo sr. ${user_execute} com o trabalho ${work}, para mais informações consultar a aplicação Navia.</p>
                 <a href="https://navia.emas-beja.pt/Tarefas/Intervencoes/verDetalhes.php?id_intervencao=${id_service_order}&referer=consulta_os" target="_blank">Visualizar intervenção</a>
                 `
-                /*
-                text: `Prezados colegas da EMAS de Beja,\n
-                No dia ${int_date}, foi executada a ordem de serviço ${number}, com o sintoma ${symptom} e localização em ${address}. Esta intervenção, foi executada pelo sr. ${user_execute} com o trabalho ${work}, para mais informações consultar a aplicação Navia.\n
-                https://navia.emas-beja.pt/Tarefas/Intervencoes/verDetalhes.php?id_intervencao=${id_service_order}&referer=consulta_os`
-                */
                 };
             const info = await transporter.sendMail(mailOptions);
             console.log(`${formattedDate} => DPEI Requests to DOM events executed, Email sent:, ${info.response}`);
