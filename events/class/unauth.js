@@ -15,7 +15,7 @@ const pool = new pg.Pool({
 
 const query = `SELECT vw.service_orders.id_service_order AS int_id,
 vw.service_orders.number AS intervencao,vw.service_orders.address AS morada,vw.service_orders.dma AS zmc,vw.service_orders.symptom AS int_sintoma,workcause.work,vw.service_orders.user_execute AS responsavel,
-vw.service_orders.state AS int_estado,vw.service_orders.date_hour_end - interval '1 hour' AS data_termino
+vw.service_orders.state AS int_estado,vw.service_orders.date_hour_end AS data_termino
 FROM vw.service_orders
 LEFT JOIN (SELECT vw.service_orders_cause_work.id_service_order AS id_service_order,string_agg(vw.service_orders_cause_work.work, ', ') as work,string_agg(vw.service_orders_cause_work.cause, ', ') as cause
 FROM vw.service_orders_cause_work GROUP BY vw.service_orders_cause_work.id_service_order ) AS workcause ON vw.service_orders.id_service_order = workcause.id_service_order

@@ -1,5 +1,5 @@
 import schedule from 'node-schedule';
-import { disunauth, diszerogc, diszeroregas, disfalhas4h, disrequest, disasbestos, disreadings } from './dispatch.js';
+import { disunauth, diszerogc, diszeroregas, disfalhas4h, disrequest, disasbestos, disdpeirq, disreadings } from './dispatch.js';
 
 /*
 //schedule rules
@@ -54,6 +54,13 @@ asbestos_rule.minute = 14; //(0-59)
 asbestos_rule.hour = 8; //(0-23)
 // Schedule the insclientss tasks
 const asbestos_job = schedule.scheduleJob(asbestos_rule, disasbestos);
+
+// Define the dpei requests schedule
+const dpeirq_rule = new schedule.RecurrenceRule();
+dpeirq_rule.minute = 15; //(0-59)
+dpeirq_rule.hour = 7; //(0-23)
+// Schedule the insclientss tasks
+const dpeirq_job = schedule.scheduleJob(dpeirq_rule, disdpeirq);
 
 // Define the readings schedule
 const readings_rule = new schedule.RecurrenceRule();

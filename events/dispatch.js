@@ -7,6 +7,7 @@ import { unauthdataTask } from './class/unauth.js';
 import { falhas4hdataTask } from './class/falhas4h.js';
 import { requestdataTask } from './class/request.js';
 import { asbestosdataTask } from './class/asbestos.js';
+import { dpeirqTask  } from './class/dpeirq.js';
 import { execPython } from './class/readings.js';
 import nodemailer from 'nodemailer';
 import TelegramBot from 'node-telegram-bot-api';
@@ -241,6 +242,52 @@ const readingsSendEmail = async (csv_name) => {
     }
 };
 
+const dpeirqsendEmail = async (data) => {
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
+    try {
+        for (const entry of data) {
+            const { id_service_order, number, address, symptom, work, user_execute, date_hour_end } = entry;
+            let now = new Date(date_hour_end);
+            let year = now.getFullYear();
+            let month = ('0' + (now.getMonth() + 1)).slice(-2); // Using slice to pad with leading zero
+            let day = ('0' + now.getDate()).slice(-2); // Using slice to pad with leading zero
+            let hour = ('0' + (now.getHours() )).slice(-2); // Using slice to pad with leading zero, and incrementing hour properly
+            let min = ('0' + now.getMinutes()).slice(-2); // Using slice to pad with leading zero
+            let second = ('0' + now.getSeconds()).slice(-2); // Using slice to pad with leading zero
+            let int_date = day + '-' + month + '-' + year + ' pelas ' + hour + ':' + min + ':' + second;
+            const mailOptions = {
+                from: 'mciot.pt@gmail.com',
+                to: 'sabrina.amaro@emas-beja.pt,luis.janeiro@emas-beja.pt,helio.placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt',
+                //cc: 'joao.pirata@emas-beja.pt',
+                bcc: 'miguel.casadinho@emas-beja.pt',
+                subject: 'Intervenção DOM concluída',
+                html:`
+                <h3>Prezados colegas da EMAS de Beja,</h3>
+                <p>No dia ${int_date}, foi executada a ordem de serviço ${number}, com o sintoma <b>${symptom}</b> e localização em <i>${address}</i>. Esta intervenção, foi executada pelo sr. ${user_execute} com o trabalho ${work}, para mais informações consultar a aplicação Navia.</p>
+                <a href="https://navia.emas-beja.pt/Tarefas/Intervencoes/verDetalhes.php?id_intervencao=${id_service_order}&referer=consulta_os" target="_blank">Visualizar intervenção</a>
+                `
+                /*
+                text: `Prezados colegas da EMAS de Beja,\n
+                No dia ${int_date}, foi executada a ordem de serviço ${number}, com o sintoma ${symptom} e localização em ${address}. Esta intervenção, foi executada pelo sr. ${user_execute} com o trabalho ${work}, para mais informações consultar a aplicação Navia.\n
+                https://navia.emas-beja.pt/Tarefas/Intervencoes/verDetalhes.php?id_intervencao=${id_service_order}&referer=consulta_os`
+                */
+                };
+            const info = await transporter.sendMail(mailOptions);
+            console.log(`${formattedDate} => DPEI Requests to DOM events executed, Email sent:, ${info.response}`);
+        }
+    } catch (error) {
+        console.error('Error sending email:', error);
+        // Consider adding retries or other error handling mechanisms here
+    }
+};
+
+
 const disunauth = async () => {
     try {
         const unauthdata = await unauthdataTask();
@@ -295,6 +342,16 @@ const disasbestos = async () => {
     }
 };
 
+const disdpeirq = async () => {
+    try {
+        const requests = await dpeirqTask();
+        //console.log(requests);
+        await dpeirqsendEmail(requests);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
 const disreadings = async () => {
     try {
         const readings = await execPython();
@@ -305,4 +362,4 @@ const disreadings = async () => {
     }
 };
 
-export { disunauth, diszerogc, diszeroregas, disfalhas4h, disrequest, disasbestos, disreadings };
+export { disunauth, diszerogc, diszeroregas, disfalhas4h, disrequest, disasbestos, disdpeirq, disreadings };
