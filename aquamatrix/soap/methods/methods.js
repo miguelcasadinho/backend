@@ -107,4 +107,24 @@ const GIS_RamaisRua =
     </soap:Body>
     </soap:Envelope>`;
 
-export { GIS_DadosContadores, GIS_Clientes, GIS_CoordenadasPorRamal, GIS_DadosFaturacao, GIS_InfoContrato, GIS_RamaisRua };
+const GIS_UpdateZmc = async (ramal, zmc, coordx, coordy) => {
+    let method = 
+    `<?xml version="1.0" encoding="utf-8"?>
+    <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+        <soap:Body>
+            <GIS_UpdateZmc xmlns="http://tempuri.org/">
+                <Empresa>${process.env.aquaUser}</Empresa>
+                <ramal>${ramal}</ramal>
+                <nrZmcRamal>${zmc}</nrZmcRamal>
+                <coord_X>${coordy}</coord_X>
+                <coord_Y>${coordx}</coord_Y>
+                <utilizador>${process.env.aquaEditor}</utilizador>
+            </GIS_UpdateZmc>
+        </soap:Body>
+    </soap:Envelope>`
+    return method;
+};
+
+export { GIS_DadosContadores, GIS_Clientes, GIS_CoordenadasPorRamal, GIS_DadosFaturacao, GIS_InfoContrato, GIS_RamaisRua, GIS_UpdateZmc };
