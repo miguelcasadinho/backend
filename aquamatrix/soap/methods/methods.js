@@ -74,6 +74,27 @@ const GIS_DadosFaturacao = async (date) => {
     return method;
 };
 
+const GIS_ConsumosZero = async (date) => {
+    let method = 
+    `<?xml version="1.0" encoding="utf-8"?>
+    <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <GIS_ConsumosZero xmlns="http://tempuri.org/">
+        <Empresa>${process.env.aquaUser}</Empresa>
+        <dataInicial>${date}</dataInicial>
+        <dataFinal>${date}</dataFinal>
+        <!--<local></local>-->
+        <!--<ramal> </ramal>-->
+        <itemInicial>1</itemInicial>
+        <nrItemsObter>20000</nrItemsObter>
+        </GIS_ConsumosZero>
+    </soap:Body>
+    </soap:Envelope>`;
+    return method;
+};
+
 const GIS_InfoContrato =
     `<?xml version="1.0" encoding="utf-8"?>
     <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -127,4 +148,4 @@ const GIS_UpdateZmc = async (ramal, zmc, coordx, coordy) => {
     return method;
 };
 
-export { GIS_DadosContadores, GIS_Clientes, GIS_CoordenadasPorRamal, GIS_DadosFaturacao, GIS_InfoContrato, GIS_RamaisRua, GIS_UpdateZmc };
+export { GIS_DadosContadores, GIS_Clientes, GIS_CoordenadasPorRamal, GIS_DadosFaturacao, GIS_ConsumosZero, GIS_InfoContrato, GIS_RamaisRua, GIS_UpdateZmc };

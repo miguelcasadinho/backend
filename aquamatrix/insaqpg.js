@@ -12,6 +12,7 @@ import { zmccontratosTask } from './psql/zmccontratos.js';
 import { infometersTask } from './psql/infometers.js';
 import { zmcinfometersTask } from './psql/zmcinfometers.js';
 import { estimTask } from './psql/estimated12m.js';
+import { zerofatdataTask } from './soap/fat_zeros.js';
 
 config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../.env') });
 
@@ -162,6 +163,39 @@ const insertcoordsdata = async (coordsdata) => {
 
 // Define an async function to insert fat
 const insertfatdata = async (fatdata) => {
+  let data = new Date;
+  data.setDate(data.getDate() - 1);
+  const client = await pool.connect();
+  try {
+    // Begin a transaction
+    await client.query('BEGIN');
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
+    // Iterate over the data and execute insert queries
+    for (var i=0; i < fatdata.length ; i++){
+      await client.query(`INSERT INTO dadosfaturacao(ramal, local, date, date_ini, date_fim, volume_fat) VALUES($1, $2, $3, $4, $5, $6)`,
+                        [fatdata[i].Ramal, fatdata[i].Local, data, fatdata[i].Dt_Ini_Ft, fatdata[i].Dt_Fim_Ft, fatdata[i].Volume_Ft]);
+    }
+    // Commit the transaction
+    await client.query('COMMIT');
+    console.log(`${formattedDate} => ${fatdata.length} records of GIS_DadosFaturacao inserted successfully!`);
+  } catch (err) {
+    // Rollback the transaction if an error occurs
+    await client.query('ROLLBACK');
+    console.error('Error inserting data:', err);
+  } finally {
+    // Release the client back to the pool
+    client.release();
+  }
+};
+
+// Define an async function to insert zerofat
+const insertzerofatdata = async (fatdata) => {
   let data = new Date;
   data.setDate(data.getDate() - 1);
   const client = await pool.connect();
@@ -487,6 +521,20 @@ const insfat = async () => {
   }
 };
 
+const inszerofat = async () => {
+  try {
+      const zerofatdata = await zerofatdataTask();
+      if (zerofatdata !== 'no data'){
+        //console.log(zerofatdata);
+        await insertzerofatdata(zerofatdata);
+        //await pool.end();
+        //console.log('Connection pool closed.');
+      }
+  } catch (error) {
+      console.error('Error:', error);
+  }
+};
+
 const inscontra = async () => {
   try {
       await deleteAllRecords('infocontrato');
@@ -561,5 +609,5 @@ const insestimated = async () => {
 }
 };
 
-export { insmeters, insclients, inscoords, insfat, inscontra, insramrua, inszmccontratos, insinfometers, inszmcinfometers, insestimated };
+export { insmeters, insclients, inscoords, insfat, inszerofat, inscontra, insramrua, inszmccontratos, insinfometers, inszmcinfometers, insestimated };
 

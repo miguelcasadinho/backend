@@ -1,5 +1,5 @@
 import schedule from 'node-schedule';
-import { insmeters, insclients, inscoords, insfat, inscontra, insramrua, inszmccontratos, insinfometers, inszmcinfometers, insestimated } from './insaqpg.js';
+import { insmeters, insclients, inscoords, insfat, inszerofat, inscontra, insramrua, inszmccontratos, insinfometers, inszmcinfometers, insestimated } from './insaqpg.js';
 
 /*
 //schedule rules
@@ -36,10 +36,17 @@ const coords_job = schedule.scheduleJob(coords_rule, inscoords);
 
 // Define the insfat schedule
 const fat_rule = new schedule.RecurrenceRule();
-fat_rule.minute = 20; //(0-59)
+fat_rule.minute = 25; //(0-59)
 fat_rule.hour = 7; //(0-23)
 // Schedule the insclients tasks
 const fat_job = schedule.scheduleJob(fat_rule, insfat);
+
+// Define the inszerofat schedule
+const zerofat_rule = new schedule.RecurrenceRule();
+zerofat_rule.minute = 20; //(0-59)
+zerofat_rule.hour = 7; //(0-23)
+// Schedule the insclients tasks
+const zerofat_job = schedule.scheduleJob(zerofat_rule, inszerofat);
 
 // Define the inscontra schedule
 const contra_rule0 = new schedule.RecurrenceRule();
