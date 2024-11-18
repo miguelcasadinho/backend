@@ -1,5 +1,5 @@
 import schedule from 'node-schedule';
-import { insmeters, insclients, inscoords, insfat, inszerofat, inscontra, insramrua, inszmccontratos, insinfometers, inszmcinfometers, insestimated } from './insaqpg.js';
+import { insmeters, insclients, inscoords, insfat, inszerofat, inscontra, insramrua, inszmccontratos, insinfometers, inszmcinfometers, insestimated, insRL } from './insaqpg.js';
 
 /*
 //schedule rules
@@ -105,6 +105,13 @@ estimated_rule.minute = 2; //(0-59)
 estimated_rule.hour = 6; //(0-23)
 // Schedule the insclients tasks
 const estimated_job = schedule.scheduleJob(estimated_rule, insestimated);
+
+// Define the ramais locais data schedule
+const rl_rule = new schedule.RecurrenceRule();
+rl_rule.minute = 5; //(0-59)
+rl_rule.hour = 6; //(0-23)
+// Schedule the insclients tasks
+const rl_job = schedule.scheduleJob(rl_rule, insRL);
 
 // Cancel the job if needed
 // job.cancel();

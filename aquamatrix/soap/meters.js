@@ -43,14 +43,14 @@ const extractdata = () => {
         let metersdata = [];
         for (let i=0; i < xml.length; i++){
             let item = xml[i];
-            let hasRAMAL = Object.hasOwnProperty.call(item, 'ANDAR');
+            let hasRAMAL = Object.hasOwnProperty.call(item, 'RAMAL');
             let hasRUA = Object.hasOwnProperty.call(item, 'RUA');
             let hasNR_POLICIA = Object.hasOwnProperty.call(item, 'NR_POLICIA');
             let hasANDAR = Object.hasOwnProperty.call(item, 'ANDAR');
             let hasLOCAL = Object.hasOwnProperty.call(item, 'LOCAL');
             let hasCLIENTE = Object.hasOwnProperty.call(item, 'CLIENTE');
             let hasTARIFA= Object.hasOwnProperty.call(item, 'TARIFA');
-            let hasULTIMA_LEITURA = Object.hasOwnProperty.call(item, 'ULTIMA_LEITURA');
+            let hasULTIMA_LEITURA = Object.hasOwnProperty.call(item, 'DT_ULTIMA_LEITURA');
             let hasDTINST = Object.hasOwnProperty.call(item, 'DT_INSTALACAO');
 
             metersdata.push({
@@ -62,7 +62,7 @@ const extractdata = () => {
                 "Andar":hasANDAR ? (typeof item.ANDAR[0] === 'object' ? '' : item.ANDAR[0]) : '',
                 "Grupo":parseInt(item.GR_CONTADOR[0]),
                 "Numero":parseInt(item.NR_CONTADOR[0]),
-                //"Contador":item.NR_SERIE[0],
+                "Contador":item.NR_SERIE[0],
                 "DtInstalacao":hasDTINST ? new Date(item.DT_INSTALACAO[0]) : null,
                 "Diametro":parseInt(item.DIAMETRO[0]),
                 "Classe":hasTARIFA ? item.TARIFA[0] : '',
@@ -82,8 +82,8 @@ const metersdataTask = async () => {
         //console.log(xml.length, 'records');
         const metersdata = await extractdata(xml);
         // Handle the extracted data
-        //console.log(metersdata.length, 'meters to insert');
         //console.log(metersdata);
+        //console.log(metersdata.length, 'meters to insert');
         return metersdata;
     } catch (error) {
         // Handle any errors in the Promise chain

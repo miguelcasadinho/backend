@@ -29,6 +29,7 @@
     "nodemailer": "^6.9.13",
     "openai": "^4.67.3",
     "pg": "^8.11.3",
+    "pg-format": "^1.0.4",
     "puppeteer": "^23.6.0",
     "tough-cookie": "^5.0.0",
     "xlsx": "^0.18.5",

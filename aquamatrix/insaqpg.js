@@ -13,6 +13,7 @@ import { infometersTask } from './psql/infometers.js';
 import { zmcinfometersTask } from './psql/zmcinfometers.js';
 import { estimTask } from './psql/estimated12m.js';
 import { zerofatdataTask } from './soap/fat_zeros.js';
+import { ramlocaisdataTask } from './soap/ramaislocais.js';
 
 config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../.env') });
 
@@ -26,72 +27,74 @@ const pool  = new pg.Pool({
 
 // Define an async function to insert meters
 const insertmetersdata = async (metersdata) => {
-    const client = await pool.connect();
-    try {
-      // Begin a transaction
-      await client.query('BEGIN');
-      const data_tr = new Date();
-      const year = data_tr.getFullYear();
-      const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
-      const day = String(data_tr.getDate()).padStart(2, '0');
-      const hour = String(data_tr.getHours()).padStart(2, '0');
-      const min = String(data_tr.getMinutes()).padStart(2, '0');
-      const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
-      // Iterate over the data and execute insert queries
-      for (var i=0; i < metersdata.length ; i++){
-        if ( metersdata[i].DtInstalacao !== null && metersdata[i].DtLeitura !== null ){
-          await client.query(`INSERT INTO meters(ramal, local, client, street, num_pol, floor, device, date_inst, dn, class, brand, model, volume, date_leit)
-                            VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)  ON CONFLICT (device) DO UPDATE SET
-                                ramal = EXCLUDED.ramal, local = EXCLUDED.local, client = EXCLUDED.client, street = EXCLUDED.street, num_pol = EXCLUDED.num_pol,
-                                floor = EXCLUDED.floor, date_inst = EXCLUDED.date_inst, dn = EXCLUDED.dn, class = EXCLUDED.class, brand = EXCLUDED.brand, 
-                                model = EXCLUDED.model, volume = EXCLUDED.volume, date_leit = EXCLUDED.date_leit`,
-                            [Number(metersdata[i].Ramal), Number(metersdata[i].Local), Number(metersdata[i].Cliente), metersdata[i].Rua, metersdata[i].NPolicia, 
-                            metersdata[i].Andar, metersdata[i].Numero, new Date(metersdata[i].DtInstalacao), Number(metersdata[i].Diametro), metersdata[i].Classe, 
-                            metersdata[i].Marca, metersdata[i].Modelo, Number(metersdata[i].Volume), new Date(metersdata[i].DtLeitura)]);
-        }
-        else if ( metersdata[i].DtInstalacao !== null && metersdata[i].DtLeitura === null  ){
-          await client.query(`INSERT INTO meters(ramal, local, client, street, num_pol, floor, device, date_inst, dn, class, brand, model, volume)
-                            VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)  ON CONFLICT (device) DO UPDATE SET
-                                ramal = EXCLUDED.ramal, local = EXCLUDED.local, client = EXCLUDED.client, street = EXCLUDED.street, num_pol = EXCLUDED.num_pol,
-                                floor = EXCLUDED.floor, date_inst = EXCLUDED.date_inst, dn = EXCLUDED.dn, class = EXCLUDED.class, brand = EXCLUDED.brand, 
-                                model = EXCLUDED.model, volume = EXCLUDED.volume`,
-                            [Number(metersdata[i].Ramal), Number(metersdata[i].Local), Number(metersdata[i].Cliente), metersdata[i].Rua, metersdata[i].NPolicia, 
-                            metersdata[i].Andar, metersdata[i].Numero, new Date(metersdata[i].DtInstalacao), Number(metersdata[i].Diametro), metersdata[i].Classe, 
-                            metersdata[i].Marca, metersdata[i].Modelo, Number(metersdata[i].Volume)]);
-        }
-        else if ( metersdata[i].DtInstalacao === null && metersdata[i].DtLeitura !== null  ){
-          await client.query(`INSERT INTO meters(ramal, local, client, street, num_pol, floor, device, dn, class, brand, model, volume, date_leit)
-                            VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)  ON CONFLICT (device) DO UPDATE SET
-                                ramal = EXCLUDED.ramal, local = EXCLUDED.local, client = EXCLUDED.client, street = EXCLUDED.street, num_pol = EXCLUDED.num_pol,
-                                floor = EXCLUDED.floor, dn = EXCLUDED.dn, class = EXCLUDED.class, brand = EXCLUDED.brand, 
-                                model = EXCLUDED.model, volume = EXCLUDED.volume, date_leit = EXCLUDED.date_leit`,
-                            [Number(metersdata[i].Ramal), Number(metersdata[i].Local), Number(metersdata[i].Cliente), metersdata[i].Rua, metersdata[i].NPolicia, 
-                            metersdata[i].Andar, metersdata[i].Numero, Number(metersdata[i].Diametro), metersdata[i].Classe, 
-                            metersdata[i].Marca, metersdata[i].Modelo, Number(metersdata[i].Volume), new Date(metersdata[i].DtLeitura)]);
-        }
-        else {
-          await client.query(`INSERT INTO meters(ramal, local, client, street, num_pol, floor, device, dn, class, brand, model, volume)
-                            VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)  ON CONFLICT (device) DO UPDATE SET
-                                ramal = EXCLUDED.ramal, local = EXCLUDED.local, client = EXCLUDED.client, street = EXCLUDED.street, num_pol = EXCLUDED.num_pol,
-                                floor = EXCLUDED.floor, dn = EXCLUDED.dn, class = EXCLUDED.class, brand = EXCLUDED.brand, 
-                                model = EXCLUDED.model, volume = EXCLUDED.volume`,
-                            [Number(metersdata[i].Ramal), Number(metersdata[i].Local), Number(metersdata[i].Cliente), metersdata[i].Rua, metersdata[i].NPolicia, 
-                            metersdata[i].Andar, metersdata[i].Numero, Number(metersdata[i].Diametro), metersdata[i].Classe, 
-                            metersdata[i].Marca, metersdata[i].Modelo, Number(metersdata[i].Volume)]);
-        }
+  const client = await pool.connect();
+  try {
+    // Begin a transaction
+    await client.query('BEGIN');
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
+    // Iterate over the data and execute insert queries
+    for (let i=0; i < metersdata.length ; i++){
+      if ( metersdata[i].DtInstalacao !== null && metersdata[i].DtLeitura !== null ){
+        await client.query(`INSERT INTO meters(ramal, local, client, street, num_pol, floor, device, date_inst, dn, class, brand, model, volume, date_leit)
+                          VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)  ON CONFLICT (device) DO UPDATE SET
+                              ramal = EXCLUDED.ramal, local = EXCLUDED.local, client = EXCLUDED.client, street = EXCLUDED.street, num_pol = EXCLUDED.num_pol,
+                              floor = EXCLUDED.floor, date_inst = EXCLUDED.date_inst, dn = EXCLUDED.dn, class = EXCLUDED.class, brand = EXCLUDED.brand, 
+                              model = EXCLUDED.model, volume = EXCLUDED.volume, date_leit = EXCLUDED.date_leit`,
+                          [Number(metersdata[i].Ramal), Number(metersdata[i].Local), Number(metersdata[i].Cliente), metersdata[i].Rua, metersdata[i].NPolicia, 
+                          metersdata[i].Andar, metersdata[i].Contador, new Date(metersdata[i].DtInstalacao), Number(metersdata[i].Diametro), metersdata[i].Classe, 
+                          metersdata[i].Marca, metersdata[i].Modelo, Number(metersdata[i].Volume), new Date(metersdata[i].DtLeitura)]);
       }
-      // Commit the transaction
-      await client.query('COMMIT');
-      console.log(`${formattedDate} => ${metersdata.length} records of GIS_DadosContadores inserted successfully!`);
-    } catch (err) {
-      // Rollback the transaction if an error occurs
-      await client.query('ROLLBACK');
-      console.error('Error inserting data:', err);
-    } finally {
-      // Release the client back to the pool
-      client.release();
+      else if ( metersdata[i].DtInstalacao !== null && metersdata[i].DtLeitura === null  ){
+        await client.query(`INSERT INTO meters(ramal, local, client, street, num_pol, floor, device, date_inst, dn, class, brand, model, volume)
+                          VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)  ON CONFLICT (device) DO UPDATE SET
+                              ramal = EXCLUDED.ramal, local = EXCLUDED.local, client = EXCLUDED.client, street = EXCLUDED.street, num_pol = EXCLUDED.num_pol,
+                              floor = EXCLUDED.floor, date_inst = EXCLUDED.date_inst, dn = EXCLUDED.dn, class = EXCLUDED.class, brand = EXCLUDED.brand, 
+                              model = EXCLUDED.model, volume = EXCLUDED.volume`,
+                          [Number(metersdata[i].Ramal), Number(metersdata[i].Local), Number(metersdata[i].Cliente), metersdata[i].Rua, metersdata[i].NPolicia, 
+                          metersdata[i].Andar, metersdata[i].Contador, new Date(metersdata[i].DtInstalacao), Number(metersdata[i].Diametro), metersdata[i].Classe, 
+                          metersdata[i].Marca, metersdata[i].Modelo, Number(metersdata[i].Volume)]);
+      }
+      else if ( metersdata[i].DtInstalacao === null && metersdata[i].DtLeitura !== null  ){
+        await client.query(`INSERT INTO meters(ramal, local, client, street, num_pol, floor, device, dn, class, brand, model, volume, date_leit)
+                          VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)  ON CONFLICT (device) DO UPDATE SET
+                              ramal = EXCLUDED.ramal, local = EXCLUDED.local, client = EXCLUDED.client, street = EXCLUDED.street, num_pol = EXCLUDED.num_pol,
+                              floor = EXCLUDED.floor, dn = EXCLUDED.dn, class = EXCLUDED.class, brand = EXCLUDED.brand, 
+                              model = EXCLUDED.model, volume = EXCLUDED.volume, date_leit = EXCLUDED.date_leit`,
+                          [Number(metersdata[i].Ramal), Number(metersdata[i].Local), Number(metersdata[i].Cliente), metersdata[i].Rua, metersdata[i].NPolicia, 
+                          metersdata[i].Andar, metersdata[i].Contador, Number(metersdata[i].Diametro), metersdata[i].Classe, 
+                          metersdata[i].Marca, metersdata[i].Modelo, Number(metersdata[i].Volume), new Date(metersdata[i].DtLeitura)]);
+      }
+      else {
+        await client.query(`INSERT INTO meters(ramal, local, client, street, num_pol, floor, device, dn, class, brand, model, volume)
+                          VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)  ON CONFLICT (device) DO UPDATE SET
+                              ramal = EXCLUDED.ramal, local = EXCLUDED.local, client = EXCLUDED.client, street = EXCLUDED.street, num_pol = EXCLUDED.num_pol,
+                              floor = EXCLUDED.floor, dn = EXCLUDED.dn, class = EXCLUDED.class, brand = EXCLUDED.brand, 
+                              model = EXCLUDED.model, volume = EXCLUDED.volume`,
+                          [Number(metersdata[i].Ramal), Number(metersdata[i].Local), Number(metersdata[i].Cliente), metersdata[i].Rua, metersdata[i].NPolicia, 
+                          metersdata[i].Andar, metersdata[i].Contador, Number(metersdata[i].Diametro), metersdata[i].Classe, 
+                          metersdata[i].Marca, metersdata[i].Modelo, Number(metersdata[i].Volume)]);
+      }
     }
-  };
+    // Commit the transaction
+    await client.query('COMMIT');
+    console.log(`${formattedDate} => ${metersdata.length} records of GIS_DadosContadores inserted successfully!`);
+  } catch (err) {
+    // Rollback the transaction if an error occurs
+    await client.query('ROLLBACK');
+    console.error('Error inserting data:', err);
+  } finally {
+    // Release the client back to the pool
+    client.release();
+  }
+};
+
+
 
 // Define an async function to insert clients
 const insertclientsdata = async (clientsdata) => {
@@ -177,7 +180,7 @@ const insertfatdata = async (fatdata) => {
     const min = String(data_tr.getMinutes()).padStart(2, '0');
     const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     // Iterate over the data and execute insert queries
-    for (var i=0; i < fatdata.length ; i++){
+    for (let i=0; i < fatdata.length ; i++){
       await client.query(`INSERT INTO dadosfaturacao(ramal, local, date, date_ini, date_fim, volume_fat) VALUES($1, $2, $3, $4, $5, $6)`,
                         [fatdata[i].Ramal, fatdata[i].Local, data, fatdata[i].Dt_Ini_Ft, fatdata[i].Dt_Fim_Ft, fatdata[i].Volume_Ft]);
     }
@@ -210,7 +213,7 @@ const insertzerofatdata = async (fatdata) => {
     const min = String(data_tr.getMinutes()).padStart(2, '0');
     const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     // Iterate over the data and execute insert queries
-    for (var i=0; i < fatdata.length ; i++){
+    for (let i=0; i < fatdata.length ; i++){
       await client.query(`INSERT INTO dadosfaturacao(ramal, local, date, date_ini, date_fim, volume_fat) VALUES($1, $2, $3, $4, $5, $6)`,
                         [fatdata[i].Ramal, fatdata[i].Local, data, fatdata[i].Dt_Ini_Ft, fatdata[i].Dt_Fim_Ft, fatdata[i].Volume_Ft]);
     }
@@ -269,7 +272,7 @@ const insertcontradata = async (contradata) => {
     await deleteAllRecords('infocontrato');
     */
     // Iterate over the data and execute insert queries
-    for (var i=0; i < contradata.length ; i++){
+    for (let i=0; i < contradata.length ; i++){
       if (contradata[i].DtInst === null){
         await client.query(`INSERT INTO infocontrato(ramal, local, client, name, street, num_pol, floor, locality, zone, area, sequence, situation, 
                             client_group, client_tariff, estimated) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
@@ -322,7 +325,7 @@ const insertramruadata = async (ramruadata) => {
     const min = String(data_tr.getMinutes()).padStart(2, '0');
     const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
     // Iterate over the data and execute insert queries
-    for (var i=0; i < ramruadata.length ; i++){
+    for (let i=0; i < ramruadata.length ; i++){
       await client.query(`INSERT INTO ramaisrua(ramal, predio, zmc, dt_sit) VALUES($1, $2, $3, $4) 
                           ON CONFLICT (ramal) DO UPDATE SET zmc = EXCLUDED.zmc, dt_sit = EXCLUDED.dt_sit`,
                           [ramruadata[i].Ramal, ramruadata[i].Predio, ramruadata[i].ZMC, ramruadata[i].DtSituacao]);
@@ -451,7 +454,7 @@ const insertestimated = async (data) => {
 
     // Iterate over the data and execute insert queries
     let date = new Date();
-    for (var i=0; i < data.length ; i++){
+    for (let i=0; i < data.length ; i++){
         await client.query(`INSERT INTO estimated(local, date, volume) VALUES($1, $2, $3)`,
                             [data[i].local, date, Number(data[i].volume_avg)]);
       
@@ -469,12 +472,71 @@ const insertestimated = async (data) => {
   }
 };
 
+// Define an async function to insert ramais locais
+const insertrlData = async (rldata) => {
+  const client = await pool.connect();
+  try {
+    // Begin a transaction
+    await client.query('BEGIN');
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
+    // Iterate over the data and execute insert queries
+    for (let i=0; i < rldata.length ; i++){
+      if ( rldata[i].DtLeitura !== null ){
+        await client.query(`INSERT INTO ramaislocais(ramal, local, client, street, num_pol, floor, situation, zone, area, sequence, date_leit)
+                          VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)  ON CONFLICT (local) DO UPDATE SET
+                              ramal = EXCLUDED.ramal, client = EXCLUDED.client, street = EXCLUDED.street, num_pol = EXCLUDED.num_pol,
+                              floor = EXCLUDED.floor, situation = EXCLUDED.situation, zone = EXCLUDED.zone, area = EXCLUDED.area, 
+                              sequence = EXCLUDED.sequence, date_leit = EXCLUDED.date_leit`,
+                          [Number(rldata[i].Ramal), Number(rldata[i].Local), Number(rldata[i].Cliente), rldata[i].Rua, rldata[i].NPolicia, 
+                          rldata[i].Andar, rldata[i].Situacao, Number(rldata[i].Zona), Number(rldata[i].Area), 
+                          Number(rldata[i].Sequencia), new Date(rldata[i].DtLeitura)]);
+      }
+      else {
+        await client.query(`INSERT INTO ramaislocais(ramal, local, client, street, num_pol, floor, situation, zone, area, sequence)
+                          VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)  ON CONFLICT (local) DO UPDATE SET
+                              ramal = EXCLUDED.ramal, client = EXCLUDED.client, street = EXCLUDED.street, num_pol = EXCLUDED.num_pol,
+                              floor = EXCLUDED.floor, situation = EXCLUDED.situation, zone = EXCLUDED.zone, area = EXCLUDED.area, 
+                              sequence = EXCLUDED.sequence`,
+                          [Number(rldata[i].Ramal), Number(rldata[i].Local), Number(rldata[i].Cliente), rldata[i].Rua, rldata[i].NPolicia, 
+                          rldata[i].Andar, rldata[i].Situacao, Number(rldata[i].Zona), Number(rldata[i].Area), 
+                          Number(rldata[i].Sequencia)]);
+      }
+    }
+    // Commit the transaction
+    await client.query('COMMIT');
+    console.log(`${formattedDate} => ${rldata.length} records of GIS_RamaisLocais inserted successfully!`);
+  } catch (err) {
+    // Rollback the transaction if an error occurs
+    await client.query('ROLLBACK');
+    console.error('Error inserting data:', err);
+  } finally {
+    // Release the client back to the pool
+    client.release();
+  }
+};
 
+const insRL = async () => {
+  try {
+      const rldata = await ramlocaisdataTask();
+      //console.log(rldata.length);
+      await insertrlData(rldata);
+      //await pool.end();
+      //console.log('Connection pool closed.');
+  } catch (error) {
+      console.error('Error:', error);
+  }
+};
 
 const insmeters = async () => {
   try {
       const metersdata = await metersdataTask();
-      //console.log(metersdata);
+      //console.log(metersdata.length);
       await insertmetersdata(metersdata);
       //await pool.end();
       //console.log('Connection pool closed.');
@@ -609,5 +671,4 @@ const insestimated = async () => {
 }
 };
 
-export { insmeters, insclients, inscoords, insfat, inszerofat, inscontra, insramrua, inszmccontratos, insinfometers, inszmcinfometers, insestimated };
-
+export { insmeters, insclients, inscoords, insfat, inszerofat, inscontra, insramrua, inszmccontratos, insinfometers, inszmcinfometers, insestimated, insRL };
