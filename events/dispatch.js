@@ -34,7 +34,7 @@ const unauthsendEmail = async (data) => {
             let year = now.getFullYear();
             let month = ('0' + (now.getMonth() + 1)).slice(-2); // Using slice to pad with leading zero
             let day = ('0' + now.getDate()).slice(-2); // Using slice to pad with leading zero
-            let hour = ('0' + (now.getHours() + 1)).slice(-2); // Using slice to pad with leading zero, and incrementing hour properly
+            let hour = ('0' + (now.getHours())).slice(-2); // Using slice to pad with leading zero, and incrementing hour properly
             let minute = ('0' + now.getMinutes()).slice(-2); // Using slice to pad with leading zero
             let second = ('0' + now.getSeconds()).slice(-2); // Using slice to pad with leading zero
             let data = day + '-' + month + '-' + year + ' pelas ' + hour + ':' + minute + ':' + second;

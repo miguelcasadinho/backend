@@ -162,4 +162,24 @@ const GIS_UpdateZmc = async (ramal, zmc, coordx, coordy) => {
     return method;
 };
 
-export { GIS_DadosContadores, GIS_Clientes, GIS_CoordenadasPorRamal, GIS_DadosFaturacao, GIS_ConsumosZero, GIS_InfoContrato, GIS_RamaisRua, GIS_RamaisLocais, GIS_UpdateZmc };
+const GIS_ConsumosMesRamal = async (date) => {
+    let method = 
+    `<?xml version="1.0" encoding="utf-8"?>
+    <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <GIS_ConsumosMesRamal xmlns="http://tempuri.org/">
+        <Empresa>${process.env.aquaUser}</Empresa>
+        <dataConsumo>${date}</dataConsumo>
+        <!--<ramal> </ramal>-->
+        <itemInicial>1</itemInicial>
+        <nrItemsObter>20000</nrItemsObter>
+        </GIS_ConsumosMesRamal>
+    </soap:Body>
+    </soap:Envelope>`;
+    return method;
+};
+
+
+export { GIS_DadosContadores, GIS_Clientes, GIS_CoordenadasPorRamal, GIS_DadosFaturacao, GIS_ConsumosZero, GIS_InfoContrato, GIS_RamaisRua, GIS_RamaisLocais, GIS_ConsumosMesRamal, GIS_UpdateZmc };

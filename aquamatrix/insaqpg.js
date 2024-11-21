@@ -14,6 +14,7 @@ import { zmcinfometersTask } from './psql/zmcinfometers.js';
 import { estimTask } from './psql/estimated12m.js';
 import { zerofatdataTask } from './soap/fat_zeros.js';
 import { ramlocaisdataTask } from './soap/ramaislocais.js';
+import { cmrdataTask } from './soap/cmramal.js';
 
 config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../.env') });
 
@@ -521,6 +522,39 @@ const insertrlData = async (rldata) => {
   }
 };
 
+// Define an async function to insert consumos mês ramal
+const insertCmr = async (data) => {
+  const client = await pool.connect();
+  try {
+    // Begin a transaction
+    await client.query('BEGIN');
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
+
+    // Iterate over the data and execute insert queries
+    for (let i=0; i < data.length ; i++){
+        await client.query(`INSERT INTO consmesramal(ramal, classe, date, volume) VALUES($1, $2, $3, $4) ON CONFLICT (ramal, date) DO NOTHING`,
+                            [data[i].Ramal, data[i].Classe_Consumo, data[i].Dt_Fat, Number(data[i].Volume_Ft)]);
+      
+    }
+    // Commit the transaction
+    await client.query('COMMIT');
+    console.log(`${formattedDate} => ${data.length} records of consumo mês ramal inserted!`);
+  } catch (err) {
+    // Rollback the transaction if an error occurs
+    await client.query('ROLLBACK');
+    console.error('Error inserting data:', err);
+  } finally {
+    // Release the client back to the pool
+    client.release();
+  }
+};
+
 const insRL = async () => {
   try {
       const rldata = await ramlocaisdataTask();
@@ -671,4 +705,16 @@ const insestimated = async () => {
 }
 };
 
-export { insmeters, insclients, inscoords, insfat, inszerofat, inscontra, insramrua, inszmccontratos, insinfometers, inszmcinfometers, insestimated, insRL };
+const insCrm = async () => {
+  try {
+    const cmr = await cmrdataTask();
+    //console.log(cmr);
+    await insertCmr(cmr);
+    //await pool.end();
+    //console.log('Connection pool closed.');
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+export { insmeters, insclients, inscoords, insfat, inszerofat, inscontra, insramrua, inszmccontratos, insinfometers, inszmcinfometers, insestimated, insRL, insCrm };
