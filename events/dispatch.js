@@ -29,7 +29,7 @@ const bot = new TelegramBot(token, { polling: false });
 const unauthsendEmail = async (data) => {
     try {
         for (const entry of data) {
-            const { intervencao, int_sintoma, work, morada, data_termino } = entry;
+            const { id_service_order, intervencao, int_sintoma, work, morada, data_termino } = entry;
             let now = new Date(data_termino);
             let year = now.getFullYear();
             let month = ('0' + (now.getMonth() + 1)).slice(-2); // Using slice to pad with leading zero
@@ -46,7 +46,8 @@ const unauthsendEmail = async (data) => {
                 subject: work,
                 html:`
                 <h3>Prezados colegas da EMAS de Beja,</h3>
-                <p>No dia ' + data + ' a intervenção ' + intervencao + ", com o sintoma " + int_sintoma + " e trabalho " + work + ", na morada "  + morada + " foi concluida.</p>
+                <p>No dia ${data} a intervenção ${intervencao}, com o sintoma ${int_sintoma} e trabalho ${work}, na morada ${morada} foi concluida, para mais informações consultar a aplicação Navia.</p>
+                <a href="https://navia.emas-beja.pt/Tarefas/Intervencoes/verDetalhes.php?id_intervencao=${id_service_order}&referer=consulta_os target="_blank">Visualizar intervenção</a>
                 `
             };
             const info = await transporter.sendMail(mailOptions);
