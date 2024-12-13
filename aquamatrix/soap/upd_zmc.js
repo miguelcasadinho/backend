@@ -68,7 +68,7 @@ const getxml = async (method) => {
 
 const updZmcTask = async () => {
     try {
-        const updates = await readCsv('./updates.csv');
+        const updates = await readCsv('./tenval.csv');
         //console.log(updates)
         for (let i = 0; i < updates.length; i++) {
             const method = await GIS_UpdateZmc(updates[i].codramal, updates[i].ZMC, updates[i].XValue, updates[i].YValue);

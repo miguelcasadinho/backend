@@ -58,6 +58,7 @@ const extractData = (xml) => {
                     Rua: item.RUA ? item.RUA[0] : '',
                     NPolicia: item.POLICIA ? item.POLICIA[0] : '',
                     Andar: item.ANDAR ? (typeof item.ANDAR[0] === 'object' ? '' : item.ANDAR[0]) : '',
+                    Localidade: item.LOCALIDADE ? item.LOCALIDADE[0] : '',
                     Situacao: item.SITUACAO ? item.SITUACAO[0] : '',
                     Zona: item.ZONA ? parseInt(item.ZONA[0], 10) : '',
                     Area: item.AREA ? parseInt(item.AREA[0], 10) : '',

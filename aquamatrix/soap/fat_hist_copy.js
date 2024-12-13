@@ -68,7 +68,8 @@ const getxml = async (formdate) => {
 const extractdata = (xml) => {
     return new Promise((resolve, reject) => {
         for (let i = 0; i < xml.length; i++) {
-            fatdata.push({
+            if (Object.hasOwnProperty.bind(xml[i])('DT_INI_FT')){
+                            fatdata.push({
                 "Ramal": parseInt(xml[i].RAMAL[0]),
                 "Local": parseInt(xml[i].LOCAL[0]),
                 "GrupoContador": parseInt(xml[i].GR_CONTADOR[0]),
@@ -79,6 +80,21 @@ const extractdata = (xml) => {
                 "Valor_Ft_Agua": parseFloat(xml[i].VALOR_FT_AGUA[0]).toFixed(2),
                 "Valor_Ft_ASR": parseFloat(xml[i].VALOR_FT_ASR[0]).toFixed(2)
             });
+            }
+            else {
+                fatdata.push({
+                    "Ramal": parseInt(xml[i].RAMAL[0]),
+                    "Local": parseInt(xml[i].LOCAL[0]),
+                    "GrupoContador": parseInt(xml[i].GR_CONTADOR[0]),
+                    "Num_Contador": xml[i].NR_CONTADOR[0],
+                    //"Dt_Ini_Ft": '',
+                    //"Dt_Fim_Ft": '',
+                    "Volume_Ft": parseInt(xml[i].VOLUME_FT[0]),
+                    "Valor_Ft_Agua": parseFloat(xml[i].VALOR_FT_AGUA[0]).toFixed(2),
+                    "Valor_Ft_ASR": parseFloat(xml[i].VALOR_FT_ASR[0]).toFixed(2)
+                });
+            }
+
         }
         resolve(fatdata);
     });
@@ -128,7 +144,7 @@ const insertfatdata = async (fatdata, date) => {
 
 const fetchAndProcessData = async () => {
     const pageSize = 100; // Define the page size
-    const totalIterations = 1; // Total number of iterations
+    const totalIterations = 366; // Total number of iterations
     const totalPages = Math.ceil(totalIterations / pageSize); // Calculate total pages
 
     try {
@@ -139,10 +155,10 @@ const fetchAndProcessData = async () => {
 
             // Generate dates for the current page
             for (let i = startIdx; i < endIdx; i++) {
-                let date = new Date();
-                //date.setDate(date.getDate() - i);
+                let date = new Date(2020, 11, 31);
+                date.setDate(date.getDate() - i);
                 //date.setDate(date.getDate() -2);// Select other day to start the iteration
-                date = new Date(2024, 10, 30);  // Months are 0-indexed, so 3 represents April
+                //date = new Date(2024, 10, 29);  // Months are 0-indexed, so 3 represents April
                 const formdate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
                 dates.push({ date: formdate, actualDate: date }); // Store both formdate and actual date
             }

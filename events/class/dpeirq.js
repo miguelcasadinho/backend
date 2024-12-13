@@ -14,7 +14,7 @@ const pool = new pg.Pool({
 });
 
 const query = `
-SELECT 
+SELECT DISTINCT ON (so.id_service_order)
     so.id_service_order, 
     so.number,
     so.address,

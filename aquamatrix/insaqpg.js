@@ -489,23 +489,23 @@ const insertrlData = async (rldata) => {
     // Iterate over the data and execute insert queries
     for (let i=0; i < rldata.length ; i++){
       if ( rldata[i].DtLeitura !== null ){
-        await client.query(`INSERT INTO ramaislocais(ramal, local, client, street, num_pol, floor, situation, zone, area, sequence, date_leit)
-                          VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)  ON CONFLICT (local) DO UPDATE SET
+        await client.query(`INSERT INTO ramaislocais(ramal, local, client, street, num_pol, floor, locality, situation, zone, area, sequence, date_leit)
+                          VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)  ON CONFLICT (local) DO UPDATE SET
                               ramal = EXCLUDED.ramal, client = EXCLUDED.client, street = EXCLUDED.street, num_pol = EXCLUDED.num_pol,
                               floor = EXCLUDED.floor, situation = EXCLUDED.situation, zone = EXCLUDED.zone, area = EXCLUDED.area, 
                               sequence = EXCLUDED.sequence, date_leit = EXCLUDED.date_leit`,
                           [Number(rldata[i].Ramal), Number(rldata[i].Local), Number(rldata[i].Cliente), rldata[i].Rua, rldata[i].NPolicia, 
-                          rldata[i].Andar, rldata[i].Situacao, Number(rldata[i].Zona), Number(rldata[i].Area), 
+                          rldata[i].Andar, rldata[i].Localidade, rldata[i].Situacao, Number(rldata[i].Zona), Number(rldata[i].Area), 
                           Number(rldata[i].Sequencia), new Date(rldata[i].DtLeitura)]);
       }
       else {
-        await client.query(`INSERT INTO ramaislocais(ramal, local, client, street, num_pol, floor, situation, zone, area, sequence)
-                          VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)  ON CONFLICT (local) DO UPDATE SET
+        await client.query(`INSERT INTO ramaislocais(ramal, local, client, street, num_pol, floor, locality, situation, zone, area, sequence)
+                          VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)  ON CONFLICT (local) DO UPDATE SET
                               ramal = EXCLUDED.ramal, client = EXCLUDED.client, street = EXCLUDED.street, num_pol = EXCLUDED.num_pol,
                               floor = EXCLUDED.floor, situation = EXCLUDED.situation, zone = EXCLUDED.zone, area = EXCLUDED.area, 
                               sequence = EXCLUDED.sequence`,
                           [Number(rldata[i].Ramal), Number(rldata[i].Local), Number(rldata[i].Cliente), rldata[i].Rua, rldata[i].NPolicia, 
-                          rldata[i].Andar, rldata[i].Situacao, Number(rldata[i].Zona), Number(rldata[i].Area), 
+                          rldata[i].Andar, rldata[i].Localidade, rldata[i].Situacao, Number(rldata[i].Zona), Number(rldata[i].Area), 
                           Number(rldata[i].Sequencia)]);
       }
     }

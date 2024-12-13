@@ -142,7 +142,7 @@ const fetchAndProcessData = async () => {
                 let date = new Date();
                 //date.setDate(date.getDate() - i);
                 //date.setDate(date.getDate() -2);// Select other day to start the iteration
-                date = new Date(2024, 9, 31);  // Months are 0-indexed, so 3 represents April
+                date = new Date(2024, 10, 29);  // Months are 0-indexed, so 3 represents April
                 const formdate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
                 dates.push({ date: formdate, actualDate: date }); // Store both formdate and actual date
             }

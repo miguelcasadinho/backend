@@ -111,7 +111,8 @@ const zerogcsendEmail = async (data) => {
                 subject: 'Anómalia grande cliente',
                 html:`
                 <h3>Prezados colegas da EMAS de Beja,</h3>
-                <p>O contador ${device} instalado no local ${local} com o nome ${name} e morada ${morada} teve um consumo de ${consumo} m3 nas últimas 72 horas.</p>
+                <p>O contador <b>${device}</b> instalado no local <b>${local}</b> com o nome ${name} e morada <i>${morada}</i> teve um consumo de ${consumo} m3 nas últimas 72 horas, para mais informações consultar o local de consumo.</p>
+                <a href="http://172.16.16.15:3000/d/c977129a-f05f-45e4-98da-57639a855c52/detalhes-do-contador?orgId=2&var-device=${device}&from=now-7d&to=now" target="_blank">Visualizar local de consumo</a>
                 `
             };
             const info = await transporter.sendMail(mailOptions);
@@ -205,8 +206,8 @@ const asbestossendEmail = async (data) => {
             let int_date = day + '-' + month + '-' + year + ' pelas ' + hour + ':' + min + ':' + second;
             const mailOptions = {
                 from: 'mciot.pt@gmail.com',
-                to: 'donatila.marques@emas-beja.pt,ricardo.gomes@emas-beja.pt',
-                cc: 'ana.madeira@emas-beja.pt,antonio.conceicao@emas-beja.pt,joao.pirata@emas-beja.pt,carlos.guerreiro@emas-beja.pt',
+                to: 'joao.pirata@emas-beja.pt',//'donatila.marques@emas-beja.pt,ricardo.gomes@emas-beja.pt',
+                //cc: 'ana.madeira@emas-beja.pt,antonio.conceicao@emas-beja.pt,joao.pirata@emas-beja.pt,carlos.guerreiro@emas-beja.pt',
                 bcc: 'miguel.casadinho@emas-beja.pt',
                 subject: 'Intervenção em amianto',
                 html:`
@@ -279,7 +280,7 @@ const dpeirqsendEmail = async (data) => {
             let int_date = day + '-' + month + '-' + year + ' pelas ' + hour + ':' + min + ':' + second;
             const mailOptions = {
                 from: 'mciot.pt@gmail.com',
-                to: 'sabrina.amaro@emas-beja.pt,luis.janeiro@emas-beja.pt,helio.placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt',
+                to: 'sabrina.amaro@emas-beja.pt,luis.janeiro@emas-beja.pt,helio.placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt,nuno.barnabe@emas-beja.pt',
                 //cc: 'joao.pirata@emas-beja.pt',
                 bcc: 'miguel.casadinho@emas-beja.pt',
                 subject: 'Intervenção DOM concluída',

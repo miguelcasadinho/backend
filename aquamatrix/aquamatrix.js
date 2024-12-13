@@ -108,12 +108,12 @@ const estimated_job = schedule.scheduleJob(estimated_rule, insestimated);
 
 // Define the ramais locais data schedule
 const rl_rule = new schedule.RecurrenceRule();
-rl_rule.minute = 5; //(0-59)
-rl_rule.hour = 6; //(0-23)
+rl_rule.minute = 32; //(0-59)
+rl_rule.hour = 11; //(0-23)
 // Schedule the insclients tasks
 const rl_job = schedule.scheduleJob(rl_rule, insRL);
 
-// Define the ramais locais data schedule
+// Define the consumos mes ramal data schedule
 const cmr_rule = new schedule.RecurrenceRule();
 cmr_rule.minute = 4; //(0-59)
 cmr_rule.hour = 7; //(0-23)

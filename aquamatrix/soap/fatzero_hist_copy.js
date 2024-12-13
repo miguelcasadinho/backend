@@ -26,7 +26,7 @@ const getxml = async (formdate) => {
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                 xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
             <soap:Body>
-                <GIS_DadosFaturacao xmlns="http://tempuri.org/">
+                <GIS_ConsumosZero xmlns="http://tempuri.org/">
                 <Empresa>${process.env.aquaUser}</Empresa>
                 <dataInicial>${formdate}</dataInicial>
                 <dataFinal>${formdate}</dataFinal>
@@ -34,7 +34,7 @@ const getxml = async (formdate) => {
                 <!--<ramal> </ramal>-->
                 <itemInicial>1</itemInicial>
                 <nrItemsObter>20000</nrItemsObter>
-                </GIS_DadosFaturacao>
+                </GIS_ConsumosZero>
             </soap:Body>
             </soap:Envelope>`;
 
@@ -56,8 +56,8 @@ const getxml = async (formdate) => {
             });
         });
 
-        xml = result['soap:Envelope']['soap:Body'][0]['GIS_DadosFaturacaoResponse'][0]['GIS_DadosFaturacaoResult'][0]
-            ['diffgr:diffgram'][0].NewDataSet[0].DadosFaturacaoTable;
+        xml = result['soap:Envelope']['soap:Body'][0]['GIS_ConsumosZeroResponse'][0]['GIS_ConsumosZeroResult'][0]
+            ['diffgr:diffgram'][0].NewDataSet[0].ConsumosZeroTable;
         return xml;
     } catch (error) {
         console.error('Error making SOAP request:', error);
@@ -69,15 +69,15 @@ const extractdata = (xml) => {
     return new Promise((resolve, reject) => {
         for (let i = 0; i < xml.length; i++) {
             fatdata.push({
-                "Ramal": parseInt(xml[i].RAMAL[0]),
-                "Local": parseInt(xml[i].LOCAL[0]),
-                "GrupoContador": parseInt(xml[i].GR_CONTADOR[0]),
-                "Num_Contador": xml[i].NR_CONTADOR[0],
-                "Dt_Ini_Ft": new Date(xml[i].DT_INI_FT[0]),
-                "Dt_Fim_Ft": new Date(xml[i].DT_FIM_FT[0]),
-                "Volume_Ft": parseInt(xml[i].VOLUME_FT[0]),
-                "Valor_Ft_Agua": parseFloat(xml[i].VALOR_FT_AGUA[0]).toFixed(2),
-                "Valor_Ft_ASR": parseFloat(xml[i].VALOR_FT_ASR[0]).toFixed(2)
+                "Ramal":parseInt(xml[i].RAMAL[0]),
+                "Local":parseInt(xml[i].LOCAL[0]),
+                "Cliente":parseInt(xml[i].NR_CLIENTE[0]),
+                "GrupoContador":parseInt(xml[i].GR_CONTADOR[0]),
+                "Num_Contador":xml[i].NR_CONTADOR[0],
+                "Dt_Ini_Ft":new Date(xml[i].DT_INI_FT[0]),
+                "Dt_Fim_Ft":new Date(xml[i].DT_FIM_FT[0]),
+                "Dt_Fat":new Date(xml[i].DT_EM_FCT[0]),
+                "Volume_Ft": 0
             });
         }
         resolve(fatdata);
@@ -128,7 +128,7 @@ const insertfatdata = async (fatdata, date) => {
 
 const fetchAndProcessData = async () => {
     const pageSize = 100; // Define the page size
-    const totalIterations = 1; // Total number of iterations
+    const totalIterations = 366; // Total number of iterations
     const totalPages = Math.ceil(totalIterations / pageSize); // Calculate total pages
 
     try {
@@ -139,10 +139,10 @@ const fetchAndProcessData = async () => {
 
             // Generate dates for the current page
             for (let i = startIdx; i < endIdx; i++) {
-                let date = new Date();
-                //date.setDate(date.getDate() - i);
+                let date = new Date(2020, 11, 31);
+                date.setDate(date.getDate() - i);
                 //date.setDate(date.getDate() -2);// Select other day to start the iteration
-                date = new Date(2024, 10, 30);  // Months are 0-indexed, so 3 represents April
+                //date = new Date(2024, 10, 29);  // Months are 0-indexed, so 3 represents April
                 const formdate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
                 dates.push({ date: formdate, actualDate: date }); // Store both formdate and actual date
             }
