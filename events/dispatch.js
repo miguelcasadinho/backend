@@ -9,8 +9,10 @@ import { requestdataTask } from './class/request.js';
 import { asbestosdataTask } from './class/asbestos.js';
 import { dpeirqTask  } from './class/dpeirq.js';
 import { execPython } from './class/readings.js';
+import { getDevices7days, getDevicesNeverSeen } from './class/chirp.js';
 import nodemailer from 'nodemailer';
 import TelegramBot from 'node-telegram-bot-api';
+import { get } from 'https';
 
 config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../.env') });
 
@@ -40,7 +42,7 @@ const unauthsendEmail = async (data) => {
             let data = day + '-' + month + '-' + year + ' pelas ' + hour + ':' + minute + ':' + second;
             const formattedDate = `${day}-${month}-${year} ${hour}:${minute}`;
             const mailOptions = {
-                from: 'mciot.pt@gmail.com',
+                from: '"NoReply EMAS" <miguel.casadinho@emas-beja.pt>',
                 to: 'pedro.rodrigues@emas-beja.pt,luis.janeiro@emas-beja.pt,sabrina.dores@emas-beja.pt,helio.placido@emas-beja.pt,nuno.barnabe@emas-beja.pt',
                 bcc: 'miguel.casadinho@emas-beja.pt',
                 subject: work,
@@ -48,8 +50,20 @@ const unauthsendEmail = async (data) => {
                 <h3>Prezados colegas da EMAS de Beja,</h3>
                 <p>No dia ${data} a intervenção ${intervencao}, com o sintoma ${int_sintoma} e trabalho ${work}, na morada ${morada} foi concluida, para mais informações consultar a aplicação Navia.</p>
                 <a href="https://navia.emas-beja.pt/Tarefas/Intervencoes/verDetalhes.php?id_intervencao=${id_service_order}&referer=consulta_os target="_blank">Visualizar intervenção</a>
-                `
-            };
+                <br></br>
+                <br></br>
+                <p>Com os melhores cumprimentos,</p>
+                <p><b>wavenotify by EMAS</b></p>
+                <img src="cid:signature" alt="Signature" style="width: 200px;" />
+                `,
+                attachments: [
+                    {
+                    filename: 'natal24.png',            
+                    path: '/home/giggo/nodejs/events/natal24.png',             
+                    cid: 'signature',                     
+                    },
+                ],  
+                };
             const info = await transporter.sendMail(mailOptions);
             console.log(`${formattedDate} => ${work} executed, Email sent:, ${info.response}`);
         }
@@ -69,15 +83,24 @@ const zeroregassendEmail = async () => {
         const min = String(data_tr.getMinutes()).padStart(2, '0');
         const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
         const mailOptions = {
-            from: 'mciot.pt@gmail.com',
+            from: '"NoReply EMAS" <miguel.casadinho@emas-beja.pt>',
             to: 'luis.janeiro@emas-beja.pt,Helio.Placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt',
             bcc: 'miguel.casadinho@emas-beja.pt',
             subject: 'Anómalia regas',
             html:`
             <h3>Prezados colegas da EMAS de Beja,</h3>
             <p>Encontrarão em anexo as regas sem consumos nos últimos 7 dias.</p>
+            <br></br>
+            <p>Com os melhores cumprimentos,</p>
+            <p><b>wavenotify by EMAS</b></p>
+            <img src="cid:signature" alt="Signature" style="width: 200px;" />
             `,
             attachments: [
+                {
+                    filename: 'natal24.png',            
+                    path: '/home/giggo/nodejs/events/natal24.png',             
+                    cid: 'signature',                     
+                },
                 {
                     filename: 'regas.xlsx',
                     path: '/home/giggo' + '/regas.xlsx',
@@ -105,7 +128,7 @@ const zerogcsendEmail = async (data) => {
         for (const entry of data) {
             const { local, device, name, morada, consumo } = entry;
             const mailOptions = {
-                from: 'mciot.pt@gmail.com',
+                from: '"NoReply EMAS" <miguel.casadinho@emas-beja.pt>',
                 to: 'luis.janeiro@emas-beja.pt,Helio.Placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt',
                 bcc: 'miguel.casadinho@emas-beja.pt',
                 subject: 'Anómalia grande cliente',
@@ -113,8 +136,20 @@ const zerogcsendEmail = async (data) => {
                 <h3>Prezados colegas da EMAS de Beja,</h3>
                 <p>O contador <b>${device}</b> instalado no local <b>${local}</b> com o nome ${name} e morada <i>${morada}</i> teve um consumo de ${consumo} m3 nas últimas 72 horas, para mais informações consultar o local de consumo.</p>
                 <a href="http://172.16.16.15:3000/d/c977129a-f05f-45e4-98da-57639a855c52/detalhes-do-contador?orgId=2&var-device=${device}&from=now-7d&to=now" target="_blank">Visualizar local de consumo</a>
-                `
-            };
+                <br></br>
+                <br></br>
+                <p>Com os melhores cumprimentos,</p>
+                <p><b>wavenotify by EMAS</b></p>
+                <img src="cid:signature" alt="Signature" style="width: 200px;" />
+                `,
+                attachments: [
+                    {
+                    filename: 'natal24.png',            
+                    path: '/home/giggo/nodejs/events/natal24.png',             
+                    cid: 'signature',                     
+                    },
+                ],  
+                };
             const info = await transporter.sendMail(mailOptions);
             console.log(`${formattedDate} => Big consumers events executed, Email sent:, ${info.response}`);
         }
@@ -139,7 +174,7 @@ const falhas4hsendEmail = async (data) => {
             let date = day + '-' + month + '-' + year + ' pelas ' + hour + ':' + min + ':' + second;
             const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
             const mailOptions = {
-                from: 'mciot.pt@gmail.com',
+                from: '"NoReply EMAS" <miguel.casadinho@emas-beja.pt>',
                 to: 'artur.janeiro@emas-beja.pt,goncalo.candeias@emas-beja.pt',
                 cc: 'gabriela.palma@emas-beja.pt,joao.pirata@emas-beja.pt,j.dias@emas-beja.pt',
                 bcc: 'miguel.casadinho@emas-beja.pt',
@@ -148,8 +183,20 @@ const falhas4hsendEmail = async (data) => {
                 <h3>Prezados colegas da EMAS de Beja,</h3>
                 <p>No dia ${date}, a intervenção ${numero}, com o sintoma ${sintoma} e morada ${morada}, teve uma interrupção de abastecimento de ${duracao_hours} horas, para mais informações consultar a aplicação Navia.</p>
                 <a href="https://navia.emas-beja.pt/Tarefas/Intervencoes/verDetalhes.php?id_intervencao=${id_service_order}&referer=consulta_os target="_blank">Visualizar intervenção</a>
-                `
-            };
+                <br></br>
+                <br></br>
+                <p>Com os melhores cumprimentos,</p>
+                <p><b>wavenotify by EMAS</b></p>
+                <img src="cid:signature" alt="Signature" style="width: 200px;" />
+                `,
+                attachments: [
+                    {
+                    filename: 'natal24.png',            
+                    path: '/home/giggo/nodejs/events/natal24.png',             
+                    cid: 'signature',                     
+                    },
+                ],  
+                };
             const info = await transporter.sendMail(mailOptions);
             console.log(`${formattedDate} => 4 hours failures events executed, Email sent:, ${info.response}`);
         }
@@ -205,7 +252,7 @@ const asbestossendEmail = async (data) => {
             let second = ('0' + now.getSeconds()).slice(-2); // Using slice to pad with leading zero
             let int_date = day + '-' + month + '-' + year + ' pelas ' + hour + ':' + min + ':' + second;
             const mailOptions = {
-                from: 'mciot.pt@gmail.com',
+                from: '"NoReply EMAS" <miguel.casadinho@emas-beja.pt>',
                 to: 'joao.pirata@emas-beja.pt',//'donatila.marques@emas-beja.pt,ricardo.gomes@emas-beja.pt',
                 //cc: 'ana.madeira@emas-beja.pt,antonio.conceicao@emas-beja.pt,joao.pirata@emas-beja.pt,carlos.guerreiro@emas-beja.pt',
                 bcc: 'miguel.casadinho@emas-beja.pt',
@@ -214,8 +261,20 @@ const asbestossendEmail = async (data) => {
                 <h3>Prezados colegas da EMAS de Beja,</h3>
                 <p>No dia ${int_date}, foi executada a ordem de serviço ${number}, com o sintoma ${sympton} e localização em ${address}. Esta intervenção, criada pelo sr. ${creator} e entregue ao sr. ${responsible}, foi efectuada em tubagens contendo amianto, para mais informações consultar a aplicação Navia.</p>
                 <a href="https://navia.emas-beja.pt/Tarefas/Intervencoes/verDetalhes.php?id_intervencao=${id_service_order}&referer=consulta_os" target="_blank">Visualizar intervenção</a>
-                `
-            };
+                <br></br>
+                <br></br>
+                <p>Com os melhores cumprimentos,</p>
+                <p><b>wavenotify by EMAS</b></p>
+                <img src="cid:signature" alt="Signature" style="width: 200px;" />
+                `,
+                attachments: [
+                    {
+                    filename: 'natal24.png',            
+                    path: '/home/giggo/nodejs/events/natal24.png',             
+                    cid: 'signature',                     
+                    },
+                ],  
+                };
             const info = await transporter.sendMail(mailOptions);
             console.log(`${formattedDate} => Asbestos events executed, Email sent:, ${info.response}`);
         }
@@ -235,15 +294,24 @@ const readingsSendEmail = async (csv_name) => {
         const min = String(data_tr.getMinutes()).padStart(2, '0');
         const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
         const mailOptions = {
-            from: 'mciot.pt@gmail.com',
+            from: '"NoReply EMAS" <miguel.casadinho@emas-beja.pt>',
             to: 'rui.fernandes@emas-beja.pt',
             bcc: 'miguel.casadinho@emas-beja.pt',
             subject: 'Leituras de telemetria',
             html:`
             <h3>Caro Rui,</h3>
-            <p>Segue em anexo o ficheiro csv das leituras de telemetria.</p>
+            <p>Segue em anexo o ficheiro csv com as leituras de telemetria.</p>
+            <br></br>
+            <p>Com os melhores cumprimentos,</p>
+            <p><b>wavenotify by EMAS</b></p>
+            <img src="cid:signature" alt="Signature" style="width: 200px;" />
             `,
             attachments: [
+                {
+                    filename: 'natal24.png',            
+                    path: '/home/giggo/nodejs/events/natal24.png',             
+                    cid: 'signature',                     
+                },
                 {
                     filename: csv_name,
                     path: '/home/giggo/nodejs/events/' + csv_name,
@@ -279,7 +347,7 @@ const dpeirqsendEmail = async (data) => {
             let second = ('0' + now.getSeconds()).slice(-2); // Using slice to pad with leading zero
             let int_date = day + '-' + month + '-' + year + ' pelas ' + hour + ':' + min + ':' + second;
             const mailOptions = {
-                from: 'mciot.pt@gmail.com',
+                from: '"NoReply EMAS" <miguel.casadinho@emas-beja.pt>',
                 to: 'sabrina.amaro@emas-beja.pt,luis.janeiro@emas-beja.pt,helio.placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt,nuno.barnabe@emas-beja.pt',
                 //cc: 'joao.pirata@emas-beja.pt',
                 bcc: 'miguel.casadinho@emas-beja.pt',
@@ -288,11 +356,169 @@ const dpeirqsendEmail = async (data) => {
                 <h3>Prezados colegas da EMAS de Beja,</h3>
                 <p>No dia ${int_date}, foi executada a ordem de serviço ${number}, com o sintoma <b>${symptom}</b> e localização em <i>${address}</i>. Esta intervenção, foi executada pelo sr. ${user_execute} com o trabalho ${work}, para mais informações consultar a aplicação Navia.</p>
                 <a href="https://navia.emas-beja.pt/Tarefas/Intervencoes/verDetalhes.php?id_intervencao=${id_service_order}&referer=consulta_os" target="_blank">Visualizar intervenção</a>
-                `
+                <br></br>
+                <br></br>
+                <p>Com os melhores cumprimentos,</p>
+                <p><b>wavenotify by EMAS</b></p>
+                <img src="cid:signature" alt="Signature" style="width: 200px;" />
+                `,
+                attachments: [
+                    {
+                    filename: 'natal24.png',            
+                    path: '/home/giggo/nodejs/events/natal24.png',             
+                    cid: 'signature',                     
+                    },
+                ],  
                 };
             const info = await transporter.sendMail(mailOptions);
             console.log(`${formattedDate} => DPEI Requests to DOM events executed, Email sent:, ${info.response}`);
         }
+    } catch (error) {
+        console.error('Error sending email:', error);
+        // Consider adding retries or other error handling mechanisms here
+    }
+};
+
+const notseen7dayssendEmail = async (data) => {
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
+
+    const generateHTMLTable = (data) => {
+        let rows = data.map(item => {
+            const formattedLastSeen = item.lastSeen 
+                ? item.lastSeen.replace('T', ' ').split('.')[0] 
+                : 'N/A'; // Caso lastSeen seja nulo
+            return `
+                <tr>
+                    <td>${item.device}</td>
+                    <td>${item.description}</td>
+                    <td>${formattedLastSeen}</td>
+                </tr>
+            `;
+        }).join('');
+        
+        return `
+            <table border="1" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th>Dispositivo</th>
+                        <th>Designação</th>
+                        <th>Última comunicação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${rows}
+                </tbody>
+            </table>
+        `;
+    };
+
+    try {
+        const tableHTML = generateHTMLTable(data);
+        const mailOptions = {
+            from: '"NoReply EMAS" <miguel.casadinho@emas-beja.pt>',
+            to: 'luis.janeiro@emas-beja.pt,helio.placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt',
+            //cc: 'joao.pirata@emas-beja.pt',
+            bcc: 'miguel.casadinho@emas-beja.pt',
+            subject: 'Contadores sem comunicar',
+            html:`
+            <h3>Prezados colegas da EMAS de Beja,</h3>
+            <p>Segue a tabela dos contadores sem comunicar há mais de 7 dias.</p>
+            <body>${tableHTML}</body>
+            <br></br>
+            <br></br>
+            <p>Com os melhores cumprimentos,</p>
+            <p><b>wavenotify by EMAS</b></p>
+            <img src="cid:signature" alt="Signature" style="width: 200px;" />
+            `,
+            attachments: [
+                {
+                filename: 'natal24.png',            
+                path: '/home/giggo/nodejs/events/natal24.png',             
+                cid: 'signature',                     
+                },
+            ],  
+            };
+        const info = await transporter.sendMail(mailOptions);
+        console.log(`${formattedDate} => Meters last seen 7 days executed, Email sent:, ${info.response}`);
+    } catch (error) {
+        console.error('Error sending email:', error);
+        // Consider adding retries or other error handling mechanisms here
+    }
+};
+
+const neverseensendEmail = async (data) => {
+    const data_tr = new Date();
+    const year = data_tr.getFullYear();
+    const month = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day = String(data_tr.getDate()).padStart(2, '0');
+    const hour = String(data_tr.getHours()).padStart(2, '0');
+    const min = String(data_tr.getMinutes()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
+
+    const generateHTMLTable = (data) => {
+        let rows = data.map(item => {
+            const formattedLastSeen = item.lastSeen 
+                ? item.lastSeen.replace('T', ' ').split('.')[0] 
+                : 'N/A'; // Caso lastSeen seja nulo
+            return `
+                <tr>
+                    <td>${item.device}</td>
+                    <td>${item.description}</td>
+                    <td>${formattedLastSeen}</td>
+                </tr>
+            `;
+        }).join('');
+        
+        return `
+            <table border="1" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th>Dispositivo</th>
+                        <th>Designação</th>
+                        <th>Última comunicação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${rows}
+                </tbody>
+            </table>
+        `;
+    };
+
+    try {
+        const tableHTML = generateHTMLTable(data);
+        const mailOptions = {
+            from: '"NoReply EMAS" <miguel.casadinho@emas-beja.pt>',
+            to: 'luis.janeiro@emas-beja.pt,helio.placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt',
+            //cc: 'joao.pirata@emas-beja.pt',
+            bcc: 'miguel.casadinho@emas-beja.pt',
+            subject: 'Contadores por ativar',
+            html:`
+            <h3>Prezados colegas da EMAS de Beja,</h3>
+            <p>Segue a tabela dos contadores que ainda não se ligaram à rede.</p>
+            <body>${tableHTML}</body>
+            <br></br>
+            <br></br>
+            <p>Com os melhores cumprimentos,</p>
+            <p><b>wavenotify by EMAS</b></p>
+            <img src="cid:signature" alt="Signature" style="width: 200px;" />
+            `,
+            attachments: [
+                {
+                filename: 'natal24.png',            
+                path: '/home/giggo/nodejs/events/natal24.png',             
+                cid: 'signature',                     
+                },
+            ],  
+            };
+        const info = await transporter.sendMail(mailOptions);
+        console.log(`${formattedDate} => Meters never seen executed, Email sent:, ${info.response}`);
     } catch (error) {
         console.error('Error sending email:', error);
         // Consider adding retries or other error handling mechanisms here
@@ -374,4 +600,24 @@ const disreadings = async () => {
     }
 };
 
-export { disunauth, diszerogc, diszeroregas, disfalhas4h, disrequest, disasbestos, disdpeirq, disreadings };
+const disLastSeen7days = async () => {
+    try {
+        const devices = await getDevices7days();
+        //console.log(devices);
+        await notseen7dayssendEmail(devices);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
+const disNeverSeen = async () => {
+    try {
+        const devices = await getDevicesNeverSeen();
+        //console.log(devices);
+        await neverseensendEmail(devices);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
+export { disunauth, diszerogc, diszeroregas, disfalhas4h, disrequest, disasbestos, disdpeirq, disreadings, disLastSeen7days, disNeverSeen};

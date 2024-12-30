@@ -117,7 +117,7 @@ const rl_job = schedule.scheduleJob(rl_rule, insRL);
 const cmr_rule = new schedule.RecurrenceRule();
 cmr_rule.minute = 4; //(0-59)
 cmr_rule.hour = 7; //(0-23)
-cmr_rule.date = 5; //(1-31)
+cmr_rule.date = 15; //(1-31)
 // Schedule the insclients tasks
 const cmr_job = schedule.scheduleJob(cmr_rule, insCrm);
 

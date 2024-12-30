@@ -1,5 +1,5 @@
 import schedule from 'node-schedule';
-import { disunauth, diszerogc, diszeroregas, disfalhas4h, disrequest, disasbestos, disdpeirq, disreadings } from './dispatch.js';
+import { disunauth, diszerogc, diszeroregas, disfalhas4h, disrequest, disasbestos, disdpeirq, disreadings, disLastSeen7days, disNeverSeen } from './dispatch.js';
 
 /*
 //schedule rules
@@ -92,3 +92,19 @@ readings_rule3.hour = 8; //(0-23)
 readings_rule3.date = 30; //(1-31)
 // Schedule the readings tasks
 const readings_job3 = schedule.scheduleJob(readings_rule3, disreadings);
+
+// Define the last seen 7 days schedule
+const ls7days_rule = new schedule.RecurrenceRule();
+ls7days_rule.minute = 29; //(0-59)
+ls7days_rule.hour = 8; //(0-23)
+ls7days_rule.dayOfWeek = 1; //(0 - 7) (0 or 7 is Sun)
+// Schedule the insclientss tasks
+const ls7days_job = schedule.scheduleJob(ls7days_rule, disLastSeen7days);
+
+// Define the never seen schedule
+const neverseen_rule = new schedule.RecurrenceRule();
+neverseen_rule.minute = 24; //(0-59)
+neverseen_rule.hour = 8; //(0-23)
+neverseen_rule.dayOfWeek = 1; //(0 - 7) (0 or 7 is Sun)
+// Schedule the insclientss tasks
+const neverseen_job = schedule.scheduleJob(neverseen_rule, disNeverSeen);

@@ -12,6 +12,7 @@ import { ldds75Decoder} from  './decoders/ldds75.js';
 import { sensecapDecoder} from  './decoders/sensecap.js';
 import { xlogicDecoder } from './decoders/xlogic.js';
 import { arquiledDecoder } from './decoders/arquiled.js';
+import { cpl03Decoder } from './decoders/cpl03.js';
 import { insertPg } from './ins_pg.js';
 import express from 'express';
 import bodyParser from 'body-parser';
@@ -177,6 +178,16 @@ app.post(path, (req, res) => {
             }
             res.send('Data received successfully!');   
             break;
+            case '154':
+                let cpl03_decoded = cpl03Decoder(objectjson);
+                if (typeof cpl03_decoded !== 'undefined'){
+                    //console.log(cpl03_decoded);
+                    insertPg(cpl03Decoder(objectjson));
+                } else {
+                    console.log(`${formattedDate} => ${objectjson.applicationName}, Device:${objectjson.deviceName}, Payload not valid!`);
+                }
+                res.send('Data received successfully!');   
+                break;
         default:
             res.send('Data received successfully!');
     }

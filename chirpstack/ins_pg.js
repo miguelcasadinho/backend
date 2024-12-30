@@ -99,8 +99,14 @@ const insertFlowDiehl = async (payload) => {
         let hour =data.getHours();
         hour=hour+i;
         data.setHours(hour);
-        await client.query(`INSERT INTO flow(device, date, flow) VALUES($1, $2, $3) ON CONFLICT (device, date) DO NOTHING`,
-                          [payload.DeviceName, data, payload.Deltas[i]*0.001]);
+        if (['81541670'].includes(payload.DeviceName)){
+            await client.query(`INSERT INTO flow(device, date, flow) VALUES($1, $2, $3) ON CONFLICT (device, date) DO NOTHING`,
+                          [payload.DeviceName, data, payload.Deltas[i]*0.01]);
+        }
+        else {
+            await client.query(`INSERT INTO flow(device, date, flow) VALUES($1, $2, $3) ON CONFLICT (device, date) DO NOTHING`,
+                            [payload.DeviceName, data, payload.Deltas[i]*0.001]);
+        }                 
       }
       // Commit the transaction
       await client.query('COMMIT');
@@ -514,8 +520,15 @@ const insertVolumeDiehl = async (payload) => {
         datavol.setSeconds(0);
         datavol.setMilliseconds(0);
         //Execute insert querie
-        await client.query(`INSERT INTO volume(device, date, volume) VALUES($1, $2, $3) ON CONFLICT (device, date) DO UPDATE SET volume = EXCLUDED.volume`,
-                            [payload.DeviceName, datavol, payload.Volume]);
+        if (['81541670'].includes(payload.DeviceName)){
+            await client.query(`INSERT INTO volume(device, date, volume) VALUES($1, $2, $3) ON CONFLICT (device, date) DO UPDATE SET volume = EXCLUDED.volume`,
+                            [payload.DeviceName, datavol, payload.Volume*10]);
+        }
+        else {
+            await client.query(`INSERT INTO volume(device, date, volume) VALUES($1, $2, $3) ON CONFLICT (device, date) DO UPDATE SET volume = EXCLUDED.volume`,
+                [payload.DeviceName, datavol, payload.Volume]);
+        }
+        
       // Commit the transaction
       await client.query('COMMIT');
       //console.log(`${payload.Application}, ${payload.DeviceName} , volume inserted successfully`);
@@ -796,6 +809,101 @@ const insertXlogicFlow = async (payload) => {
     }
 };
 
+// Define an async function to insert cpl03 devices readings
+const insCpl03Volume = async (payload) => {
+    const client = await pool.connect();
+    try {
+      // Begin a transaction
+      await client.query('BEGIN');
+      // Iterate over the data and execute insert queries
+      for (let i=0; i < payload.Volume_IN1.length ; i++){
+        await client.query(`INSERT INTO volume(device, date, volume) VALUES($1, $2, $3) ON CONFLICT (device, date) DO NOTHING`,
+                          [payload.DeviceName, payload.Volume_IN1[i].date, payload.Volume_IN1[i].volume]);
+      }
+      // Commit the transaction
+      await client.query('COMMIT');
+      //console.log(`${payload.Application}, ${payload.DeviceName} , flow inserted successfully`);
+    } catch (err) {
+      // Rollback the transaction if an error occurs
+      await client.query('ROLLBACK');
+      console.error('Error inserting data:', err);
+    } finally {
+      // Release the client back to the pool
+      client.release();
+    }
+};
+
+const getCpl03Flow = async (device) => {
+    const query = {
+        text: `
+            WITH calculated_flow AS (
+                SELECT 
+                    device,
+                    date, 
+                    (volume - LAG(volume) OVER (ORDER BY date)) / 
+                    (EXTRACT(EPOCH FROM (date - LAG(date) OVER (ORDER BY date))) / 3600) AS flow,
+                    EXTRACT(EPOCH FROM (date - LAG(date) OVER (ORDER BY date))) AS time_diff
+                FROM volume 
+                WHERE device = $1 AND date > now() - INTERVAL '8 hours'
+            )
+            SELECT device, date, flow
+            FROM calculated_flow
+            WHERE time_diff >= 60
+            ORDER BY date ASC;
+        `,
+        values: [device],
+    };
+
+    try {
+        const client = await pool.connect();
+        const result = await client.query(query);
+        client.release();
+        return result.rows; // Return all rows
+    } catch (error) {
+        console.error('Error fetching flow data:', error);
+        throw new Error('Failed to fetch flow data');
+    }
+};
+
+const insertCpl03Flow = async (payload) => {
+    const client = await pool.connect();
+    try {
+        // Begin a transaction
+        await client.query('BEGIN');
+
+        // Get flow data
+        const flowData = await getCpl03Flow(payload.DeviceName);
+        if (!flowData.length) {
+            console.log(`No flow data for device: ${payload.DeviceName}`);
+            await client.query('ROLLBACK');
+            return;
+        }
+
+        // Prepare and execute batch insert
+        const insertQuery = `
+            INSERT INTO flow(device, date, flow) 
+            VALUES ($1, $2, $3) 
+            ON CONFLICT (device, date)
+            DO NOTHING
+            --DO UPDATE SET flow = EXCLUDED.flow;
+        `;
+
+        for (const flow of flowData) {
+            await client.query(insertQuery, [flow.device, flow.date, flow.flow]);
+        }
+
+        // Commit the transaction
+        await client.query('COMMIT');
+        //console.log(`${payload.Application}, ${payload.DeviceName} - Flow inserted successfully`);
+    } catch (err) {
+        // Rollback the transaction if an error occurs
+        await client.query('ROLLBACK');
+        console.error('Error inserting data:', err.message || err);
+    } finally {
+        // Release the client back to the pool
+        client.release();
+    }
+};
 
 const insertPg = async (payload) => {
     try {
@@ -890,6 +998,19 @@ const insertPg = async (payload) => {
                 insertAlarm(payload);
                 insertBattery(payload);
                 insertCom(payload);
+                break;
+            case '154':
+                if (payload.fPort === 3) {
+                    insertCom(payload);
+                    insCpl03Volume(payload);
+                } else if (payload.fPort === 6) {
+                    insCpl03Volume(payload);
+                    insertCom(payload);
+                    setTimeout(() => insertCpl03Flow(payload), 15000); // Pass as a function reference
+                } else if (payload.fPort === 5) {
+                    insertBattery(payload);
+                    insertCom(payload);
+                };
                 break;
             default:
                 console.log('Unsupported AppID:', payload.AppID);
