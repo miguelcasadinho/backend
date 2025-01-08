@@ -844,7 +844,7 @@ const getCpl03Flow = async (device) => {
                     (EXTRACT(EPOCH FROM (date - LAG(date) OVER (ORDER BY date))) / 3600) AS flow,
                     EXTRACT(EPOCH FROM (date - LAG(date) OVER (ORDER BY date))) AS time_diff
                 FROM volume 
-                WHERE device = $1 AND date > now() - INTERVAL '8 hours'
+                WHERE device = $1 AND date > now() - INTERVAL '6 hours'
             )
             SELECT device, date, flow
             FROM calculated_flow
@@ -884,8 +884,8 @@ const insertCpl03Flow = async (payload) => {
             INSERT INTO flow(device, date, flow) 
             VALUES ($1, $2, $3) 
             ON CONFLICT (device, date)
-            DO NOTHING
-            --DO UPDATE SET flow = EXCLUDED.flow;
+            --DO NOTHING
+            DO UPDATE SET flow = EXCLUDED.flow;
         `;
 
         for (const flow of flowData) {

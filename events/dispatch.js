@@ -58,7 +58,7 @@ const unauthsendEmail = async (data) => {
                 `,
                 attachments: [
                     {
-                    filename: 'natal24.png',            
+                    filename: 'emas24.png',            
                     path: '/home/giggo/nodejs/events/natal24.png',             
                     cid: 'signature',                     
                     },
@@ -97,7 +97,7 @@ const zeroregassendEmail = async () => {
             `,
             attachments: [
                 {
-                    filename: 'natal24.png',            
+                    filename: 'emas24.png',            
                     path: '/home/giggo/nodejs/events/natal24.png',             
                     cid: 'signature',                     
                 },
@@ -144,7 +144,7 @@ const zerogcsendEmail = async (data) => {
                 `,
                 attachments: [
                     {
-                    filename: 'natal24.png',            
+                    filename: 'emas24.png',            
                     path: '/home/giggo/nodejs/events/natal24.png',             
                     cid: 'signature',                     
                     },
@@ -191,7 +191,7 @@ const falhas4hsendEmail = async (data) => {
                 `,
                 attachments: [
                     {
-                    filename: 'natal24.png',            
+                    filename: 'emas24.png',            
                     path: '/home/giggo/nodejs/events/natal24.png',             
                     cid: 'signature',                     
                     },
@@ -269,7 +269,7 @@ const asbestossendEmail = async (data) => {
                 `,
                 attachments: [
                     {
-                    filename: 'natal24.png',            
+                    filename: 'emas24.png',            
                     path: '/home/giggo/nodejs/events/natal24.png',             
                     cid: 'signature',                     
                     },
@@ -308,7 +308,7 @@ const readingsSendEmail = async (csv_name) => {
             `,
             attachments: [
                 {
-                    filename: 'natal24.png',            
+                    filename: 'emas24.png',            
                     path: '/home/giggo/nodejs/events/natal24.png',             
                     cid: 'signature',                     
                 },
@@ -364,7 +364,7 @@ const dpeirqsendEmail = async (data) => {
                 `,
                 attachments: [
                     {
-                    filename: 'natal24.png',            
+                    filename: 'emas24.png',            
                     path: '/home/giggo/nodejs/events/natal24.png',             
                     cid: 'signature',                     
                     },
@@ -438,7 +438,7 @@ const notseen7dayssendEmail = async (data) => {
             `,
             attachments: [
                 {
-                filename: 'natal24.png',            
+                filename: 'emas24.png',            
                 path: '/home/giggo/nodejs/events/natal24.png',             
                 cid: 'signature',                     
                 },
@@ -511,7 +511,7 @@ const neverseensendEmail = async (data) => {
             `,
             attachments: [
                 {
-                filename: 'natal24.png',            
+                filename: 'emas24.png',            
                 path: '/home/giggo/nodejs/events/natal24.png',             
                 cid: 'signature',                     
                 },

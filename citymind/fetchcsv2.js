@@ -13,7 +13,7 @@ const pool  = new pg.Pool({
     host: process.env.psqlGiggoHost,
     port: process.env.psqlGiggoPort,
     user: process.env.psqlGiggoUser,
-    password: process.env.psqlGiggoPassword2,
+    password: process.env.psqlGiggoPassword,
     database: process.env.psqlGiggoDatabase,
     max: 2000,       // Adjust based on your needs
     idleTimeoutMillis: 30000,
@@ -39,7 +39,7 @@ const fetchData = async () => {
         headless: true,
         args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
-
+    
     const page = await browser.newPage();
     console.log('Browser start!');
     const downloadPath = './downloads'; // Define the download folder
@@ -294,8 +294,8 @@ rule.tz = 'Europe/Lisbon';
 
 
 const rule = new schedule.RecurrenceRule();
-rule.minute = 10; //(0-59)
-rule.hour = 10; //(0-23)
+rule.minute = 51; //(0-59)
+rule.hour = 9; //(0-23)
 // Schedule the tasks
 const job = schedule.scheduleJob(rule, fetch);
 /*

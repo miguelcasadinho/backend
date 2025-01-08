@@ -14,7 +14,7 @@ const pool  = new pg.Pool({
     host: process.env.psqlGiggoHost,
     port: process.env.psqlGiggoPort,
     user: process.env.psqlGiggoUser,
-    password: process.env.psqlGiggoPassword,
+    password: process.env.psqlGiggoPassword2,
     database: process.env.psqlGiggoDatabase
 });
 

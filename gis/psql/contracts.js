@@ -28,8 +28,9 @@ LEFT JOIN consmesramal AS cmr ON ic.ramal = cmr.ramal
 LEFT JOIN (SELECT DISTINCT ON (local) * from meters ORDER BY local, date_leit DESC) AS mt ON ic.local = mt.local
 LEFT JOIN coord AS cd ON ic.local = cd.local
 LEFT JOIN estimated AS et ON ic.local = et.local
-where et.volume > 3000
-limit 10
+--where et.volume > 1000
+--limit 1
+where ic.date_inst > now() -interval '1 month'
  ;
 `;
 
