@@ -817,8 +817,8 @@ const insCpl03Volume = async (payload) => {
       await client.query('BEGIN');
       // Iterate over the data and execute insert queries
       for (let i=0; i < payload.Volume_IN1.length ; i++){
-        await client.query(`INSERT INTO volume(device, date, volume) VALUES($1, $2, $3) ON CONFLICT (device, date) DO NOTHING`,
-                          [payload.DeviceName, payload.Volume_IN1[i].date, payload.Volume_IN1[i].volume]);
+        await client.query(`INSERT INTO volume(device, date, volume, tag_id) VALUES($1, $2, $3, $4) ON CONFLICT (device, date) DO NOTHING`,
+                          [payload.DeviceName, payload.Volume_IN1[i].date, payload.Volume_IN1[i].volume, payload.Tag_id]);
       }
       // Commit the transaction
       await client.query('COMMIT');
@@ -881,15 +881,15 @@ const insertCpl03Flow = async (payload) => {
 
         // Prepare and execute batch insert
         const insertQuery = `
-            INSERT INTO flow(device, date, flow) 
-            VALUES ($1, $2, $3) 
+            INSERT INTO flow(device, date, flow, tag_id) 
+            VALUES ($1, $2, $3, $4) 
             ON CONFLICT (device, date)
             --DO NOTHING
             DO UPDATE SET flow = EXCLUDED.flow;
         `;
 
         for (const flow of flowData) {
-            await client.query(insertQuery, [flow.device, flow.date, flow.flow]);
+            await client.query(insertQuery, [flow.device, flow.date, flow.flow, payload.Tag_id]);
         }
 
         // Commit the transaction

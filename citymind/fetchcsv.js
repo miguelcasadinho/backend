@@ -294,8 +294,8 @@ rule.tz = 'Europe/Lisbon';
 
 
 const rule = new schedule.RecurrenceRule();
-rule.minute = 10; //(0-59)
-rule.hour = 10; //(0-23)
+rule.minute = 41; //(0-59)
+rule.hour = 8; //(0-23)
 // Schedule the tasks
 const job = schedule.scheduleJob(rule, fetch);
 /*

@@ -48,6 +48,7 @@ const cpl03Decoder = (message) => {
   if (message.hasOwnProperty('fPort') && message.hasOwnProperty('data')) {
     let bytes = Buffer.from(message.data, 'base64');
     let contador = message.tags.CONTADOR;
+    let hastag_id = Object.hasOwnProperty.call(message.tags, 'TAG');
     let leitura_inicial = Number(message.tags.LEITURA_INICIAL);
     let litros_impulso = Number(message.tags.LITROS_IMPULSO);
     let rxinfo_length = message.rxInfo.length;
@@ -91,6 +92,7 @@ const cpl03Decoder = (message) => {
         "AppID": message.applicationID,
         "Application": message.applicationName,
         "DeviceName": contador,
+        "Tag_id": hastag_id ? message.tags.TAG : '',
         "Data": message.data,
         "fPort": message.fPort,
         //"Date": new Date(), 
@@ -157,6 +159,7 @@ const cpl03Decoder = (message) => {
         "AppID": message.applicationID,
         "Application": message.applicationName,
         "DeviceName": contador,
+        "Tag_id": hastag_id ? message.tags.TAG : '',
         "Data": message.data,
         "fPort": message.fPort,
         "Date": new Date(),
@@ -187,6 +190,7 @@ const cpl03Decoder = (message) => {
               "AppID": message.applicationID,
               "Application": message.applicationName,
               "DeviceName": contador,
+              "Tag_id": hastag_id ? message.tags.TAG : '',
               "Data": message.data,
               "fPort": message.fPort,
               //"Date": new Date(), 
