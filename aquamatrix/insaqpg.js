@@ -633,10 +633,15 @@ const inszerofat = async () => {
 
 const inscontra = async () => {
   try {
-      await deleteAllRecords('infocontrato');
       const contradata = await contradataTask();
       //console.log(contradata);
-      await insertcontradata(contradata);
+      if (contradata.length > 19000){
+        await deleteAllRecords('infocontrato');
+        await insertcontradata(contradata);
+      } 
+      else {
+      console.log('Infocontrato Data length below threshold. No action taken.');
+      }
       //await pool.end();
       //console.log('Connection pool closed.');
   } catch (error) {

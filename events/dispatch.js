@@ -59,7 +59,7 @@ const unauthsendEmail = async (data) => {
                 attachments: [
                     {
                     filename: 'emas24.png',            
-                    path: '/home/giggo/nodejs/events/natal24.png',             
+                    path: '/home/giggo/nodejs/events/emas24.png',             
                     cid: 'signature',                     
                     },
                 ],  
@@ -98,7 +98,7 @@ const zeroregassendEmail = async () => {
             attachments: [
                 {
                     filename: 'emas24.png',            
-                    path: '/home/giggo/nodejs/events/natal24.png',             
+                    path: '/home/giggo/nodejs/events/emas24.png',             
                     cid: 'signature',                     
                 },
                 {
@@ -145,7 +145,7 @@ const zerogcsendEmail = async (data) => {
                 attachments: [
                     {
                     filename: 'emas24.png',            
-                    path: '/home/giggo/nodejs/events/natal24.png',             
+                    path: '/home/giggo/nodejs/events/emas24.png',             
                     cid: 'signature',                     
                     },
                 ],  
@@ -192,7 +192,7 @@ const falhas4hsendEmail = async (data) => {
                 attachments: [
                     {
                     filename: 'emas24.png',            
-                    path: '/home/giggo/nodejs/events/natal24.png',             
+                    path: '/home/giggo/nodejs/events/emas24.png',             
                     cid: 'signature',                     
                     },
                 ],  
@@ -270,7 +270,7 @@ const asbestossendEmail = async (data) => {
                 attachments: [
                     {
                     filename: 'emas24.png',            
-                    path: '/home/giggo/nodejs/events/natal24.png',             
+                    path: '/home/giggo/nodejs/events/emas24.png',             
                     cid: 'signature',                     
                     },
                 ],  
@@ -309,7 +309,7 @@ const readingsSendEmail = async (csv_name) => {
             attachments: [
                 {
                     filename: 'emas24.png',            
-                    path: '/home/giggo/nodejs/events/natal24.png',             
+                    path: '/home/giggo/nodejs/events/emas24.png',             
                     cid: 'signature',                     
                 },
                 {
@@ -365,7 +365,7 @@ const dpeirqsendEmail = async (data) => {
                 attachments: [
                     {
                     filename: 'emas24.png',            
-                    path: '/home/giggo/nodejs/events/natal24.png',             
+                    path: '/home/giggo/nodejs/events/emas24.png',             
                     cid: 'signature',                     
                     },
                 ],  
@@ -439,7 +439,7 @@ const notseen7dayssendEmail = async (data) => {
             attachments: [
                 {
                 filename: 'emas24.png',            
-                path: '/home/giggo/nodejs/events/natal24.png',             
+                path: '/home/giggo/nodejs/events/emas24.png',             
                 cid: 'signature',                     
                 },
             ],  
@@ -512,7 +512,7 @@ const neverseensendEmail = async (data) => {
             attachments: [
                 {
                 filename: 'emas24.png',            
-                path: '/home/giggo/nodejs/events/natal24.png',             
+                path: '/home/giggo/nodejs/events/emas24.png',             
                 cid: 'signature',                     
                 },
             ],  
@@ -524,7 +524,6 @@ const neverseensendEmail = async (data) => {
         // Consider adding retries or other error handling mechanisms here
     }
 };
-
 
 const disunauth = async () => {
     try {
@@ -538,6 +537,7 @@ const disunauth = async () => {
 const diszerogc = async () => {
     try {
         const zerogcdata = await zerogcdataTask();
+        console.log(zerogcdata.length, 'Records fetch!');
         await zerogcsendEmail(zerogcdata);
     } catch (error) {
         console.error('Error:', error);

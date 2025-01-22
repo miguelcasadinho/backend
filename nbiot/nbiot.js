@@ -6,6 +6,7 @@ import { cpl03Decoder } from './decoders/cpl03.js';
 import { xlogicDecoder } from './decoders/xlogic.js';
 import { ds03aDecoder } from './decoders/ds03a.js';
 import { insertPg, insertMeters } from './ins_pg.js';
+import { postWebhook } from './post.js';
 import mqtt from 'mqtt';
 
 config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../.env') });
@@ -19,7 +20,7 @@ const options = {
 };
 
 // MQTT topics you want to subscribe to
-const topics = ['overflow', 'cpl03', 'xlogic', 'ds03a'];
+const topics = ['overflow', 'cpl03', /*'xlogic',*/ 'ds03a'];
 
 // Connect to an MQTT broker with authentication
 const client = mqtt.connect(process.env.mqttIotserverAddr, options);
@@ -50,12 +51,13 @@ client.on('message', async (topic, message) => {
             let cpl03_decoded = await cpl03Decoder(message.toString());
             if (typeof cpl03_decoded !== 'undefined'){
                 //console.log(cpl03Decoder(message.toString()));
-                insertMeters(cpl03_decoded);
+                await insertMeters(cpl03_decoded);
+                await postWebhook(cpl03_decoded);
             } else {
                 console.log(`${formattedDate} => IMEI: ${message.toString().substring(1,16)}, don't have any meter associated!`);
             }
             break;
-        case 'xlogic':
+        /*case 'xlogic':
             let xlogic_decoded = await xlogicDecoder(message.toString('hex'));
             if (typeof xlogic_decoded !== 'undefined'){
                 //console.log(xlogic_decoded);
@@ -63,7 +65,7 @@ client.on('message', async (topic, message) => {
             } else {
                 console.log(`${formattedDate} => Don't find any meter associated!`);
             }
-            break;
+            break;*/
         case 'ds03a':
             let ds03a_decoded = await ds03aDecoder(message.toString());
             if (typeof ds03a_decoded !== 'undefined'){

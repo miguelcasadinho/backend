@@ -1,6 +1,5 @@
 import schedule from 'node-schedule';
 import { disunauth, diszerogc, diszeroregas, disfalhas4h, disrequest, disasbestos, disdpeirq, disreadings, disLastSeen7days, disNeverSeen } from './dispatch.js';
-
 /*
 //schedule rules
 const rule = new schedule.RecurrenceRule();
@@ -21,7 +20,7 @@ const unauth_job = schedule.scheduleJob(unauth_rule, disunauth);
 
 // Define the zeros gc schedule
 const zerogc_rule = new schedule.RecurrenceRule();
-zerogc_rule.minute = 29; //(0-59)
+zerogc_rule.minute = 24; //(0-59)
 zerogc_rule.hour = 8; //(0-23)
 zerogc_rule.dayOfWeek = 4; //(0 - 7) (0 or 7 is Sun)
 // Schedule the insclientss tasks
@@ -73,8 +72,8 @@ readings_rule.date = 10; //(1-31)
 const readings_job = schedule.scheduleJob(readings_rule, disreadings);
 
 const readings_rule1 = new schedule.RecurrenceRule();
-readings_rule1.minute = 24; //(0-59)
-readings_rule1.hour = 8; //(0-23)
+readings_rule1.minute = 50; //(0-59)
+readings_rule1.hour = 10; //(0-23)
 readings_rule1.date = 17; //(1-31)
 // Schedule the readings tasks
 const readings_job1 = schedule.scheduleJob(readings_rule1, disreadings);
@@ -95,7 +94,7 @@ const readings_job3 = schedule.scheduleJob(readings_rule3, disreadings);
 
 // Define the last seen 7 days schedule
 const ls7days_rule = new schedule.RecurrenceRule();
-ls7days_rule.minute = 29; //(0-59)
+ls7days_rule.minute = 25; //(0-59)
 ls7days_rule.hour = 8; //(0-23)
 ls7days_rule.dayOfWeek = 1; //(0 - 7) (0 or 7 is Sun)
 // Schedule the insclientss tasks

@@ -396,6 +396,9 @@ const sensecapDecoder = (message) => {
             index = snr.indexOf(max);
             };
             var gatewayID = (Buffer.from(message.rxInfo[index].gatewayID, 'base64')).toString('hex');
+
+            let hasBAT = Array.isArray(result.messages) && result.messages.length > 2 && Object.hasOwnProperty.call(result.messages[2][0], 'Battery(%)');
+
             var payload = {
                 "AppID": message.applicationID,
                 "Application": message.applicationName,
@@ -411,6 +414,7 @@ const sensecapDecoder = (message) => {
                 "wind_direction": result.messages[1][0].measurementValue,
                 "rain_gauge": result.messages[1][1].measurementValue,
                 "barometric_pressure": result.messages[1][2].measurementValue,
+                "battery": hasBAT ? result.messages[2][0]['Battery(%)'] : null,
                 "gateway": gatewayID,
                 "rssi": message.rxInfo[index].rssi,
                 "snr": message.rxInfo[index].loRaSNR,

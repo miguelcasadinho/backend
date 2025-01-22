@@ -36,7 +36,8 @@ const getDevices = async (device) => {
         vol_ini::float,  -- Cast vol_ini to float
         meter,
         rph,
-        report
+        report,
+        tag_id
     FROM 
         nbiot_devices`
     };
@@ -65,9 +66,10 @@ const cpl03Decoder = async (message) => {
 
         const device = devices.find(device => device.imei === decoded.IMEI);
         if (device) {
-            const { pulse, meter, vol_ini, lit_pul, report, rph, model } = device;
+            const { pulse, meter, vol_ini, lit_pul, report, rph, model, tag_id } = device;
             decoded.pulse = pulse;
             decoded.device = meter;
+            decoded.tag_id = tag_id;
             decoded.vol_ini = vol_ini;
             decoded.lit_pul = lit_pul;
             decoded.report = report;
@@ -91,6 +93,7 @@ const cpl03Decoder = async (message) => {
                 })
             offset+=14;
             }
+            decoded.deltasVol = deltasVol;
 
             if (decoded.pulse === 1){
                 decoded.volume = parseFloat(((((deltasVol[1].index1)*decoded.lit_pul)*0.001)+decoded.vol_ini).toFixed(2));
@@ -124,7 +127,7 @@ const cpl03Decoder = async (message) => {
                 } 
             };
             decoded.deltas = deltas;
-
+            //console.log(decoded);
             return decoded;
         }
     } catch (error) {

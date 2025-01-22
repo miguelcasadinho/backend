@@ -630,10 +630,10 @@ const insertSensecap = async (payload) => {
       // Begin a transaction
       await client.query('BEGIN');
       //Execute insert querie
-      await client.query(`INSERT INTO weather(device, date, air_temperature, air_humidity, light_intensity, uv_index, wind_speed, wind_direction, rain_gauge, barometric_pressure)
-                        VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+      await client.query(`INSERT INTO weather(device, date, air_temperature, air_humidity, light_intensity, uv_index, wind_speed, wind_direction, rain_gauge, barometric_pressure, battery)
+                        VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
                         [payload.DeviceName, payload.Date, payload.air_temperature, payload.air_humidity, payload.light_intensity, payload.uv_index, 
-                        payload.wind_speed, payload.wind_direction, payload.rain_gauge, payload.barometric_pressure]);
+                        payload.wind_speed, payload.wind_direction, payload.rain_gauge, payload.barometric_pressure, payload.battery]);
       // Commit the transaction
       await client.query('COMMIT');
       //console.log(`${payload.Application}, ${payload.DeviceName} , weather details inserted successfully`);
@@ -844,7 +844,7 @@ const getCpl03Flow = async (device) => {
                     (EXTRACT(EPOCH FROM (date - LAG(date) OVER (ORDER BY date))) / 3600) AS flow,
                     EXTRACT(EPOCH FROM (date - LAG(date) OVER (ORDER BY date))) AS time_diff
                 FROM volume 
-                WHERE device = $1 AND date > now() - INTERVAL '6 hours'
+                WHERE device = $1 AND date > now() - INTERVAL '24 hours'
             )
             SELECT device, date, flow
             FROM calculated_flow

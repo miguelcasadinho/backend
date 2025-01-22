@@ -91,8 +91,8 @@ const insertFlow = async (payload) => {
       const min = String(data_tr.getMinutes()).padStart(2, '0');
       const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
       for (let i=0; i < payload.deltas.length ; i++){
-        await client.query(`INSERT INTO flow(device, date, flow) VALUES($1, $2, $3) ON CONFLICT (device, date) DO NOTHING`,
-                            [payload.device, payload.deltas[i].date, payload.deltas[i].flow]);
+        await client.query(`INSERT INTO flow(device, date, flow, tag_id) VALUES($1, $2, $3, $4) ON CONFLICT (device, date) DO NOTHING`,
+                            [payload.device, payload.deltas[i].date, payload.deltas[i].flow, payload.tag_id]);
       }
       // Commit the transaction
       await client.query('COMMIT');
@@ -142,8 +142,8 @@ const insertXlogicFlow0 = async (payload, last_volume) => {
     // Begin a transaction
     await client.query('BEGIN');
     //Execute insert querie
-      await client.query(`INSERT INTO flow(device, date, flow) VALUES($1, $2, $3)`,
-                          [payload.device, payload.date, payload.volume - last_volume]);
+      await client.query(`INSERT INTO flow(device, date, flow, tag_id) VALUES($1, $2, $3, $4)`,
+                          [payload.device, payload.date, payload.volume - last_volume, payload.tag_id]);
     // Commit the transaction
     await client.query('COMMIT');
   } catch (err) {
@@ -178,8 +178,8 @@ const insertVolume = async (payload) => {
     // Begin a transaction
     await client.query('BEGIN');
     //Execute insert querie
-      await client.query(`INSERT INTO volume(device, date, volume) VALUES($1, $2, $3)`,
-                          [payload.device, payload.deltas[0].date, payload.volume]);
+      await client.query(`INSERT INTO volume(device, date, volume, tag_id) VALUES($1, $2, $3, $4)`,
+                          [payload.device, payload.deltas[0].date, payload.volume, payload.tag_id]);
     // Commit the transaction
     await client.query('COMMIT');
   } catch (err) {
