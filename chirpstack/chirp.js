@@ -13,6 +13,8 @@ import { sensecapDecoder} from  './decoders/sensecap.js';
 import { xlogicDecoder } from './decoders/xlogic.js';
 import { arquiledDecoder } from './decoders/arquiled.js';
 import { cpl03Decoder } from './decoders/cpl03.js';
+import { t1000Decoder } from './decoders/t1000.js';
+import { postWebhook } from './post.js';
 import { insertPg } from './ins_pg.js';
 import express from 'express';
 import bodyParser from 'body-parser';
@@ -183,6 +185,17 @@ app.post(path, (req, res) => {
                 if (typeof cpl03_decoded !== 'undefined'){
                     //console.log(cpl03_decoded);
                     insertPg(cpl03Decoder(objectjson));
+                    postWebhook(cpl03Decoder(objectjson));
+                } else {
+                    console.log(`${formattedDate} => ${objectjson.applicationName}, Device:${objectjson.deviceName}, Payload not valid!`);
+                }
+                res.send('Data received successfully!');   
+                break;
+            case '155':
+                let t1000_decoded = t1000Decoder(objectjson);
+                if (typeof t1000_decoded !== 'undefined'){
+                    //console.log(t1000_decoded);
+                    insertPg(t1000Decoder(objectjson));
                 } else {
                     console.log(`${formattedDate} => ${objectjson.applicationName}, Device:${objectjson.deviceName}, Payload not valid!`);
                 }

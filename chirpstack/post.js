@@ -48,6 +48,7 @@ client.on('close', () => {
 
 // Define the webhook URL, payload, and token
 const webhookUrl = 'https://beja.baseform.com/hooks/chirpstack/?key=hs_dOW!eP22';
+//const webhookUrl = 'http://172.16.16.15:1880/webhook';
 
 const token = 'bearer-token';
 const username = 'username';
@@ -57,12 +58,12 @@ const password = 'password';
 const postWebhook = async (payload) => {
     try {
         let message = [];
-        for (let i=1; i < payload.deltasVol.length -1; i++){
+        for (let i=0; i < payload.Volume_IN1.length ; i++){
             message.push({
-                "id": payload.tag_id,
-                "device": payload.device,
-                "Timestamp": payload.deltasVol[i].date,
-                "Valor": parseFloat(((((payload.deltasVol[i].index1)*payload.lit_pul)*0.001)+payload.vol_ini).toFixed(2))
+                "id": payload.Tag_id,
+                "device": payload.DeviceName,
+                "Timestamp": payload.Volume_IN1[i].date,
+                "Valor": payload.Volume_IN1[i].volume
             })
         }
         //console.log(message);
@@ -89,4 +90,3 @@ const postWebhook = async (payload) => {
 };
 
 export { postWebhook };
-

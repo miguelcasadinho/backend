@@ -84,7 +84,7 @@ const zeroregassendEmail = async () => {
         const formattedDate = `${day}-${month}-${year} ${hour}:${min}`;
         const mailOptions = {
             from: '"NoReply EMAS" <miguel.casadinho@emas-beja.pt>',
-            to: 'luis.janeiro@emas-beja.pt,Helio.Placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt',
+            to: 'luis.janeiro@emas-beja.pt,Helio.Placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt,joao.santos@emas-beja.pt',
             bcc: 'miguel.casadinho@emas-beja.pt',
             subject: 'Anómalia regas',
             html:`
@@ -129,9 +129,9 @@ const zerogcsendEmail = async (data) => {
             const { local, device, name, morada, consumo } = entry;
             const mailOptions = {
                 from: '"NoReply EMAS" <miguel.casadinho@emas-beja.pt>',
-                to: 'luis.janeiro@emas-beja.pt,Helio.Placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt',
+                to: 'luis.janeiro@emas-beja.pt,Helio.Placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt,joao.santos@emas-beja.pt',
                 bcc: 'miguel.casadinho@emas-beja.pt',
-                subject: 'Anómalia grande cliente',
+                subject: 'Anomalia grande cliente',
                 html:`
                 <h3>Prezados colegas da EMAS de Beja,</h3>
                 <p>O contador <b>${device}</b> instalado no local <b>${local}</b> com o nome ${name} e morada <i>${morada}</i> teve um consumo de ${consumo} m3 nas últimas 72 horas, para mais informações consultar o local de consumo.</p>
@@ -176,7 +176,7 @@ const falhas4hsendEmail = async (data) => {
             const mailOptions = {
                 from: '"NoReply EMAS" <miguel.casadinho@emas-beja.pt>',
                 to: 'artur.janeiro@emas-beja.pt,goncalo.candeias@emas-beja.pt',
-                cc: 'gabriela.palma@emas-beja.pt,joao.pirata@emas-beja.pt,j.dias@emas-beja.pt',
+                cc: 'gabriela.palma@emas-beja.pt,joao.pirata@emas-beja.pt,j.dias@emas-beja.pt,,joao.santos@emas-beja.pt',
                 bcc: 'miguel.casadinho@emas-beja.pt',
                 subject: `Falha superior a 4 horas`,
                 html:`
@@ -422,7 +422,7 @@ const notseen7dayssendEmail = async (data) => {
         const tableHTML = generateHTMLTable(data);
         const mailOptions = {
             from: '"NoReply EMAS" <miguel.casadinho@emas-beja.pt>',
-            to: 'luis.janeiro@emas-beja.pt,helio.placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt',
+            to: 'luis.janeiro@emas-beja.pt,helio.placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt,joao.santos@emas-beja.pt',
             //cc: 'joao.pirata@emas-beja.pt',
             bcc: 'miguel.casadinho@emas-beja.pt',
             subject: 'Contadores sem comunicar',
@@ -495,7 +495,7 @@ const neverseensendEmail = async (data) => {
         const tableHTML = generateHTMLTable(data);
         const mailOptions = {
             from: '"NoReply EMAS" <miguel.casadinho@emas-beja.pt>',
-            to: 'luis.janeiro@emas-beja.pt,helio.placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt',
+            to: 'luis.janeiro@emas-beja.pt,helio.placido@emas-beja.pt,pedro.rodrigues@emas-beja.pt,joao.santos@emas-beja.pt',
             //cc: 'joao.pirata@emas-beja.pt',
             bcc: 'miguel.casadinho@emas-beja.pt',
             subject: 'Contadores por ativar',

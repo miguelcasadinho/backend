@@ -78,4 +78,4 @@ const requestdataTask = async () => {
 };
 
 export { requestdataTask };
-requestdataTask();
+

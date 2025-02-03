@@ -691,6 +691,28 @@ const insertLdds75 = async (payload) => {
     }
 };
 
+// Define an async function to insert tracker data (155)
+const insertT1000 = async (payload) => {
+    const client = await pool.connect();
+    try {
+      // Begin a transaction
+      await client.query('BEGIN');
+      //Execute insert querie
+      await client.query(`INSERT INTO tracker(device, date, battery, lat, lon) VALUES($1, $2, $3, $4, $5) ON CONFLICT(device, date) DO NOTHING`,
+                        [payload.DeviceName, payload.Date, payload.Battery, payload.Lat, payload.Lon]);
+      // Commit the transaction
+      await client.query('COMMIT');
+      //console.log(`${payload.Application}, ${payload.DeviceName} , distance details inserted successfully`);
+    } catch (err) {
+      // Rollback the transaction if an error occurs
+      await client.query('ROLLBACK');
+      console.error('Error inserting data:', err);
+    } finally {
+      // Release the client back to the pool
+      client.release();
+    }
+};
+
 // Define an async function to insert x-logic devices volume (152)
 const insertXlogicVolume = async (payload) => {
     const client = await pool.connect();
@@ -1011,6 +1033,10 @@ const insertPg = async (payload) => {
                     insertBattery(payload);
                     insertCom(payload);
                 };
+                break;
+            case '155':
+                insertT1000(payload);
+                insertCom(payload);
                 break;
             default:
                 console.log('Unsupported AppID:', payload.AppID);
