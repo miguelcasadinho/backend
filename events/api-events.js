@@ -1,5 +1,6 @@
 import schedule from 'node-schedule';
-import { disunauth, diszerogc, diszeroregas, disfalhas4h, disrequest, disasbestos, disdpeirq, disLastSeen7days, disNeverSeen } from './dispatch.js';
+import { disunauth, diszerogc, diszeroregas, disfalhas4h, disrequest, disasbestos, disdpeirq, disLastSeen7days, disNeverSeen, disLeak } from './dispatch.js';
+import { leakTask } from './class/leak.js';
 /*
 //schedule rules
 const rule = new schedule.RecurrenceRule();
@@ -78,3 +79,10 @@ neverseen_rule.hour = 8; //(0-23)
 neverseen_rule.dayOfWeek = 1; //(0 - 7) (0 or 7 is Sun)
 // Schedule the insclientss tasks
 const neverseen_job = schedule.scheduleJob(neverseen_rule, disNeverSeen);
+
+// Define the leak requests schedule
+const leak_rule = new schedule.RecurrenceRule();
+leak_rule.minute = 10; //(0-59)
+leak_rule.hour = 7; //(0-23)
+// Schedule the leak tasks
+const leak_job = schedule.scheduleJob(leak_rule, disLeak);

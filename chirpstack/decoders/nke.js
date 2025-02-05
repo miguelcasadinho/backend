@@ -1037,7 +1037,7 @@ const nkeDecoder = (message) => {
               payload.index1.push({
                 "device": payload.DeviceName,
                 "date": payload.Deltas[i].date,
-                "flow": (payload.Deltas[i].value * litros_impulso * rh)* 0.001
+                "flow": parseFloat(((payload.Deltas[i].value * litros_impulso * rh)* 0.001).toFixed(3))
               })
             }
 
@@ -1045,7 +1045,7 @@ const nkeDecoder = (message) => {
               payload.index2.push({
                 "device": payload.DeviceName,
                 "date": payload.Deltas[i].date,
-                "flow_inv": (payload.Deltas[i].value * litros_impulso * rh)* 0.001
+                "flow_inv": parseFloat(((payload.Deltas[i].value * litros_impulso * rh)* 0.001).toFixed(3))
               })
             }
           };

@@ -370,7 +370,7 @@ const insertFlowNke = (payload) => {
     if (payload.index1.length > 0) { 
         for (var i=0; i < payload.index1.length; i++){
             var query_index1 = `INSERT INTO nkeaux(device, date, flow) VALUES($1, $2, $3)`;
-            var values = [payload.index1[i].device, payload.index1[i].date, payload.index1[i].flow];
+            var values = [payload.index1[i].device, payload.index1[i].date, parseFloat(payload.index1[i].flow.toFixed(3))];
             pool.query(query_index1, values, (error, response) => {
                 if (error) {
                     console.log(error);
@@ -381,7 +381,7 @@ const insertFlowNke = (payload) => {
     if (payload.index2.length > 0) { 
         for (var i=0; i < payload.index2.length; i++){
             var query_index2 = `INSERT INTO nkeauxinv(device, date, flow) VALUES($1, $2, $3)`;
-            var values = [payload.index2[i].device, payload.index2[i].date, payload.index2[i].flow_inv];
+            var values = [payload.index2[i].device, payload.index2[i].date, parseFloat(payload.index2[i].flow_inv.toFixed(3))];
             pool.query(query_index2, values, (error, response) => {
                 if (error) {
                     console.log(error);
@@ -938,6 +938,7 @@ const insertPg = async (payload) => {
                 break;
             case '39':
                 insertFlowNke(payload);//falta otimizar
+                //console.log(payload);
                 insertVolumeNke(payload);
                 insertBattery(payload);
                 insertCom(payload);

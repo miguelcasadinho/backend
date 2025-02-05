@@ -10,6 +10,7 @@ import { asbestosdataTask } from './class/asbestos.js';
 import { dpeirqTask  } from './class/dpeirq.js';
 import { execPython } from './class/readings.js';
 import { getDevices7days, getDevicesNeverSeen } from './class/chirp.js';
+import { leakTask } from './class/leak.js';
 import nodemailer from 'nodemailer';
 import TelegramBot from 'node-telegram-bot-api';
 import { get } from 'https';
@@ -525,6 +526,52 @@ const neverseensendEmail = async (data) => {
     }
 };
 
+const leaksendEmail = async (data) => {
+    try {
+        for (const entry of data) {
+            const { id_service_order, number, date_hour_executed, resp_days, symptom, user_create, user_execute, address, work } = entry;
+            let now = new Date(date_hour_executed);
+            let year = now.getFullYear();
+            let month = ('0' + (now.getMonth() + 1)).slice(-2); // Using slice to pad with leading zero
+            let day = ('0' + now.getDate()).slice(-2); // Using slice to pad with leading zero
+            let hour = ('0' + (now.getHours())).slice(-2); // Using slice to pad with leading zero, and incrementing hour properly
+            let minute = ('0' + now.getMinutes()).slice(-2); // Using slice to pad with leading zero
+            let second = ('0' + now.getSeconds()).slice(-2); // Using slice to pad with leading zero
+            let data = day + '-' + month + '-' + year + ' pelas ' + hour + ':' + minute + ':' + second;
+            const formattedDate = `${day}-${month}-${year} ${hour}:${minute}`;
+            const mailOptions = {
+                from: '"NoReply EMAS" <miguel.casadinho@emas-beja.pt>',
+                to: '',
+                bcc: 'miguel.casadinho@emas-beja.pt',
+                subject: 'Fuga reparada',
+                html:`
+                <h3>Prezados colegas da EMAS de Beja,</h3>
+                <p>No dia ${data}, foi executada a ordem de serviço ${number}, com o sintoma <b>${symptom}</b> e localização em <i>${address}</i>.</p> 
+                <p>Esta intervenção, criada pelo sr. ${user_create} e resolvida pelo sr. ${user_execute}, com o trabalho ${work}, teve um tempo de resposta de <b>${resp_days}</b> dias, para mais informações consultar a aplicação Navia.</p>
+                <a href="https://navia.emas-beja.pt/Tarefas/Intervencoes/verDetalhes.php?id_intervencao=${id_service_order}&referer=consulta_os target="_blank">Visualizar intervenção</a>
+                <br></br>
+                <br></br>
+                <p>Com os melhores cumprimentos,</p>
+                <p><b>wavenotify by EMAS</b></p>
+                <img src="cid:signature" alt="Signature" style="width: 200px;" />
+                `,
+                attachments: [
+                    {
+                    filename: 'emas24.png',            
+                    path: '/home/giggo/nodejs/events/emas24.png',             
+                    cid: 'signature',                     
+                    },
+                ],  
+                };
+            const info = await transporter.sendMail(mailOptions);
+            console.log(`${formattedDate} => ${work} executed, Email sent:, ${info.response}`);
+        }
+    } catch (error) {
+        console.error('Error sending email:', error);
+        // Consider adding retries or other error handling mechanisms here
+    }
+};
+
 const disunauth = async () => {
     try {
         const unauthdata = await unauthdataTask();
@@ -620,4 +667,13 @@ const disNeverSeen = async () => {
     }
 };
 
-export { disunauth, diszerogc, diszeroregas, disfalhas4h, disrequest, disasbestos, disdpeirq, disreadings, disLastSeen7days, disNeverSeen};
+const disLeak = async () => {
+    try {
+        const leakdata = await leakTask();
+        await leaksendEmail(leakdata);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
+export { disunauth, diszerogc, diszeroregas, disfalhas4h, disrequest, disasbestos, disdpeirq, disreadings, disLastSeen7days, disNeverSeen, disLeak};
