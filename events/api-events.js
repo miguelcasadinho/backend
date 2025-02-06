@@ -82,7 +82,7 @@ const neverseen_job = schedule.scheduleJob(neverseen_rule, disNeverSeen);
 
 // Define the leak requests schedule
 const leak_rule = new schedule.RecurrenceRule();
-leak_rule.minute = 10; //(0-59)
+leak_rule.minute = 14; //(0-59)
 leak_rule.hour = 7; //(0-23)
 // Schedule the leak tasks
 const leak_job = schedule.scheduleJob(leak_rule, disLeak);

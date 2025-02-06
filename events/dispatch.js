@@ -529,7 +529,7 @@ const neverseensendEmail = async (data) => {
 const leaksendEmail = async (data) => {
     try {
         for (const entry of data) {
-            const { id_service_order, number, date_hour_executed, resp_days, symptom, user_create, user_execute, address, work } = entry;
+            const { id_service_order, number, date_hour_executed, resp_hours, symptom, user_create, user_execute, address, work } = entry;
             let now = new Date(date_hour_executed);
             let year = now.getFullYear();
             let month = ('0' + (now.getMonth() + 1)).slice(-2); // Using slice to pad with leading zero
@@ -539,15 +539,22 @@ const leaksendEmail = async (data) => {
             let second = ('0' + now.getSeconds()).slice(-2); // Using slice to pad with leading zero
             let data = day + '-' + month + '-' + year + ' pelas ' + hour + ':' + minute + ':' + second;
             const formattedDate = `${day}-${month}-${year} ${hour}:${minute}`;
+            const data_tr = new Date();
+            const year_tr = data_tr.getFullYear();
+            const month_tr = String(data_tr.getMonth() + 1).padStart(2, '0'); // January is 0!
+            const day_tr = String(data_tr.getDate()).padStart(2, '0');
+            const hour_tr = String(data_tr.getHours()).padStart(2, '0');
+            const min_tr = String(data_tr.getMinutes()).padStart(2, '0');
+            const formattedDate_tr = `${day_tr}-${month_tr}-${year_tr} ${hour_tr}:${min_tr}`;
             const mailOptions = {
                 from: '"NoReply EMAS" <miguel.casadinho@emas-beja.pt>',
                 to: '',
-                bcc: 'miguel.casadinho@emas-beja.pt',
-                subject: 'Fuga reparada',
+                bcc: 'miguel.casadinho@emas-beja.pt,joao.pirata@emas-beja.pt,joao.santos@emas-beja.pt',
+                subject: `${symptom} reparada`,
                 html:`
                 <h3>Prezados colegas da EMAS de Beja,</h3>
                 <p>No dia ${data}, foi executada a ordem de serviço ${number}, com o sintoma <b>${symptom}</b> e localização em <i>${address}</i>.</p> 
-                <p>Esta intervenção, criada pelo sr. ${user_create} e resolvida pelo sr. ${user_execute}, com o trabalho ${work}, teve um tempo de resposta de <b>${resp_days}</b> dias, para mais informações consultar a aplicação Navia.</p>
+                <p>Esta intervenção, criada pelo sr. ${user_create} e resolvida pelo sr. ${user_execute}, com o trabalho ${work}, teve um tempo de resposta de <b>${resp_hours}</b> horas, para mais informações consultar a aplicação Navia.</p>
                 <a href="https://navia.emas-beja.pt/Tarefas/Intervencoes/verDetalhes.php?id_intervencao=${id_service_order}&referer=consulta_os target="_blank">Visualizar intervenção</a>
                 <br></br>
                 <br></br>
@@ -564,7 +571,7 @@ const leaksendEmail = async (data) => {
                 ],  
                 };
             const info = await transporter.sendMail(mailOptions);
-            console.log(`${formattedDate} => ${work} executed, Email sent:, ${info.response}`);
+            console.log(`${formattedDate_tr} => ${work} executed, Email sent:, ${info.response}`);
         }
     } catch (error) {
         console.error('Error sending email:', error);

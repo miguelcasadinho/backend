@@ -48,7 +48,18 @@ const pslbDecoder = (message) => {
               else if(bytes[3]==12)
               var deltas= parseFloat(((IDC_intput_mA-4.0)*6.25).toFixed(3));         
             }    
-            var battery= (bytes[0]<<8 | bytes[1])/1000;
+            let voltage= (bytes[0]<<8 | bytes[1])/1000;
+            if (voltage >= 3.64) {
+              var bat = 3.64
+            }
+            else if (voltage <= 3.00) {
+              var bat = 3.00
+            }
+            else
+             var bat = voltage;
+            let battery = parseFloat((((bat-3)*100)/0.64).toFixed(2));
+
+
             var rxinfo_length = message.rxInfo.length;
             var snr = [];
             var index;

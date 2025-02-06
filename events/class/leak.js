@@ -19,7 +19,7 @@ const query = `
         so.number,
         rq.date_hour_created, 
         so.date_hour_executed,
-        round((EXTRACT(EPOCH FROM (so.date_hour_executed - rq.date_hour_created)) / (3600*24))::NUMERIC, 2) AS resp_days, 
+        round((EXTRACT(EPOCH FROM (so.date_hour_executed - rq.date_hour_created)) / (3600))::NUMERIC, 2) AS resp_hours, 
         so.symptom, 
         so.user_create, 
         so.user_execute, 
