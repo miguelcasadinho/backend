@@ -16,6 +16,7 @@ import { cpl03Decoder } from './decoders/cpl03.js';
 import { t1000Decoder } from './decoders/t1000.js';
 import { postWebhook } from './post.js';
 import { insertPg } from './ins_pg.js';
+import { mqttPublish } from './publish.js';
 import express from 'express';
 import bodyParser from 'body-parser';
 
@@ -45,6 +46,7 @@ app.post(path, (req, res) => {
             if (typeof axioma_decoded !== 'undefined'){
                 //console.log(axioma_decoded);
                 insertPg(axiomaDecoder(objectjson));
+                //mqttPublish(objectjson);
             } else {
                 console.log(`${formattedDate} => ${objectjson.applicationName}, Device:${objectjson.deviceName}, Payload not valid!`);
             }
@@ -75,6 +77,7 @@ app.post(path, (req, res) => {
             if (typeof sagem_decoded !== 'undefined'){
                 //console.log(sagem_decoded);
                 insertPg(sagemDecoder(objectjson));
+                mqttPublish(objectjson);
             } else {
                 console.log(`${formattedDate} => ${objectjson.applicationName}, Device:${objectjson.deviceName}, Payload not valid!`);
             }

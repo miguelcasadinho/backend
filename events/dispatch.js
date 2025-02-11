@@ -256,7 +256,7 @@ const asbestossendEmail = async (data) => {
                 from: '"NoReply EMAS" <miguel.casadinho@emas-beja.pt>',
                 to: 'joao.pirata@emas-beja.pt',//'donatila.marques@emas-beja.pt,ricardo.gomes@emas-beja.pt',
                 //cc: 'ana.madeira@emas-beja.pt,antonio.conceicao@emas-beja.pt,joao.pirata@emas-beja.pt,carlos.guerreiro@emas-beja.pt',
-                bcc: 'miguel.casadinho@emas-beja.pt',
+                bcc: 'miguel.casadinho@emas-beja.pt, joao.santos@emas-beja.pt',
                 subject: 'Intervenção em amianto',
                 html:`
                 <h3>Prezados colegas da EMAS de Beja,</h3>
@@ -684,3 +684,4 @@ const disLeak = async () => {
 };
 
 export { disunauth, diszerogc, diszeroregas, disfalhas4h, disrequest, disasbestos, disdpeirq, disreadings, disLastSeen7days, disNeverSeen, disLeak};
+

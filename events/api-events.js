@@ -51,7 +51,7 @@ const requests_job = schedule.scheduleJob(requests_rule, disrequest);
 
 // Define the asbestos schedule
 const asbestos_rule = new schedule.RecurrenceRule();
-asbestos_rule.minute = 14; //(0-59)
+asbestos_rule.minute = 35; //(0-59)
 asbestos_rule.hour = 8; //(0-23)
 // Schedule the insclientss tasks
 const asbestos_job = schedule.scheduleJob(asbestos_rule, disasbestos);

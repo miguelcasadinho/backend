@@ -58,27 +58,29 @@ const password = 'password';
 const postWebhook = async (payload) => {
     try {
         let message = [];
-        for (let i=0; i < payload.Volume_IN1.length ; i++){
-            message.push({
-                "id": payload.Tag_id,
-                "device": payload.DeviceName,
-                "Timestamp": payload.Volume_IN1[i].date,
-                "Valor": payload.Volume_IN1[i].volume
-            })
+        if (Object.hasOwnProperty.bind(payload)('Volume_IN1')) {
+            for (let i=0; i < payload.Volume_IN1.length ; i++){
+                message.push({
+                    "id": payload.Tag_id,
+                    "device": payload.DeviceName,
+                    "Timestamp": payload.Volume_IN1[i].date,
+                    "Valor": payload.Volume_IN1[i].volume
+                })
+            }
+            //console.log(message);
+            const response = await axios.post(webhookUrl, message, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    //'Authorization': `Bearer ${token}`,
+                },
+                //auth: {
+                    //username,
+                    //password,
+                //},
+            });
+            console.log('Status:', response.status);
+            //console.log('Response Data:', response.data);
         }
-        //console.log(message);
-        const response = await axios.post(webhookUrl, message, {
-            headers: {
-                'Content-Type': 'application/json',
-                //'Authorization': `Bearer ${token}`,
-            },
-            //auth: {
-                //username,
-                //password,
-            //},
-        });
-        console.log('Status:', response.status);
-        //console.log('Response Data:', response.data);
     }catch (error) {
         if (error.response) {
             console.error('Error Response:', error.response.data);
