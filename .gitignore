@@ -110,3 +110,10 @@ lerna-debug.log*
 
 # node-gyp generated files
 build/
+
+#other files
+/home/giggo/nodejs/kafka/ca-cert.pem
+/home/giggo/nodejs/kafka/client-cert.pem
+/home/giggo/nodejs/kafka/client-key.pem
+/home/giggo/nodejs/kafka/kafka.client.truststore.jks
+/home/giggo/nodejs/kafka/keystore.p12
