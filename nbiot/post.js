@@ -1,4 +1,9 @@
 import axios from 'axios';
+import { config } from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
+
+config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../.env') });
 
 /*
 import { config } from 'dotenv';
@@ -47,7 +52,7 @@ client.on('close', () => {
 */
 
 // Define the webhook URL, payload, and token
-const webhookUrl = 'https://beja.baseform.com/hooks/chirpstack/?key=hs_dOW!eP22';
+const webhookUrl = process.env.BaseformURL;
 
 const token = 'bearer-token';
 const username = 'username';
