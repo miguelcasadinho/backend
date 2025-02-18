@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 
 // Load environment variables from the .env file
-config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '.env') });
+config({ path: resolve(dirname(fileURLToPath(import.meta.url)), '../.env') });
 
 /*
 import { config } from 'dotenv';
@@ -54,7 +54,7 @@ client.on('close', () => {
 
 // Define the webhook URL, payload, and token
 const webhookUrl = process.env.BaseformURL;
-//const webhookUrl = 'http://172.16.16.15:1880/webhook';
+//const webhookUrl = 'http://172.16.16.15:1880/webhook'; 
 
 const token = 'bearer-token';
 const username = 'username';
